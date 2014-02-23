@@ -19,11 +19,11 @@ import java.io.OutputStream;
 /**
  * Created by Alex on 2/22/14.
  */
-public class ConcealEncrypter implements IEncrypter {
+public class ConcealCrypto implements ICrypto {
 
     Crypto crypto;
 
-    public ConcealEncrypter(Context context){
+    public ConcealCrypto(Context context){
         crypto = new Crypto(
                 new SharedPrefsBackedKeyChain(context),
                 new SystemNativeCryptoLibrary());

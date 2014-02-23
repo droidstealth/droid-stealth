@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by Alex on 2/22/14.
@@ -27,7 +26,7 @@ public class EncryptionService extends Service {
     //whether the service should encrypt or decrypt
     public static final String ENCRYPT_KEY = "ENCRYPT";
 
-    ConcealEncrypter mEncrypter;
+    ConcealCrypto mEncrypter;
 
 
     ExecutorService cryptoExecutor;
@@ -38,7 +37,7 @@ public class EncryptionService extends Service {
 
         //use a scheduled thread pool for the running of our crypto system
         cryptoExecutor = Executors.newScheduledThreadPool(PoolSize);
-        mEncrypter = new ConcealEncrypter(this);
+        mEncrypter = new ConcealCrypto(this);
     }
 
     //no binding necessary here
@@ -72,12 +71,12 @@ public class EncryptionService extends Service {
     }
 
     private class CryptoTask implements Runnable {
-        private final ConcealEncrypter encrypter;
+        private final ConcealCrypto encrypter;
         private final File encryptedFile;
         private final File unencryptedFile;
         private final String entityName;
         private final boolean encrypt;
-        public CryptoTask(ConcealEncrypter encrypter, File encryptedFile, File unencryptedFile, String entityName, boolean encrypt){
+        public CryptoTask(ConcealCrypto encrypter, File encryptedFile, File unencryptedFile, String entityName, boolean encrypt){
             this.encrypter = encrypter;
             this.encryptedFile = encryptedFile;
             this.unencryptedFile = unencryptedFile;

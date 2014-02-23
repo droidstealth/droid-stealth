@@ -12,12 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.crypto.exception.CryptoInitializationException;
+import com.facebook.crypto.exception.KeyChainException;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
 
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Alex on 2/21/14.
@@ -25,7 +28,14 @@ import java.io.File;
 public class FilePickerFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_CHOOSER = 1234;
 
+    ConcealCrypto crypto;
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        crypto = new ConcealCrypto(activity);
+    }
 
     TextView textView;
 
@@ -59,6 +69,7 @@ public class FilePickerFragment extends Fragment implements View.OnClickListener
                     if (path != null && FileUtils.isLocal(path)) {
                         File selected = new File(path);
                         File encrypted = new File(selected.getParentFile(), "encryptedtest");
+
 
                         Intent encryptIntent = new Intent(getActivity(), EncryptionService.class);
                         encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, selected.getPath());

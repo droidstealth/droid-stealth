@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Alex on 2/22/14.
  */
-public interface IEncrypter {
+public interface ICrypto {
     /**
      * Encrypts a file input stream to the given file
      * @param encrypted file to be written to. Cannot be a directory
