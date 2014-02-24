@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="wifi_AP_progress_title">Wifi Hotspot</string>
+    <string name="wifi_AP_progress_message">Creating a Wifi hotspot to allow other to connect to. Please wait...</string>
+
     <string name="app_name">AndroidStealth</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
