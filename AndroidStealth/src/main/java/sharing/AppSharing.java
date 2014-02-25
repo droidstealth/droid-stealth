@@ -13,19 +13,6 @@ import android.net.Uri;
 //TODO move to activity?
 public class AppSharing {
 
-    public boolean ShareAppViaBluetooth(Context context){
-        //first we get the bluetooth intent. For now we'll zip
-        //TODO: ask whether zip is needed?
-        Intent btIntent = getBluetoothAppShareIntent(context, true);
-        //we failed unfortunately
-        if(btIntent == null)
-            return false;
-
-        //TODO make discoverable and share app
-
-        return true;
-    }
-
     /**
      * gets an intent to share the application over bluetooth
      * @param context context needed to retrieve the app and information about it

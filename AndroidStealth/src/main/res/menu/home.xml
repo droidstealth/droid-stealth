@@ -2,11 +2,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.stealth.android.HomeActivity" >
-    <item android:id="@+id/action_example"
-        android:title="@string/action_example"
-        app:showAsAction="withText|ifRoom" />
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/app_sharing"
+        android:title="@string/share_app">
+        <menu>
+            <item android:id="@+id/share_hotspot"
+                android:title="@string/share_hotspot_title"/>
+            <item android:id="@+id/share_bluetooth"
+                android:title="@string/share_bluetooth_title"/>
+            <item android:id="@+id/share_sd_card"
+                android:title="@string/share_sd_card_title"/>
+        </menu>
+        </item>
 </menu>
