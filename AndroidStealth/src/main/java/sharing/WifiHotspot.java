@@ -4,22 +4,19 @@ package sharing;
  * Source: http://stackoverflow.com/a/7049074
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.widget.TextView;
-
-import com.stealth.android.R;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alex on 2/24/14.
  */
-class SetWifiAPTask extends AsyncTask<Void, Void, SetWifiAPTask.WifiAPState> {
+public class WifiHotspot {
 
     public enum WifiAPState{
         WIFI_AP_STATE_UNKNOWN,
@@ -34,46 +31,30 @@ class SetWifiAPTask extends AsyncTask<Void, Void, SetWifiAPTask.WifiAPState> {
         public void wifiAPStateSet(WifiAPState state);
     }
 
-    private boolean mMode;
-    private ProgressDialog mDialog;
-    private TextView mProgressDialogTitle;
-
-    private WifiAPStateListener mListener;
+    private List<WifiAPStateListener> mListeners;
     private WifiManager mWifiManager;
     private WifiConfiguration mConfiguration;
 
-    public SetWifiAPTask(Context context) {
+    private WifiAPState mLastKnownState;
+
+    public WifiHotspot(Context context) {
+        mListeners = new ArrayList<WifiAPStateListener>();
+
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        buildProgressDialog(context);
-    }
-
-    private void buildProgressDialog(Context context){
-        mDialog = new ProgressDialog(context);
-        mDialog.setIndeterminate(true);
-
-        Resources resources = context.getResources();
-        String title = resources.getString(R.string.wifi_AP_progress_title);
-        String message = resources.getString(R.string.wifi_AP_progress_message);
-
-        //Needed to set the wifi SSID in the title when the APConfiguration gets set.
-        mProgressDialogTitle = ((TextView) mDialog.findViewById(resources.getIdentifier(
-                "alertTitle", "id", "android")));
-
-        mDialog.setTitle(title);
-        mDialog.setMessage(message);
+        mLastKnownState = getWifiAPState();
     }
 
     public void setWifiAPConfiguration(WifiConfiguration configuration){
         mConfiguration = configuration;
-
-        //Sets the new title with the SSID included
-        CharSequence original = mProgressDialogTitle.getText();
-        String labeledTitle = original + " \"" + mConfiguration.SSID +"\"";
-        mProgressDialogTitle.setText(labeledTitle);
     }
 
-    public void setWifiAPStateListener(WifiAPStateListener listener){
-        mListener = listener;
+    public void addWifiAPStateListener(WifiAPStateListener listener){
+        if(!mListeners.contains(listener))
+            mListeners.add(listener);
+    }
+
+    public boolean removeWifiAPStateListener(WifiAPStateListener listener){
+        return mListeners.remove(listener);
     }
 
     private WifiConfiguration getDefaultWifiAPConfiguration() {
@@ -84,31 +65,14 @@ class SetWifiAPTask extends AsyncTask<Void, Void, SetWifiAPTask.WifiAPState> {
         return netConfig;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        if(mConfiguration == null)
-            setWifiAPConfiguration(getDefaultWifiAPConfiguration());
-
-        mDialog.show();
+    public void createHotspot(){
+        WifiAPTask task = new WifiAPTask();
+        task.execute(true);
     }
 
-    @Override
-    protected WifiAPState doInBackground(Void... params) {
-        setWifiApEnabled(mMode);
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(WifiAPState wifiAPState) {
-        super.onPostExecute(wifiAPState);
-        try {
-            mDialog.dismiss();
-        } catch (IllegalArgumentException e) {}
-        if(mListener != null){
-                mListener.wifiAPStateSet(wifiAPState);
-        }
+    public void disableHotspot(){
+        WifiAPTask task = new WifiAPTask();
+        task.execute(false);
     }
 
     /**
@@ -161,4 +125,28 @@ class SetWifiAPTask extends AsyncTask<Void, Void, SetWifiAPTask.WifiAPState> {
         return state;
     }
 
+    class WifiAPTask extends AsyncTask<Boolean, Void, WifiAPState> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            if(mConfiguration == null)
+                setWifiAPConfiguration(getDefaultWifiAPConfiguration());
+        }
+
+        @Override
+        protected WifiAPState doInBackground(Boolean... params) {
+            return setWifiApEnabled(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(WifiAPState wifiAPState) {
+            super.onPostExecute(wifiAPState);
+            try {
+            } catch (IllegalArgumentException e) {}
+            for(WifiAPStateListener listener : mListeners)
+                listener.wifiAPStateSet(wifiAPState);
+        }
+    }
 }
