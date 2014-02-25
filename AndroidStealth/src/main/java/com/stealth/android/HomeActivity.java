@@ -1,22 +1,21 @@
 package com.stealth.android;
 
 import android.app.Activity;
+import android.net.wifi.WifiConfiguration;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+
+import sharing.WifiAPManager;
 
 public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -106,6 +105,8 @@ public class HomeActivity extends ActionBarActivity
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+        private WifiAPManager mWifiApManager;
+
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -125,15 +126,46 @@ public class HomeActivity extends ActionBarActivity
         }
 
         public PlaceholderFragment() {
+            setHasOptionsMenu(true);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            super.onCreateOptionsMenu(menu, inflater);
+            menu.clear();
+            inflater.inflate(R.menu.sharing, menu);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.hotspot_enable:
+                    mWifiApManager.setWifiApEnabled(getAPConfig(), true);
+                    return true;
+                case R.id.hotspot_disable:
+                    if(mWifiApManager.setWifiApEnabled(null, false))
+                        mWifiApManager.enableWifi(true);
+                    return true;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+        private WifiConfiguration getAPConfig(){
+            WifiConfiguration configuration = new WifiConfiguration();
+            configuration.SSID = "AndroidStealth";
+            configuration.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN, true);
+            configuration.preSharedKey = "TestPass";
+
+            return configuration;
         }
 
         @Override
@@ -141,6 +173,8 @@ public class HomeActivity extends ActionBarActivity
             super.onAttach(activity);
             ((HomeActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
+
+            mWifiApManager = new WifiAPManager(activity);
         }
     }
 
