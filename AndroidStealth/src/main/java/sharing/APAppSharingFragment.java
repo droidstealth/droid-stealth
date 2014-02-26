@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,7 +28,7 @@ public class APAppSharingFragment extends DialogFragment {
 
     public interface AppSharingListener{
         public void dialogCanceled();
-        public void networkCreated();
+        public void networkCreated(String SSID, String password);
         public void networkCreationFailed();
     }
 
@@ -34,8 +37,10 @@ public class APAppSharingFragment extends DialogFragment {
     private AlertDialog mDialog;
 
     public APAppSharingFragment(){
-        //TODO for now, needs to be cleaner
-        mListener = new HttpShare();
+    }
+
+    public void setAppSharingListener(AppSharingListener listener){
+        mListener = listener;
     }
 
     @Override
@@ -58,7 +63,7 @@ public class APAppSharingFragment extends DialogFragment {
                 boolean result = mWifiAPManager.setWifiApEnabled(getConfigFromFields(), true);
                 if(mListener != null){
                     if(result)
-                        mListener.networkCreated();
+                        mListener.networkCreated(mSSIDField.getText().toString(), mPasswordField.getText().toString());
                     else {
                         //turn wifi back on and continue
                         mWifiAPManager.enableWifi(true);
@@ -88,6 +93,14 @@ public class APAppSharingFragment extends DialogFragment {
 
         mDialog = mBuilder.create();
 
+        //Disable the create button since short passes and SSIDs aren't allowed
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            }
+        });
+
         return mDialog;
     }
 
@@ -102,28 +115,19 @@ public class APAppSharingFragment extends DialogFragment {
 
         //disable ssid button
         mSSIDField = (TextView)contentView.findViewById(R.id.SSID_field);
-        mSSIDField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                boolean validSSID = SharingUtils.validSSID(editable.toString());
-                if(!validSSID)
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                else
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            }
-        });
+        mSSIDField.addTextChangedListener(new APConfigurationValidator());
 
         //Link show password checkbox to TextView
         mPasswordField = (TextView)contentView.findViewById(R.id.password_field);
+        mPasswordField.addTextChangedListener(new APConfigurationValidator());
+
         ((CheckBox)contentView.findViewById(R.id.show_password_check)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                mPasswordField.setInputType(checked ? InputType.TYPE_CLASS_TEXT : InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                if(checked)
+                    mPasswordField.setInputType(InputType.TYPE_CLASS_TEXT |InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                else
+                    mPasswordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
         });
 
@@ -152,21 +156,29 @@ public class APAppSharingFragment extends DialogFragment {
         return configuration;
     }
 
-    private class HttpShare implements AppSharingListener {
+   private class APConfigurationValidator implements TextWatcher{
 
-        @Override
-        public void dialogCanceled() {
+       @Override
+       public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
-        }
+       }
 
-        @Override
-        public void networkCreated() {
+       @Override
+       public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
-        }
+       }
 
-        @Override
-        public void networkCreationFailed() {
-        }
-    }
+       @Override
+       public void afterTextChanged(Editable editable) {
+           String pass = mPasswordField.getText().toString();
+           boolean validPass = pass.length() == 0? true: SharingUtils.validWPAPass(pass);
+           boolean validSSID = SharingUtils.validSSID(mSSIDField.getText().toString());
+           if(!validPass || !validSSID)
+               mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+           else
+               mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+       }
+   }
+
 }
 

@@ -19,6 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="sharing.APSharingActivity"
+            android:label="@string/hotspot_app_sharing"
+            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
     </application>
 
 </manifest>
