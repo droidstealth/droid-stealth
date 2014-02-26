@@ -10,11 +10,14 @@
         android:title="@string/share_app">
         <menu>
             <item android:id="@+id/share_hotspot"
-                android:title="@string/share_hotspot_title"/>
+                android:title="@string/share_hotspot_title"
+                android:icon="@drawable/stat_sys_tether_wifi"/>
             <item android:id="@+id/share_bluetooth"
-                android:title="@string/share_bluetooth_title"/>
+                android:title="@string/share_bluetooth_title"
+                android:icon="@drawable/perm_group_bluetooth"/>
             <item android:id="@+id/share_sd_card"
-                android:title="@string/share_sd_card_title"/>
+                android:title="@string/share_sd_card_title"
+                android:icon="@drawable/stat_notify_sdcard"/>
         </menu>
         </item>
 </menu>

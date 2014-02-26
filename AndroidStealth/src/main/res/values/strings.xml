@@ -18,9 +18,9 @@
     <string name="cancel_ap_app_sharing">Cancel</string>
     <string name="start_ap_app_sharing">Create</string>
     <string name="share_app">Share Application</string>
-    <string name="share_hotspot_title">Share via Wifi</string>
-    <string name="share_bluetooth_title">Share via Bluetooth</string>
-    <string name="share_sd_card_title">Share via SD Card</string>
+    <string name="share_hotspot_title">via Hotspot</string>
+    <string name="share_bluetooth_title">via Bluetooth</string>
+    <string name="share_sd_card_title">via SD Card</string>
     <string name="password_text">Password</string>
     <string name="SSID_text">Wifi name</string>
     <string name="show_password_text">Show password</string>
