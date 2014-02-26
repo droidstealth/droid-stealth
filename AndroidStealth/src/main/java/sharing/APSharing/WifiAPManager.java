@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package sharing;
+package sharing.APSharing;
+
+import android.content.Context;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,14 +28,21 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import android.content.Context;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
-import android.util.Log;
-
 public class WifiAPManager {
     public enum WIFI_AP_STATE {
-        WIFI_AP_STATE_DISABLING, WIFI_AP_STATE_DISABLED, WIFI_AP_STATE_ENABLING, WIFI_AP_STATE_ENABLED, WIFI_AP_STATE_FAILED
+        WIFI_AP_STATE_DISABLING,
+        WIFI_AP_STATE_DISABLED,
+        WIFI_AP_STATE_ENABLING,
+        WIFI_AP_STATE_ENABLED,
+        WIFI_AP_STATE_FAILED
+    }
+
+    public enum WIFI_STATE {
+        WIFI_STATE_DISABLING,
+        WIFI_STATE_DISABLED,
+        WIFI_STATE_ENABLING,
+        WIFI_STATE_ENABLED,
+        WIFI_STATE_FAILED
     }
 
     private final WifiManager mWifiManager;
@@ -51,7 +63,7 @@ public class WifiAPManager {
     public boolean setWifiApEnabled(WifiConfiguration wifiConfig, boolean enabled) {
         try {
             if (enabled) { // disable WiFi in any case
-                enableWifi(false);
+                setWifiEnabled(false);
             }
 
             Method method = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
@@ -62,7 +74,11 @@ public class WifiAPManager {
         }
     }
 
-    public void enableWifi(boolean enabled){
+    public WIFI_STATE getWifiState(){
+        return WIFI_STATE.values()[mWifiManager.getWifiState()];
+    }
+
+    public void setWifiEnabled(boolean enabled){
         mWifiManager.setWifiEnabled(enabled);
     }
 

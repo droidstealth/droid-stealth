@@ -19,9 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="sharing.APSharingActivity"
+        <activity android:name="sharing.APSharing.APAppSharingActivity"
             android:label="@string/hotspot_app_sharing"
-            android:theme="@android:style/Theme.Holo.DialogWhenLarge"/>
+            android:theme="@style/Theme.Transparent"/>
+        <activity android:name="sharing.APSharing.ServerStatusActivity"
+            android:label="Server Status"
+            android:theme="@style/AppTheme"/>
+        <service android:name="sharing.APSharing.HttpServerService"
+            android:label="@string/http_service"/>
+
     </application>
 
 </manifest>

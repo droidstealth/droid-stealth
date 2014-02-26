@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.os.Environment;
 
+import sharing.APSharing.WifiAPManager;
+
 /**
  * Created by Alex on 2/25/14.
  */

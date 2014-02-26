@@ -14,7 +14,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sharing.APAppSharingFragment;
+import sharing.APSharing.APAppSharingFragment;
 import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity

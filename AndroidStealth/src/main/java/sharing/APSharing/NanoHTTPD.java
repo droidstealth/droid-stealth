@@ -1,4 +1,4 @@
-package sharing;
+package sharing.APSharing;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

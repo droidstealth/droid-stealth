@@ -26,5 +26,19 @@
     <string name="show_password_text">Show password</string>
     <string name="ap_dialog_title">Creating Wifi Hotspot</string>
     <string name="hotspot_app_sharing">Hotspot App Sharing</string>
+    <string name="file_not_found_message">File not found!</string>
+    <string name="page_not_found_message">404 Page not found!</string>
+    <string name="share_app_dialog_title">Share Application link</string>
+    <string name="link_name">link:</string>
+    <string name="dummy_link">http://192.168.1.1/stealth.apk</string>
+    <string name="hotspot_name">Hotspot:</string>
+    <string name="password_name">Password:</string>
+    <string name="hotspot_explanation">The hotspot has been created with the following values. Have your friends connect to it, and then share this link with them so they can receive the application as well!</string>
+    <string name="unknown">unknown</string>
+    <string name="upload_notification_title">App Share</string>
+    <string name="waiting_notification_text">Waiting for connection...</string>
+    <string name="upload_notification_text">Sending Application</string>
+    <string name="finalized_notification_text">Application Sent!</string>
+    <string name="http_service">HttpService</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package sharing;
+package sharing.APSharing;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;

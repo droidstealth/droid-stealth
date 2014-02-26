@@ -1,18 +1,14 @@
-package sharing;
+package sharing.APSharing;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Rect;
-import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.PasswordTransformationMethod;
-import android.text.method.TransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -21,20 +17,23 @@ import android.widget.TextView;
 
 import com.stealth.android.R;
 
+import sharing.SharingUtils;
+
 /**
+ * Dialog to get the fields for a new AP connection
  * Created by Alex on 2/25/14.
  */
 public class APAppSharingFragment extends DialogFragment {
 
     public interface AppSharingListener{
         public void dialogCanceled();
-        public void networkCreated(String SSID, String password);
-        public void networkCreationFailed();
+        public void dialogCreateNetworkClicked(String ssid, String password);
     }
 
-    private WifiAPManager mWifiAPManager;
     private AppSharingListener mListener;
-    private AlertDialog mDialog;
+
+    TextView mPasswordField;
+    TextView mSSIDField;
 
     public APAppSharingFragment(){
     }
@@ -50,8 +49,6 @@ public class APAppSharingFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mWifiAPManager = new WifiAPManager(getActivity());
-
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
         mBuilder.setTitle(R.string.ap_dialog_title);
 
@@ -59,20 +56,11 @@ public class APAppSharingFragment extends DialogFragment {
 
         mBuilder.setPositiveButton(R.string.start_ap_app_sharing, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                boolean result = mWifiAPManager.setWifiApEnabled(getConfigFromFields(), true);
-                if(mListener != null){
-                    if(result)
-                        mListener.networkCreated(mSSIDField.getText().toString(), mPasswordField.getText().toString());
-                    else {
-                        //turn wifi back on and continue
-                        mWifiAPManager.enableWifi(true);
-                        dismiss();
+            public void onClick(DialogInterface dialogInterface, int i) { if (mListener != null) {
+                dismiss();
 
-                        //notify listener
-                        if(mListener != null)
-                            mListener.networkCreationFailed();
-                    }
+                if(mListener != null)
+                    mListener.dialogCreateNetworkClicked(mSSIDField.getText().toString(), mPasswordField.getText().toString());
                 }
             }
         });
@@ -81,17 +69,16 @@ public class APAppSharingFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 dismiss();
 
-                //if hotspot is enabled, now's the time to close it!
-                if(mWifiAPManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
-                    if(mWifiAPManager.setWifiApEnabled(getConfigFromFields(), false))
-                        mWifiAPManager.enableWifi(true);
-                }
                 if(mListener != null)
                     mListener.dialogCanceled();
             }
         });
 
-        mDialog = mBuilder.create();
+        final AlertDialog mDialog = mBuilder.create();
+
+        APConfigurationValidator configurationValidator = new APConfigurationValidator(mDialog);
+        mSSIDField.addTextChangedListener(configurationValidator);
+        mPasswordField.addTextChangedListener(configurationValidator);
 
         //Disable the create button since short passes and SSIDs aren't allowed
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -113,13 +100,8 @@ public class APAppSharingFragment extends DialogFragment {
 
         View contentView = inflater.inflate(R.layout.ap_sharing_dialog, null);
 
-        //disable ssid button
         mSSIDField = (TextView)contentView.findViewById(R.id.SSID_field);
-        mSSIDField.addTextChangedListener(new APConfigurationValidator());
-
-        //Link show password checkbox to TextView
         mPasswordField = (TextView)contentView.findViewById(R.id.password_field);
-        mPasswordField.addTextChangedListener(new APConfigurationValidator());
 
         ((CheckBox)contentView.findViewById(R.id.show_password_check)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -134,51 +116,31 @@ public class APAppSharingFragment extends DialogFragment {
         return contentView;
     }
 
-    TextView mPasswordField;
-    TextView mSSIDField;
+    private class APConfigurationValidator implements TextWatcher{
 
-    private WifiConfiguration getConfigFromFields(){
-        WifiConfiguration configuration = new WifiConfiguration();
-        configuration.SSID = mSSIDField.getText().toString();
+        private final AlertDialog mDialog;
 
-        if(mPasswordField.getText() == null){
-            configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-        }
-        else {
-            configuration.preSharedKey = mPasswordField.getText().toString();
-            configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-            configuration.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-            configuration.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+        public APConfigurationValidator(AlertDialog dialog){
+            mDialog = dialog;
         }
 
-        configuration.status = WifiConfiguration.Status.ENABLED;
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
 
-        return configuration;
-    }
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
 
-   private class APConfigurationValidator implements TextWatcher{
-
-       @Override
-       public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-       }
-
-       @Override
-       public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-       }
-
-       @Override
-       public void afterTextChanged(Editable editable) {
-           String pass = mPasswordField.getText().toString();
-           boolean validPass = pass.length() == 0? true: SharingUtils.validWPAPass(pass);
-           boolean validSSID = SharingUtils.validSSID(mSSIDField.getText().toString());
-           if(!validPass || !validSSID)
+        @Override
+        public void afterTextChanged(Editable editable) {
+            String pass = mPasswordField.getText().toString();
+            boolean validPass = pass.length() == 0? true: SharingUtils.validWPAPass(pass);
+            boolean validSSID = SharingUtils.validSSID(mSSIDField.getText().toString());
+            if(!validPass || !validSSID)
                mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-           else
+            else
                mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-       }
-   }
+        }
+    }
 
 }
 

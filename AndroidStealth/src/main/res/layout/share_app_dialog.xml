@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_margin="@dimen/text_margin"
+        android:id="@+id/explanation_text"
+        android:text="@string/hotspot_explanation"
+        android:textSize="@dimen/explanation_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/explanation_divider"
+        android:layout_below="@id/explanation_text"
+        android:layout_margin="@dimen/divider_margin"
+        android:background="@color/divider_color"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width" />
+
+    <TextView
+        android:layout_below="@id/explanation_divider"
+        android:id="@+id/SSID_name"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/hotspot_name"
+        android:textSize="@dimen/ap_settings_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/SSID_field"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_toRightOf="@+id/SSID_name"
+        android:textSize="@dimen/ap_settings_size"
+        android:layout_below="@id/explanation_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/password_name"
+        android:layout_below="@id/SSID_name"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/password_name"
+        android:textSize="@dimen/ap_settings_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/password_field"
+        android:layout_toRightOf="@+id/password_name"
+        android:layout_below="@id/SSID_name"
+        android:layout_margin="@dimen/text_margin"
+        android:textSize="@dimen/ap_settings_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/link_divider"
+        android:layout_below="@id/password_name"
+        android:layout_margin="@dimen/divider_margin"
+        android:background="@color/divider_color"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width" />
+
+    <TextView
+        android:id="@+id/link_name"
+        android:layout_below="@id/link_divider"
+        android:textSize="@dimen/link_name_size"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/link_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/link_name"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginTop="0dp"
+        android:textSize="@dimen/link_size"
+        android:text="@string/dummy_link"
+        android:id="@+id/text_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_margin="@dimen/divider_margin"
+        android:layout_below="@+id/link_divider"
+        android:layout_toLeftOf="@+id/share_link"
+        android:layout_alignBottom="@+id/share_link"
+        android:background="@color/divider_color"
+        android:layout_width="@dimen/divider_width"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/share_link"
+        android:src="@android:drawable/ic_menu_share"
+        android:layout_below="@id/link_divider"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/image_padding"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+</RelativeLayout>
