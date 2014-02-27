@@ -12,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Alex on 2/26/14.
@@ -32,6 +35,9 @@ public class AppSharingHTTPD extends NanoHTTPD {
     private OnAppTransferListener mListener;
     private File mApkFile;
     private long mFileSize;
+
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private Calendar cal = Calendar.getInstance();
 
     public long getAppSize(){
         return mFileSize;
@@ -59,7 +65,14 @@ public class AppSharingHTTPD extends NanoHTTPD {
 
         if(uri.endsWith(ApShareUri)){
             try {
-                return new Response(Response.Status.OK, MimeType, getApkInputStream());
+                Response response = new Response(Response.Status.OK, MimeType, getApkInputStream());
+                response.addHeader("Accept-Ranges", "bytes");
+                response.addHeader("Connection", "close");
+                response.addHeader("Server", "NanoHTTPD");
+                response.addHeader("Date", dateFormat.format(cal.getTime()));
+                response.addHeader("Content-Length", String.valueOf(mFileSize));
+
+                return response;
             } catch (FileNotFoundException e) {
                 return new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, fileNotFoundMsg);
             }

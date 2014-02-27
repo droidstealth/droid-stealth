@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NFC"/>
 
     <application
         android:allowBackup="true"
@@ -19,15 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="sharing.APSharing.APAppSharingActivity"
-            android:label="@string/hotspot_app_sharing"
-            android:theme="@style/Theme.Transparent"/>
         <activity android:name="sharing.APSharing.ServerStatusActivity"
             android:label="Server Status"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme.Dialog"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"/>
         <service android:name="sharing.APSharing.HttpServerService"
             android:label="@string/http_service"/>
-
     </application>
 
 </manifest>

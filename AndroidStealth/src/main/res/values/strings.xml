@@ -40,5 +40,7 @@
     <string name="upload_notification_text">Sending Application</string>
     <string name="finalized_notification_text">Application Sent!</string>
     <string name="http_service">HttpService</string>
+    <string name="cancel_server">Cancel Sharing</string>
+    <string name="close_dialog">Close</string>
 
 </resources>

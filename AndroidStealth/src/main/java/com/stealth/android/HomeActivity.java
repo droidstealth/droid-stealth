@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sharing.APSharing.APAppSharingFragment;
+import sharing.APSharing.APAppSharingListener;
 import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity
@@ -127,15 +128,21 @@ public class HomeActivity extends ActionBarActivity
                 //TODO share sd card
                 return true;
             case R.id.share_hotspot:
-                getSupportFragmentManager().beginTransaction()
-                        .add(new APAppSharingFragment(), null).commit();
-                //TODO share hotspot
+                shareOverAP();
                 return true;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareOverAP(){
+        APAppSharingFragment fragment = new APAppSharingFragment();
+        APAppSharingListener listener = new APAppSharingListener(this);
+        fragment.setAppSharingListener(listener);
+        getSupportFragmentManager().beginTransaction()
+                .add(fragment, null).commit();
     }
 
     /**

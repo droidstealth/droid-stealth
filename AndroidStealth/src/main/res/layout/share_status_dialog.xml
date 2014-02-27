@@ -4,6 +4,25 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
+        android:layout_margin="@dimen/title_margin"
+        android:id="@+id/window_title"
+        android:textAppearance="@style/DialogTitle"
+        android:text="@string/hotspot_app_sharing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/title_divider"
+        android:layout_below="@id/window_title"
+        android:layout_marginTop="@dimen/divider_margin"
+        android:layout_marginBottom="@dimen/divider_margin"
+        android:background="@color/title_color"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_divider_width" />
+
+
+    <TextView
+        android:layout_below="@id/title_divider"
         android:layout_margin="@dimen/text_margin"
         android:id="@+id/explanation_text"
         android:text="@string/hotspot_explanation"
@@ -11,16 +30,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!--
     <View
         android:id="@+id/explanation_divider"
         android:layout_below="@id/explanation_text"
-        android:layout_margin="@dimen/divider_margin"
+        android:layout_marginTop="@dimen/section_margin"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginLeft="@dimen/divider_margin"
+        android:layout_marginRight="@dimen/divider_margin"
         android:background="@color/divider_color"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_width" />
-
+-->
     <TextView
-        android:layout_below="@id/explanation_divider"
+        android:layout_below="@id/explanation_text"
         android:id="@+id/SSID_name"
         android:layout_margin="@dimen/text_margin"
         android:text="@string/hotspot_name"
@@ -33,7 +56,7 @@
         android:layout_margin="@dimen/text_margin"
         android:layout_toRightOf="@+id/SSID_name"
         android:textSize="@dimen/ap_settings_size"
-        android:layout_below="@id/explanation_divider"
+        android:layout_below="@id/explanation_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -59,7 +82,10 @@
     <View
         android:id="@+id/link_divider"
         android:layout_below="@id/password_name"
-        android:layout_margin="@dimen/divider_margin"
+        android:layout_marginTop="@dimen/section_margin"
+        android:layout_marginBottom="@dimen/section_margin"
+        android:layout_marginLeft="@dimen/divider_margin"
+        android:layout_marginRight="@dimen/divider_margin"
         android:background="@color/divider_color"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_width" />
@@ -76,30 +102,60 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/text_link"
         android:layout_below="@id/link_name"
         android:layout_marginLeft="@dimen/text_margin"
         android:layout_marginTop="0dp"
         android:textSize="@dimen/link_size"
         android:text="@string/dummy_link"
-        android:id="@+id/text_link"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <View
-        android:layout_margin="@dimen/divider_margin"
-        android:layout_below="@+id/link_divider"
-        android:layout_toLeftOf="@+id/share_link"
-        android:layout_alignBottom="@+id/share_link"
-        android:background="@color/divider_color"
-        android:layout_width="@dimen/divider_width"
         android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/share_link"
+        android:clickable="true"
         android:src="@android:drawable/ic_menu_share"
         android:layout_below="@id/link_divider"
         android:layout_alignParentRight="true"
         android:padding="@dimen/image_padding"
         android:layout_width="48dp"
         android:layout_height="48dp" />
+
+    <View
+        android:id="@+id/button_divider"
+        android:layout_below="@id/share_link"
+        android:layout_marginTop="@dimen/section_margin"
+        android:background="@color/divider_color"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width" />
+
+    <LinearLayout
+        android:id="@+id/footer"
+        style="@style/ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/button_divider"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@android:id/button1"
+            style="@style/ButtonBarButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:text="@string/close_dialog" />
+
+        <View
+            android:background="@color/divider_color"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="50dp" />
+        <Button
+            android:id="@android:id/button2"
+            style="@style/ButtonBarButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:text="@string/cancel_server" />
+    </LinearLayout>
 </RelativeLayout>

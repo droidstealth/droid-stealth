@@ -98,7 +98,7 @@ public class APAppSharingFragment extends DialogFragment {
     private View createContentView(){
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View contentView = inflater.inflate(R.layout.ap_sharing_dialog, null);
+        View contentView = inflater.inflate(R.layout.ap_setup_dialog, null);
 
         mSSIDField = (TextView)contentView.findViewById(R.id.SSID_field);
         mPasswordField = (TextView)contentView.findViewById(R.id.password_field);
@@ -141,6 +141,7 @@ public class APAppSharingFragment extends DialogFragment {
                mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
         }
     }
+
 
 }
 

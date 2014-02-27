@@ -37,14 +37,6 @@ public class WifiAPManager {
         WIFI_AP_STATE_FAILED
     }
 
-    public enum WIFI_STATE {
-        WIFI_STATE_DISABLING,
-        WIFI_STATE_DISABLED,
-        WIFI_STATE_ENABLING,
-        WIFI_STATE_ENABLED,
-        WIFI_STATE_FAILED
-    }
-
     private final WifiManager mWifiManager;
 
     public WifiAPManager(Context context) {
@@ -74,8 +66,8 @@ public class WifiAPManager {
         }
     }
 
-    public WIFI_STATE getWifiState(){
-        return WIFI_STATE.values()[mWifiManager.getWifiState()];
+    public int getWifiState(){
+        return mWifiManager.getWifiState();
     }
 
     public void setWifiEnabled(boolean enabled){

@@ -1,34 +1,27 @@
 package sharing.APSharing;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 /**
  * Created by Alex on 2/26/14.
  */
-public class APAppSharingActivity extends FragmentActivity implements
+public class APAppSharingListener implements
         APAppSharingFragment.AppSharingListener,
         ServerStatusActivity.ServerShareDialogListener {
     private WifiAPManager mWifiAPManager;
 
-    private WifiAPManager.WIFI_STATE mOriginalWifiState;
+    private Context mAppContext;
+    private int mOriginalWifiState;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mWifiAPManager = new WifiAPManager(this);
+    public APAppSharingListener(Context context){
+        mAppContext = context.getApplicationContext();
+        mWifiAPManager = new WifiAPManager(mAppContext);
 
         mOriginalWifiState = mWifiAPManager.getWifiState();
 
         shareApp();
-    }
-
-    @Override
-    public void onBackPressed() {
-        //Do nothing. User must cancel manually by pressing cancel!
     }
 
     /**
@@ -44,15 +37,11 @@ public class APAppSharingActivity extends FragmentActivity implements
         if(mWifiAPManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
             mWifiAPManager.setWifiApEnabled(null, false);
         }
-
-        APAppSharingFragment fragment = new APAppSharingFragment();
-        fragment.setAppSharingListener(this);
-        fragment.show(getSupportFragmentManager(), null);
     }
 
     @Override
     public void dialogCanceled() {
-        finish();
+        //Do nothing for now
     }
 
     @Override
@@ -61,14 +50,12 @@ public class APAppSharingActivity extends FragmentActivity implements
         WifiConfiguration configuration = getConfigFromFields(ssid, password);
         mWifiAPManager.setWifiApEnabled(configuration, true);
 
-        Bundle args = new Bundle();
-        args.putString(ServerStatusActivity.SSID_KEY, ssid);
-        args.putString(ServerStatusActivity.PASS_KEY, password);
+        Intent serviceIntent = new Intent(mAppContext, HttpServerService.class);
+        serviceIntent.putExtra(ServerStatusActivity.SSID_KEY, ssid);
+        serviceIntent.putExtra(ServerStatusActivity.PASS_KEY, password);
+        serviceIntent.putExtra(HttpServerService.NETWORK_STATUS, mOriginalWifiState);
 
-        Intent serviceIntent = new Intent(this, HttpServerService.class);
-        serviceIntent.putExtra(HttpServerService.ARGUMENT_KEY, args);
-
-        startService(serviceIntent);
+        mAppContext.startService(serviceIntent);
     }
 
     private WifiConfiguration getConfigFromFields(String ssid, String password){
