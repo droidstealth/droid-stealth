@@ -21,9 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name="sharing.APSharing.ServerStatusActivity"
             android:label="Server Status"
-            android:theme="@style/AppTheme.Dialog"
+            android:theme="@style/AppTheme"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:excludeFromRecents="true"/>

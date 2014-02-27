@@ -6,7 +6,6 @@
     <TextView
         android:layout_margin="@dimen/title_margin"
         android:id="@+id/window_title"
-        android:textAppearance="@style/DialogTitle"
         android:text="@string/hotspot_app_sharing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
