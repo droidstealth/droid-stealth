@@ -1,24 +1,23 @@
 package com.stealth.android;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import spikes.filepicker.FilePickerFragment;
+import spikes.stealthdialer.StealthDialerFragment;
 
 public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -32,6 +31,7 @@ public class HomeActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private java.lang.String stealth_number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,23 @@ public class HomeActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        stealth_number = "";
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Get the intent that started this activity
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        Log.w("StealthHome", intent.toString());
+        Log.w("StealthHome", intent.getAction());
+
+        if (intent.getAction().equals("stealth.call") ) {
+            stealth_number = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        }
     }
 
     @Override
@@ -53,7 +70,7 @@ public class HomeActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, new FilePickerFragment())
+                .replace(R.id.container, new StealthDialerFragment(stealth_number))
                 .commit();
     }
 
