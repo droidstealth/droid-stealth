@@ -68,9 +68,14 @@ public class HomeActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        Bundle args = new Bundle();
+        args.putString(StealthDialerFragment.CALL_KEY, stealth_number);
+        StealthDialerFragment fragment = new StealthDialerFragment();
+        fragment.setArguments(args);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, new StealthDialerFragment(stealth_number))
+                .replace(R.id.container, fragment)
                 .commit();
     }
 
