@@ -5,6 +5,7 @@ import android.content.res.Resources;
 
 import com.stealth.android.R;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +21,9 @@ import java.util.Map;
  * Created by Alex on 2/26/14.
  */
 public class FileSharingHTTPD extends NanoHTTPD {
+    //The port that this server will listen on
+    public static final int Port = 8080;
+
     /**
      * Interface for listening to transfer progress of a response from this server
      */
@@ -48,12 +52,12 @@ public class FileSharingHTTPD extends NanoHTTPD {
     }
 
     /**
-     * Creates a new instance of a {@link sharing.APSharing.NanoHTTPD} server, listening on port 8080.
+     * Creates a new instance of a {@link sharing.APSharing.NanoHTTPD} server, listening on {@link sharing.APSharing.FileSharingHTTPD#Port}.
      * @param context {@link android.content.Context} passed along to retrieve response messages
      * to be used on failure.
      */
     public FileSharingHTTPD(Context context) {
-        super(8080);
+        super(Port);
 
         mRegisteredTransferables = new HashMap<String, Transferable>();
 
@@ -77,13 +81,14 @@ public class FileSharingHTTPD extends NanoHTTPD {
      * @param transferable The object to be removed
      * @return Whether the transferable was successfully removed
      */
-    public boolean removeTransferable(Transferable transferable){
-        return mRegisteredTransferables.remove(transferable) != null;
+    public boolean removeTransferable(String uri){
+        return mRegisteredTransferables.remove(uri) != null;
     }
 
     @Override
     public Response serve(IHTTPSession session) {
-        String uri = session.getUri();
+        //first char is the '/', so we remove that
+        String uri = session.getUri().substring(1);
 
         Transferable transferable = mRegisteredTransferables.get(uri);
 
@@ -115,6 +120,19 @@ public class FileSharingHTTPD extends NanoHTTPD {
             //Notify the client the requested uri does not exist.
             return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, pageNotFoundMsg);
         }
+    }
+
+    /**
+     * Returns a set of the files currently being served on this server
+     * @return
+     */
+    public Map<String,File> getSharedItems() {
+        Map<String, File> sharedItems = new HashMap<String, File>();
+        for(Map.Entry<String, Transferable> entry : mRegisteredTransferables.entrySet()){
+            sharedItems.put(entry.getKey(), entry.getValue().getTransferObject());
+        }
+
+        return sharedItems;
     }
 
     /**

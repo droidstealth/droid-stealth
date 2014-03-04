@@ -86,7 +86,7 @@ public class WifiAPManager {
             int tmp = ((Integer)method.invoke(mWifiManager));
 
             // Fix for Android 4
-            if (tmp > 10) {
+            if (tmp >= 10) {
                 tmp = tmp - 10;
             }
 
@@ -188,6 +188,9 @@ public class WifiAPManager {
         return result;
     }
 
+    /**
+     * Container for information about the connected clients
+     */
     public class ClientScanResult {
         private String mIpAddress;
 

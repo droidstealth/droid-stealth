@@ -2,10 +2,8 @@ package sharing.APSharing;
 
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -14,11 +12,19 @@ import com.stealth.android.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import sharing.SharingUtils;
 
 /**
  * Created by Alex on 2/26/14.
  */
 public class HttpServerService extends Service {
+    public interface StopListener {
+        public void stop();
+    }
 
     private static boolean isRunning = false;
 
@@ -27,77 +33,63 @@ public class HttpServerService extends Service {
     }
 
     public static final String SSID_KEY = "SSID_VALUE";
-    public static final String SHARE_FILE_PATH_KEY = "SHARE_FILE_PATH_KEY";
-    public static final String SHARE_URI_KEY = "SHARE_URI_KEY";
-    public static final String SHARE_MIME_TYPE_KEY = "SHARE_MIME_TYPE_KEY";
-
-    private static final int notifyID = 481450917;
+    public static final String STOP_KEY = "STOP_KEY";
 
     private FileSharingHTTPD mServer;
 
-    private NotificationManager mNotificationManager;
-    //Since it's updated on multiple threads (animation and HTTP server), make volatile
-    private volatile NotificationCompat.Builder mBuilder;
-
-    boolean mDownloadIsFinished = false;
     private WifiAPManager mManager;
-    private NotificationControl mNotificationControl;
-
-    //Listens for a change in WIFI AP state. Needed because the server needs the AP's host address
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if ("android.net.wifi.WIFI_AP_STATE_CHANGED".equals(action)) {
-
-                if(mManager != null){
-                    if(mManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
-                        startSharingServer();
-                    }
-                    else{
-                    }
-                }
-            }
-        }
-    };
+    private volatile NotificationControl mNotificationControl;
+    List<StopListener> mStopListeners;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         mManager = new WifiAPManager(this);
-        mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(this);
+        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
-        mNotificationControl = new NotificationControl(this, mNotificationManager, mBuilder);
+        mStopListeners = new ArrayList<StopListener>();
+        mNotificationControl = new NotificationControl(this, notificationManager, builder);
 
         mServer = new FileSharingHTTPD(this);
         mServer.setOnTransferListener(mNotificationControl);
 
-        IntentFilter mFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
-        registerReceiver(mReceiver, mFilter);
+        startSharingServer();
     }
 
+    /**
+     * Only used for setting the SSID at the start.
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         //If the file server isn't running yet, but the AP is active, start sharing!
-        if(!isRunning && mManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
+        if(!isRunning){
             startSharingServer();
         }
 
-        if(intent == null)
+        if(intent == null){
             return START_STICKY;
-
-        String shareFile = intent.getStringExtra(SHARE_FILE_PATH_KEY);
-        String uri = intent.getStringExtra(SHARE_URI_KEY);
-        String mimeType = intent.getStringExtra(SHARE_MIME_TYPE_KEY);
-        File transferObj = new File(shareFile);
-        //Make sure all values are valid
-        if(transferObj.exists() && uri != null && mimeType != null){
-            Transferable transferable = new Transferable(transferObj, mimeType, transferObj.length());
-
-            mServer.addTransferable(uri, transferable);
         }
+
+        if(intent.getBooleanExtra(STOP_KEY, false)){
+            Log.d("HTTPServerService", "Received stop message");
+
+            for(StopListener listener : mStopListeners)
+                listener.stop();
+            stopSelf();
+        }
+
+        //set ssid in notification
+        String ssid = intent.getStringExtra(SSID_KEY);
+        if(ssid != null){
+            mNotificationControl.setSSIDName(ssid);
+        }
+
         return START_STICKY;
     }
 
@@ -108,29 +100,25 @@ public class HttpServerService extends Service {
 
         stopForeground(true);
         mServer.stop();
-        mNotificationManager.cancel(notifyID);
 
-        //Disable AP
-        mManager = new WifiAPManager(this);
-        mManager.setWifiApEnabled(null, false);
-
-        //No need to listen anymore
-        unregisterReceiver(mReceiver);
+        mNotificationControl.cancel();
 
         isRunning = false;
     }
 
-    //No bindings! It doesn't want to be in a relation at the moment!
+    /**
+     * We share a simple inner binder which can access the server's fields so we can add files to the server
+     * @param intent ignored
+     * @return a SharingBinder object
+     */
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new SharingBinder();
     }
 
-    private void constructNotification(){
-        mBuilder.setContentTitle(getString(R.string.sharing_notification_title))
-                .setContentText(getString(R.string.cancel_notification_text));
-    }
-
+    /**
+     * Start the server itself.
+     */
     private void startSharingServer(){
 
         try {
@@ -147,65 +135,47 @@ public class HttpServerService extends Service {
         /* Since we have a HTTP server running, we really don't want to get killed.
          * User specifies through custom notification the service should be stopped.
          */
-        startForeground(notifyID, mBuilder.build());
+        startForeground(NotificationControl.NOTIFY_ID, mNotificationControl.getNotification());
     }
 
-    /*
-    private String getShareLink(){
-        String ipAddress = getWifiApIpAddress();
-        if(ipAddress != null){
-            StringBuilder sb = new StringBuilder();
-            sb.append("http://");
-            sb.append(ipAddress);
-            sb.append(":");
-            sb.append(mServer.getListeningPort());
-            sb.append("/");
-            sb.append(FileSharingHTTPD.ApShareUri);
+    /**
+     * A helper class for sharing the files
+     */
+    public class SharingBinder extends Binder {
+        public void shareFile(String uri, String fileType, String filePath, boolean encoded, boolean showIntent){
+            File transferObj = new File(filePath);
+            //Make sure all values are valid
+            if(transferObj.exists() && uri != null && fileType != null){
+                Transferable transferable = new Transferable(transferObj, fileType, transferObj.length());
 
-            String shareLink = sb.toString();
-            Log.d("HttpServerService", "Share Link " + shareLink);
+                mServer.addTransferable(uri, transferable);
 
-            return shareLink;
-        }
-        return null;
-    }
-
-    private String getApkName(){
-        final PackageManager pm = getPackageManager();
-        ApplicationInfo ai;
-        try {
-            ai = pm.getApplicationInfo(this.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            ai = null;
-            Log.e("HttpServerService", "failed to get package name");
-        }
-        final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : null);
-        return applicationName;
-    }
-
-
-    public String getWifiApIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
-                    .hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                if (intf.getName().contains("wlan")) {
-                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
-                            .hasMoreElements();) {
-                        InetAddress inetAddress = enumIpAddr.nextElement();
-                        Log.d("HttpServerService", "Checking address: " + inetAddress.getHostAddress());
-                        if (!inetAddress.isLoopbackAddress()
-                                && (inetAddress.getAddress().length == 4)) {
-                            Log.d("HttpServerService", "Found IP: " + inetAddress.getHostAddress());
-                            return inetAddress.getHostAddress();
-                        }
-                    }
+                if(showIntent){
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, SharingUtils.getShareLink(uri));
+                    sendIntent.setType("text/plain");
+                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_uri) + " " + uri);
+                    startActivity(sendIntent);
                 }
             }
-        } catch (SocketException ex) {
-            Log.e("HttpServerService", "failed to get IP");
         }
-        Log.d("HttpServerService", "IP not found!");
-        return null;
-    }*/
+
+        public Map<String, File> getSharedItems(){
+            return mServer.getSharedItems();
+        }
+
+        public void addStopListener(StopListener listener){
+            if(!mStopListeners.contains(listener))
+                mStopListeners.add(listener);
+        }
+        public boolean removeStopListener(StopListener listener){
+            return mStopListeners.remove(listener);
+        }
+
+        public void removeItem(String uri){
+            mServer.removeTransferable(uri);
+        }
+    }
 }

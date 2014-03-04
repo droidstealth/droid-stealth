@@ -8,17 +8,8 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
     <item android:id="@+id/app_sharing"
-        android:title="@string/share_app">
-        <menu>
-            <item android:id="@+id/share_hotspot"
-                android:title="@string/share_hotspot_title"
-                android:icon="@drawable/stat_sys_tether_wifi"/>
-            <item android:id="@+id/share_bluetooth"
-                android:title="@string/share_bluetooth_title"
-                android:icon="@drawable/perm_group_bluetooth"/>
-            <item android:id="@+id/share_sd_card"
-                android:title="@string/share_sd_card_title"
-                android:icon="@drawable/stat_notify_sdcard"/>
-        </menu>
-        </item>
+        android:title="@string/share_app"
+        android:icon="@drawable/ic_menu_share_holo_dark"
+        android:showAsAction="ifRoom"/>
+
 </menu>

@@ -3,6 +3,7 @@ package sharing.APSharing;
 import java.io.File;
 
 /**
+ * Container with information about the object being shared
  * Created by Alex on 3/3/14.
  */
 public class Transferable {

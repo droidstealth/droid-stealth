@@ -10,12 +10,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sharing.APSharing.APAppSharingFragment;
-import sharing.APSharing.APAppSharingListener;
+import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity
@@ -31,10 +29,14 @@ public class HomeActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
 
+    private APSharing mSharing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        mSharing = new APSharing(this);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -85,7 +87,7 @@ public class HomeActivity extends ActionBarActivity
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.home, menu);
 
-            checkAppSharingPossibilities(menu);
+            checkHotspotAvailability(menu);
 
             restoreActionBar();
             return true;
@@ -93,24 +95,10 @@ public class HomeActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void checkAppSharingPossibilities(Menu menu) {
+    private void checkHotspotAvailability(Menu menu) {
         MenuItem appSharingItem = menu.findItem(R.id.app_sharing);
-        SubMenu appSharingMenu = appSharingItem.getSubMenu();
-
-        if(!SharingUtils.hasBluetoothSupport()){
-            appSharingMenu.findItem(R.id.share_bluetooth).setEnabled(false);
-        }
 
         if(!SharingUtils.hasAPWifiSupport(this)){
-            appSharingMenu.findItem(R.id.share_hotspot).setEnabled(false);
-        }
-
-        if(!SharingUtils.hasRemovableExternalStorage()){
-            appSharingMenu.findItem(R.id.share_sd_card).setEnabled(false);
-        }
-
-        //If no sharing at all, tough luck.
-        if(!appSharingMenu.hasVisibleItems()){
             appSharingItem.setEnabled(false);
         }
     }
@@ -121,28 +109,14 @@ public class HomeActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()){
-            case R.id.share_bluetooth:
-                //TODO share bluetooth
-                return true;
-            case R.id.share_sd_card:
-                //TODO share sd card
-                return true;
-            case R.id.share_hotspot:
-                shareOverAP();
+            case R.id.app_sharing:
+                mSharing.shareApk();
                 return true;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void shareOverAP(){
-        APAppSharingFragment fragment = new APAppSharingFragment();
-        APAppSharingListener listener = new APAppSharingListener(this);
-        fragment.setAppSharingListener(listener);
-        getSupportFragmentManager().beginTransaction()
-                .add(fragment, null).commit();
     }
 
     /**
