@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.stealth.android.StealthSettingActivity"
+            android:label="@string/title_activity_stealth_setting"
+            android:parentActivityName="com.stealth.android.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

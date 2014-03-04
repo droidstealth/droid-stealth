@@ -1,0 +1,14 @@
+<resources>
+        <string name="title_activity_stealth_setting">Settings</string>
+
+    <!-- settings for Sharing -->
+    <string name="key_pref_ssid">key_pref_ssid</string>
+    <string name="key_pref_pass">key_pref_pass</string>
+
+    <string name="pref_header_sharing">Wifi Sharing</string>
+
+    <string name="pref_title_custom_ap">Custom Wifi Sharing</string>
+
+    <string name="pref_title_ssid">Hotspot Name</string>
+    <string name="pref_title_pass">Password</string>
+</resources>
