@@ -8,8 +8,7 @@ import android.net.wifi.WifiConfiguration;
  * Created by Alex on 2/26/14.
  */
 public class APAppSharingListener implements
-        APAppSharingFragment.AppSharingListener,
-        ServerStatusActivity.ServerShareDialogListener {
+        APAppSharingFragment.AppSharingListener {
     private WifiAPManager mWifiAPManager;
 
     private Context mAppContext;
@@ -51,9 +50,7 @@ public class APAppSharingListener implements
         mWifiAPManager.setWifiApEnabled(configuration, true);
 
         Intent serviceIntent = new Intent(mAppContext, HttpServerService.class);
-        serviceIntent.putExtra(ServerStatusActivity.SSID_KEY, ssid);
-        serviceIntent.putExtra(ServerStatusActivity.PASS_KEY, password);
-        serviceIntent.putExtra(HttpServerService.NETWORK_STATUS, mOriginalWifiState);
+        serviceIntent.putExtra(HttpServerService.SSID_KEY, ssid);
 
         mAppContext.startService(serviceIntent);
     }

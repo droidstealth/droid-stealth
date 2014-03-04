@@ -1,31 +1,24 @@
 package sharing.APSharing;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.stealth.android.R;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 /**
  * Created by Alex on 2/26/14.
  */
-public class HttpServerService extends Service implements AppSharingHTTPD.OnAppTransferListener {
+public class HttpServerService extends Service {
 
     private static boolean isRunning = false;
 
@@ -33,23 +26,24 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
        return isRunning;
     }
 
-    public static final String ARGUMENT_KEY = "BUNDLE_ARGS_VALUE";
-    public static final String NETWORK_STATUS = "NETWORK_STATUS";
+    public static final String SSID_KEY = "SSID_VALUE";
+    public static final String SHARE_FILE_PATH_KEY = "SHARE_FILE_PATH_KEY";
+    public static final String SHARE_URI_KEY = "SHARE_URI_KEY";
+    public static final String SHARE_MIME_TYPE_KEY = "SHARE_MIME_TYPE_KEY";
 
     private static final int notifyID = 481450917;
 
-    private AppSharingHTTPD mServer;
+    private FileSharingHTTPD mServer;
 
     private NotificationManager mNotificationManager;
     //Since it's updated on multiple threads (animation and HTTP server), make volatile
     private volatile NotificationCompat.Builder mBuilder;
 
     boolean mDownloadIsFinished = false;
-    private Intent statusIntent;
-    WifiAPManager mManager;
-    private boolean apActive = false;
-    private int mOriginalWifiStatus;
+    private WifiAPManager mManager;
+    private NotificationControl mNotificationControl;
 
+    //Listens for a change in WIFI AP state. Needed because the server needs the AP's host address
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -57,10 +51,10 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
             if ("android.net.wifi.WIFI_AP_STATE_CHANGED".equals(action)) {
 
                 if(mManager != null){
-                    if(mManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED)
-                        apActive = true;
+                    if(mManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
+                        startSharingServer();
+                    }
                     else{
-                        apActive = false;
                     }
                 }
             }
@@ -71,73 +65,41 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
     public void onCreate() {
         super.onCreate();
 
-        isRunning = true;
-
-        IntentFilter mFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
-        registerReceiver(mReceiver, mFilter);
-
         mManager = new WifiAPManager(this);
         mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle(getString(R.string.upload_notification_title))
-                .setContentText(getString(R.string.waiting_notification_text))
-                .setSmallIcon(R.drawable.stat_sys_upload_anim0);
 
-        statusIntent = new Intent(this, ServerStatusActivity.class);
-        statusIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mNotificationControl = new NotificationControl(this, mNotificationManager, mBuilder);
 
-        mBuilder.setContentIntent(PendingIntent.getActivity(this, 0, statusIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT));
+        mServer = new FileSharingHTTPD(this);
+        mServer.setOnTransferListener(mNotificationControl);
 
-        mServer = new AppSharingHTTPD(this);
-        mServer.setOnAppTransferListener(this);
-        try {
-            mServer.start();
-        } catch (IOException e) {
-            //Where did we go wrong?!
-            Log.e("HttpServerService", "failed to start server!", e);
-            stopSelf();
-        }
+        IntentFilter mFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
+        registerReceiver(mReceiver, mFilter);
     }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Because the hotspot might not be running immediately, we sleep a bit
-                while (!apActive){
-                    try {
-                        Thread.sleep(200l);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                }
+        //If the file server isn't running yet, but the AP is active, start sharing!
+        if(!isRunning && mManager.getWifiApState() == WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
+            startSharingServer();
+        }
 
-                //Assume args have been set properly
-                mOriginalWifiStatus = intent.getIntExtra(NETWORK_STATUS, 0);
-                final String shareLink = getShareLink();
+        if(intent == null)
+            return START_STICKY;
 
-                String ssid = intent.getStringExtra(ServerStatusActivity.SSID_KEY);
-                String pass = intent.getStringExtra(ServerStatusActivity.PASS_KEY);
-                statusIntent.putExtra(ServerStatusActivity.SSID_KEY, ssid);
-                statusIntent.putExtra(ServerStatusActivity.PASS_KEY, pass);
-                statusIntent.putExtra(ServerStatusActivity.SHARE_LINK, shareLink);
+        String shareFile = intent.getStringExtra(SHARE_FILE_PATH_KEY);
+        String uri = intent.getStringExtra(SHARE_URI_KEY);
+        String mimeType = intent.getStringExtra(SHARE_MIME_TYPE_KEY);
+        File transferObj = new File(shareFile);
+        //Make sure all values are valid
+        if(transferObj.exists() && uri != null && mimeType != null){
+            Transferable transferable = new Transferable(transferObj, mimeType, transferObj.length());
 
-                mBuilder.setContentIntent(PendingIntent.getActivity(HttpServerService.this, 0, statusIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-                mNotificationManager.notify(notifyID, mBuilder.build());
-
-                //Start activity as dialog
-                startActivity(statusIntent);
-
-                startForeground(notifyID, mBuilder.build());
-            }
-        }).start();
-
+            mServer.addTransferable(uri, transferable);
+        }
         return START_STICKY;
     }
-
 
     @Override
     public void onDestroy() {
@@ -152,14 +114,6 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
         mManager = new WifiAPManager(this);
         mManager.setWifiApEnabled(null, false);
 
-        //if wifi was enabled before, turn it back on
-        Log.d("HttpServerService", "Original wifi state: " + mOriginalWifiStatus);
-        if(mOriginalWifiStatus == WifiManager.WIFI_STATE_ENABLED ||
-                mOriginalWifiStatus == WifiManager.WIFI_STATE_ENABLING){
-            Log.d("HttpServerService", "Restoring wifi");
-            mManager.setWifiEnabled(true);
-        }
-
         //No need to listen anymore
         unregisterReceiver(mReceiver);
 
@@ -172,6 +126,31 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
         return null;
     }
 
+    private void constructNotification(){
+        mBuilder.setContentTitle(getString(R.string.sharing_notification_title))
+                .setContentText(getString(R.string.cancel_notification_text));
+    }
+
+    private void startSharingServer(){
+
+        try {
+            mServer.start();
+        } catch (IOException e) {
+            //Where did we go wrong?!
+            Log.e("HttpServerService", "failed to start server!", e);
+            stopSelf();
+            return;
+        }
+
+        isRunning = true;
+
+        /* Since we have a HTTP server running, we really don't want to get killed.
+         * User specifies through custom notification the service should be stopped.
+         */
+        startForeground(notifyID, mBuilder.build());
+    }
+
+    /*
     private String getShareLink(){
         String ipAddress = getWifiApIpAddress();
         if(ipAddress != null){
@@ -181,7 +160,7 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
             sb.append(":");
             sb.append(mServer.getListeningPort());
             sb.append("/");
-            sb.append(AppSharingHTTPD.ApShareUri);
+            sb.append(FileSharingHTTPD.ApShareUri);
 
             String shareLink = sb.toString();
             Log.d("HttpServerService", "Share Link " + shareLink);
@@ -203,6 +182,7 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
         final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : null);
         return applicationName;
     }
+
 
     public String getWifiApIpAddress() {
         try {
@@ -227,64 +207,5 @@ public class HttpServerService extends Service implements AppSharingHTTPD.OnAppT
         }
         Log.d("HttpServerService", "IP not found!");
         return null;
-    }
-
-    private int[] animIDs = new int[]{
-            R.drawable.stat_sys_upload_anim0,
-            R.drawable.stat_sys_upload_anim1,
-            R.drawable.stat_sys_upload_anim2,
-            R.drawable.stat_sys_upload_anim3,
-            R.drawable.stat_sys_upload_anim4,
-            R.drawable.stat_sys_upload_anim5,
-    };
-
-    private static final long sleepTime = 200l;
-
-    private int animIndex = 0;
-
-    @Override
-    public void appTransferStarted() {
-        //we don't want to get killed at this point!
-        mBuilder.setContentText(getString(R.string.upload_notification_text));
-
-        startForeground(notifyID, mBuilder.build());
-
-        //Run new thread to update notification icon
-        new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        while(!mDownloadIsFinished){
-                            try {
-                                Thread.sleep(sleepTime);
-
-                                mBuilder.setSmallIcon(animIDs[animIndex++]);
-                                mNotificationManager.notify(notifyID, mBuilder.build());
-                            } catch (InterruptedException e) {
-                                mDownloadIsFinished = true;
-                            }
-                        }
-                    }
-                }
-        ).start();
-    }
-
-    //Update notification
-    @Override
-    public void onBytesRead(long totalBytesRead) {
-        Log.d("HttpServerService","Bytes sent: " +  totalBytesRead);
-        mBuilder.setProgress((int)mServer.getAppSize(), (int)totalBytesRead, false);
-        mNotificationManager.notify(notifyID, mBuilder.build());
-    }
-
-    @Override
-    public void appTransferFinished() {
-        mDownloadIsFinished = true;
-        //Set to finalize
-        mBuilder.setContentTitle(getString(R.string.finalized_notification_text))
-                .setSmallIcon(R.drawable.stat_sys_upload_anim0)
-                .setProgress(0,0,false);
-        //Allow notification to be removed
-        stopForeground(false);
-    }
+    }*/
 }

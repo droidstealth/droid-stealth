@@ -19,4 +19,6 @@
     <dimen name="explanation_size">16sp</dimen>
     <dimen name="ap_settings_size">18sp</dimen>
     <dimen name="title_margin">12dp</dimen>
+    <dimen name="notification_large_icon_width">64dp</dimen>
+    <dimen name="notification_large_icon_height">64dp</dimen>
 </resources>

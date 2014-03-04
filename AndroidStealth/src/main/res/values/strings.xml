@@ -35,12 +35,9 @@
     <string name="password_name">Password:</string>
     <string name="hotspot_explanation">The hotspot has been created with the following values. Have your friends connect to it, and then share this link with them so they can receive the application as well!</string>
     <string name="unknown">unknown</string>
-    <string name="upload_notification_title">App Share</string>
-    <string name="waiting_notification_text">Waiting for connection...</string>
-    <string name="upload_notification_text">Sending Application</string>
-    <string name="finalized_notification_text">Application Sent!</string>
-    <string name="http_service">HttpService</string>
-    <string name="cancel_server">Cancel Sharing</string>
+    <string name="sharing_notification_title">File Sharing active</string>
+    <string name="cancel_notification_text">Tap to cancel</string>
+    <string name="sharing_notification_text">Sending content</string>
     <string name="close_dialog">Close</string>
 
 </resources>
