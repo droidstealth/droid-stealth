@@ -19,7 +19,7 @@ import com.stealth.android.R;
 public class StealthDialerFragment extends Fragment {
     public static final String CALL_KEY = "CALL NUMBER KEY";
     TextView callData;
-    String call;
+    String phone_number_dialed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,11 +30,11 @@ public class StealthDialerFragment extends Fragment {
 
     @Override
     public void onStart() {
-        call = ((HomeActivity) getActivity()).getStealth_number();
-        if(call == null || call.equals(""))
+        phone_number_dialed = ((HomeActivity) getActivity()).getPhone_number_dialed();
+        if(phone_number_dialed == null || phone_number_dialed.equals(""))
             callData.setText("No call was made");
         else
-            callData.setText(call + " was the call that sent you here.");
+            callData.setText(phone_number_dialed + " was the call that sent you here.");
 
         super.onStart();
     }

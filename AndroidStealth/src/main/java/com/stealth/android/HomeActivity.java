@@ -24,7 +24,7 @@ public class HomeActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-    private java.lang.String stealth_number;
+    private java.lang.String phone_number_dialed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        stealth_number = "";
+        phone_number_dialed = "";
 
     }
 
@@ -51,21 +51,21 @@ public class HomeActivity extends ActionBarActivity
         Uri data = intent.getData();
 
         if (intent.getAction().equals("stealth.call") ) {
-            stealth_number = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+            phone_number_dialed = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         }
 
         super.onStart();
     }
 
-    public String getStealth_number() {
-        return stealth_number;
+    public String getPhone_number_dialed() {
+        return phone_number_dialed;
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         Bundle args = new Bundle();
-        args.putString(StealthDialerFragment.CALL_KEY, stealth_number);
+        args.putString(StealthDialerFragment.CALL_KEY, phone_number_dialed);
         StealthDialerFragment fragment = new StealthDialerFragment();
         fragment.setArguments(args);
 
