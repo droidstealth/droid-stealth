@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import sharing.SharingUtils;
 
@@ -39,6 +42,7 @@ public class APSharing implements HttpServerService.StopListener {
     private SharingConnection mConnection = new SharingConnection();
     private HttpServerService.SharingBinder mBinder;
     private final BroadcastReceiver mReceiver = new WifiAPReceiver();
+    private List<Runnable> mQueuedTasks = new ArrayList<Runnable>();
 
     /**
      * Creates a new instance of the APSharing class
@@ -178,8 +182,6 @@ public class APSharing implements HttpServerService.StopListener {
         else
             return new HashMap<String, File>();
     }
-
-    private List<Runnable> mQueuedTasks = new ArrayList<Runnable>();
 
     /**
      * Listener for the bind of the service
