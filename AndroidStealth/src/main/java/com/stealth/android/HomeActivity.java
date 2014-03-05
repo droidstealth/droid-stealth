@@ -95,6 +95,10 @@ public class HomeActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Check if the device has AP Wifi support. If not, disable the 'Share Application' menu entry.
+     * @param menu that contains the 'Share Application' menu entry.
+     */
     private void checkHotspotAvailability(Menu menu) {
         MenuItem appSharingItem = menu.findItem(R.id.app_sharing);
 
@@ -103,11 +107,9 @@ public class HomeActivity extends ActionBarActivity
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()){
             case R.id.app_sharing:
                 mSharing.shareApk();
