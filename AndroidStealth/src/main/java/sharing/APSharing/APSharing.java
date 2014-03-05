@@ -30,47 +30,15 @@ public class APSharing implements HttpServerService.StopListener {
     public static final String PREF_PASS_KEY = "PREF_PASS_KEY";
     public static final String PREF_SSID_KEY = "PREF_SSID_KEY";
 
-    private WifiAPManager mWifiAPManager;
-
-    private Context mAppContext;
     private int mOriginalWifiState;
-
-    private SharingConnection mConnection;
-    private HttpServerService.SharingBinder mBinder;
-
     private boolean isSharing = false;
     private String mSsid = null;
 
-    //Listens for a change in WIFI AP state. Needed to maintain a proper state of the sharing
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if ("android.net.wifi.WIFI_AP_STATE_CHANGED".equals(action)) {
-
-                if(mWifiAPManager != null){
-                    WifiAPManager.WIFI_AP_STATE state = mWifiAPManager.getWifiApState();
-
-                    Log.d("APSharing", state.toString());
-                    if(state != WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
-                        //if we lose connection during a running session, stop the service
-                        if(HttpServerService.isRunning()){
-                            stop();
-                        }
-                    }else {
-                        if(!HttpServerService.isRunning()){
-                            Intent startServiceIntent = new Intent(mAppContext, HttpServerService.class);
-
-                            startServiceIntent.putExtra(HttpServerService.SSID_KEY, mSsid);
-
-                            mAppContext.startService(startServiceIntent);
-                            mAppContext.bindService(startServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
-                        }
-                    }
-                }
-            }
-        }
-    };
+    private WifiAPManager mWifiAPManager;
+    private Context mAppContext;
+    private SharingConnection mConnection = new SharingConnection();
+    private HttpServerService.SharingBinder mBinder;
+    private final BroadcastReceiver mReceiver = new WifiAPReceiver();
 
     /**
      * Creates a new instance of the APSharing class
@@ -79,8 +47,6 @@ public class APSharing implements HttpServerService.StopListener {
     public APSharing(Context context){
         mAppContext = context.getApplicationContext();
         mWifiAPManager = new WifiAPManager(mAppContext);
-
-        mConnection = new SharingConnection();
         mOriginalWifiState = mWifiAPManager.getWifiState();
     }
 
@@ -233,6 +199,39 @@ public class APSharing implements HttpServerService.StopListener {
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
 
+        }
+    }
+
+    /**
+     * Listens for a change in WIFI AP state. Needed to maintain a proper state of the sharing
+     */
+    private class WifiAPReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if ("android.net.wifi.WIFI_AP_STATE_CHANGED".equals(action)) {
+
+                if(mWifiAPManager != null){
+                    WifiAPManager.WIFI_AP_STATE state = mWifiAPManager.getWifiApState();
+
+                    Log.d("APSharing", state.toString());
+                    if(state != WifiAPManager.WIFI_AP_STATE.WIFI_AP_STATE_ENABLED){
+                        //if we lose connection during a running session, stop the service
+                        if(HttpServerService.isRunning()){
+                            stop();
+                        }
+                    }else {
+                        if(!HttpServerService.isRunning()){
+                            Intent startServiceIntent = new Intent(mAppContext, HttpServerService.class);
+
+                            startServiceIntent.putExtra(HttpServerService.SSID_KEY, mSsid);
+
+                            mAppContext.startService(startServiceIntent);
+                            mAppContext.bindService(startServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
+                        }
+                    }
+                }
+            }
         }
     }
 }
