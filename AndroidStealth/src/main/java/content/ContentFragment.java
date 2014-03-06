@@ -16,6 +16,8 @@ import android.widget.ListView;
 
 import com.stealth.android.R;
 
+import java.util.ArrayList;
+
 /**
  * Created by Alex on 3/6/14.
  */
@@ -92,25 +94,28 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(mMode != null){
-            setCheckedActionMode(position);
+            disableIfNone();
         }
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-        setCheckedActionMode(position);
-
         if (mMode == null) {
+            mListView.setItemChecked(position, true);
             mMode = ((ActionBarActivity)getActivity()).startSupportActionMode(new ContentShareMultiModeListener());
+        }
+        else {
+            disableIfNone();
         }
 
         return true;
     }
 
-    private void setCheckedActionMode(int position){
-        boolean checked = mListView.getCheckedItemPositions().get(position);
-        mListView.setItemChecked(position, !checked);
+    private void disableIfNone(){
+        if(mListView.getCheckedItemIds().length == 0){
+            mMode.finish();
+        }
     }
 
     /**
@@ -140,9 +145,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                         //TODO share goes here
                         break;
                     case R.id.action_remove:
+                        ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
                         for (long id: selected) {
-                            mContentManager.removeItem(mAdapter.getItem((int)id));
+                            itemArrayList.add(mAdapter.getItem((int)id));
                         }
+                        mContentManager.removeItems(itemArrayList);
+
                         break;
                 }
 
