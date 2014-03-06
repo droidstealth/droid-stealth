@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/SSID_field"
+        android:hint="@string/SSID_text"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/password_field"
+        android:hint="@string/password_text"
+        android:layout_below="@id/SSID_field"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text|textPassword" />
+
+
+    <CheckBox
+        android:id="@+id/show_password_check"
+        android:layout_below="@id/password_field"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin" />
+
+    <TextView
+        android:text="@string/show_password_text"
+        android:layout_alignBaseline="@+id/show_password_check"
+        android:layout_toRightOf="@id/show_password_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
