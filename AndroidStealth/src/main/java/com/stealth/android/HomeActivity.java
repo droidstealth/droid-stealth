@@ -45,20 +45,18 @@ public class HomeActivity extends ActionBarActivity
     }
 
     @Override
-    protected void onStart() {
-        // Get the intent that started this activity
+    protected void onResume() {
         Intent intent = getIntent();
-        Uri data = intent.getData();
 
         if (intent.getAction().equals("stealth.call") ) {
             phone_number_dialed = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StealthDialerFragment sdf = (StealthDialerFragment) fragmentManager
+                    .findFragmentByTag(StealthDialerFragment.TAG);
+            sdf.setPhone_number_dialed(phone_number_dialed);
         }
 
-        super.onStart();
-    }
-
-    public String getPhone_number_dialed() {
-        return phone_number_dialed;
+        super.onResume();
     }
 
     @Override
@@ -71,7 +69,7 @@ public class HomeActivity extends ActionBarActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.container, fragment, StealthDialerFragment.TAG)
                 .commit();
     }
 
