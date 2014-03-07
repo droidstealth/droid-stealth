@@ -96,6 +96,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         if(mMode != null){
             disableIfNone();
         }
+        else {
+            mListView.setItemChecked(position, false);
+        }
     }
 
     @Override
