@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -12,4 +13,19 @@
     <dimen name="content_item_padding">5dp</dimen>
     <dimen name="column_item_height">90dp</dimen>
     <dimen name="content_item_width">90dp</dimen>
+
+    <dimen name="text_margin">8dp</dimen>
+    <dimen name="image_margin">4dp</dimen>
+    <dimen name="divider_width">1dp</dimen>
+    <dimen name="title_divider_width">2dp</dimen>
+    <dimen name="divider_margin">4dp</dimen>
+    <dimen name="section_margin">16dp</dimen>
+    <dimen name="link_name_size">16sp</dimen>
+    <dimen name="link_size">18sp</dimen>
+    <dimen name="image_padding">8dp</dimen>
+    <dimen name="explanation_size">16sp</dimen>
+    <dimen name="ap_settings_size">18sp</dimen>
+    <dimen name="title_margin">12dp</dimen>
+    <dimen name="notification_large_icon_width">64dp</dimen>
+    <dimen name="notification_large_icon_height">64dp</dimen>
 </resources>
