@@ -28,14 +28,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private ContentAdapter mAdapter;
 
     /**
-     * Loads ContentAdapter
+     * Loads ContentAdapter and ContentManager
      * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContentManager = new DummyManager();
+        mContentManager = ContentManagerFactory.getInstance();
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
@@ -44,6 +44,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         setHasOptionsMenu(true);
     }
 
+    /**
+     * Inflates normal Menu.
+     * @param menu The menu to which the items should be inflated
+     * @param inflater The inflater which is used to inflate the Menu
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -73,6 +78,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         return content;
     }
 
+    /**
+     * Called when a MenuItem is clicked. Handles adding of items //TODO
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -85,7 +95,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     /**
-     * Checks whether an item is selected and enables or disables the ActionMode based on that
+     * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode.
+     * If the view is in ActionMode, check whether any items are still checked after the click.
      * @param adapterView
      * @param view
      * @param position
@@ -94,28 +105,40 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(mMode != null){
-            disableIfNone();
+            disableIfNoneChecked();
         }
         else {
             mListView.setItemChecked(position, false);
         }
     }
 
+    /**
+     * Enables ActionMode if it's not active. Otherwise make sure the ActionMode can still be active.
+     * @param adapterView
+     * @param view
+     * @param position
+     * @param l
+     * @return
+     */
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
         if (mMode == null) {
             mListView.setItemChecked(position, true);
-            mMode = ((ActionBarActivity)getActivity()).startSupportActionMode(new ContentShareMultiModeListener());
+            mMode = ((ActionBarActivity)getActivity())
+                    .startSupportActionMode(new ContentShareMultiModeListener());
         }
         else {
-            disableIfNone();
+            disableIfNoneChecked();
         }
 
         return true;
     }
 
-    private void disableIfNone(){
+    /**
+     * Disables the ActionMode if no more items are checked
+     */
+    private void disableIfNoneChecked(){
         if(mListView.getCheckedItemIds().length == 0){
             mMode.finish();
         }
@@ -127,6 +150,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
      */
     private class ContentShareMultiModeListener implements ActionMode.Callback {
 
+        /**
+         * Called when the ActionMode is created. Inflates the ActionMode Menu.
+         * @param actionMode The mode currently active
+         * @param menu The menu to which the items should be inflated
+         * @return
+         */
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             MenuInflater inflater = getActivity().getMenuInflater();
@@ -139,6 +168,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             return false;
         }
 
+        /**
+         * Called when an ActionItem is clicked. Handles removal and sharing of ContentItem
+         * @param actionMode The mode currently active
+         * @param menuItem The ActionItem clicked
+         * @return
+         */
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             long[] selected = mListView.getCheckedItemIds();
@@ -162,6 +197,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             return true;
         }
 
+        /**
+         * Called when the ActionMode is finalized. Unchecks all items in view.
+         * @param actionMode
+         */
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             // Destroying action mode, deselect all items

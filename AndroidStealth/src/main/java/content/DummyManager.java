@@ -64,6 +64,9 @@ public class DummyManager implements IContentManager {
         return mListeners.remove(listener);
     }
 
+    /**
+     * Notifies all listeners of a change in content
+     */
     private void notifyListeners(){
         for(ContentChangedListener listener : mListeners)
             listener.contentChanged();
@@ -74,6 +77,6 @@ public class DummyManager implements IContentManager {
      */
     private void generateDummyContent(){
         for(int i = 0; i < 30; i++)
-            mStorage.add(new ContentItem(new File("/")));
+            mStorage.add(new ContentItem(new File("/"), false, "Test " + i));
     }
 }

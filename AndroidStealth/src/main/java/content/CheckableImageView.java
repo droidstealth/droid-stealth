@@ -20,6 +20,9 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.ImageView;
 
+/**
+ * An extension of ImageView that makes it checkable (needed for Gingerbread support)
+ */
 public class CheckableImageView extends ImageView implements Checkable {
 
     public CheckableImageView(Context context) {
