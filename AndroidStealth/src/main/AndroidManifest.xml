@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NFC"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_stealth_launcher"
@@ -24,6 +29,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service android:name="sharing.APSharing.HttpServerService"
+            android:label="@string/http_service"/>
 
         <receiver
             android:name="spikes.stealthdialer.StealthDialReceiver"
