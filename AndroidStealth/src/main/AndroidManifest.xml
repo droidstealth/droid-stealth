@@ -2,11 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.stealth.android" >
 
-    <uses-permission android:name="android.permission.NFC"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
-    <uses-permission android:name="android.permission.INTERNET"/>    <application
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NFC"/>
+
+    <application
         android:allowBackup="true"
         android:icon="@drawable/ic_stealth_launcher"
         android:label="@string/app_name"
@@ -16,13 +19,28 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="stealth.call" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:priority="-1" >
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <service android:name="sharing.APSharing.HttpServerService"
             android:label="@string/http_service"/>
+
+        <receiver
+            android:name="spikes.stealthdialer.StealthDialReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter android:priority="1">
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.stealth.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -9,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import content.ContentFragment;
+import spikes.stealthdialer.StealthDialerFragment;
+
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
@@ -24,6 +27,7 @@ public class HomeActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private java.lang.String phone_number_dialed;
 
     private APSharing mSharing;
 
@@ -42,29 +46,38 @@ public class HomeActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        phone_number_dialed = "";
+
+    }
+
+    @Override
+    protected void onResume() {
+        Intent intent = getIntent();
+
+        if (intent.getAction().equals("stealth.call") ) {
+            phone_number_dialed = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StealthDialerFragment sdf = (StealthDialerFragment) fragmentManager
+                    .findFragmentByTag(StealthDialerFragment.TAG);
+            sdf.setPhone_number_dialed(phone_number_dialed);
+        }
+
+        super.onResume();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        Bundle args = new Bundle();
+        args.putString(StealthDialerFragment.CALL_KEY, phone_number_dialed);
+        StealthDialerFragment fragment = new StealthDialerFragment();
+        fragment.setArguments(args);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, new ContentFragment())
                 .commit();
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
     }
 
     public void restoreActionBar() {
@@ -73,7 +86,6 @@ public class HomeActivity extends ActionBarActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,7 +115,6 @@ public class HomeActivity extends ActionBarActivity
         }
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -113,7 +124,6 @@ public class HomeActivity extends ActionBarActivity
             default:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
