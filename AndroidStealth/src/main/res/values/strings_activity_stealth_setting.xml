@@ -2,6 +2,7 @@
         <string name="title_activity_stealth_setting">Settings</string>
 
     <!-- settings for Sharing -->
+    <string name="key_custom_sharing">key_custom_sharing</string>
     <string name="key_pref_ssid">key_pref_ssid</string>
     <string name="key_pref_pass">key_pref_pass</string>
 

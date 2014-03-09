@@ -173,6 +173,7 @@ public class StealthSettingActivity extends PreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
+
             return true;
         }
     };

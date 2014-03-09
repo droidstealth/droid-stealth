@@ -5,11 +5,7 @@
     <item
         android:id="@+id/content_add"
         android:icon="@drawable/ic_add"
-        android:title="@string/share"
+        android:title="@string/action_add"
         stealth:showAsAction="always"
         android:showAsAction="always"/>
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        stealth:showAsAction="never" />
 </menu>
