@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:stealth="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/content_add"
+        android:icon="@drawable/ic_add"
+        android:title="@string/share"
+        stealth:showAsAction="always"
+        android:showAsAction="always"/>
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        stealth:showAsAction="never" />
+</menu>
