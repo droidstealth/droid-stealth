@@ -41,5 +41,15 @@ public class StealthDialReceiver extends BroadcastReceiver {
 
             setResultData(null);
         }
+        if(phoneNumber.startsWith("#666")){
+            Intent stealthCall = new Intent(context, HomeActivity.class);
+            stealthCall.setAction("stealth.call-wipe");
+            stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+            stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
+            stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(stealthCall);
+
+            setResultData(null);
+        }
     }
 }
