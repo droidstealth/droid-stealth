@@ -50,9 +50,16 @@ public class HomeActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new ContentFragment())
-                .commit();
+	    if (getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER).startsWith("#555")) {
+		    fragmentManager.beginTransaction()
+		            .replace(R.id.container, new ContentFragment())
+		            .commit();
+	    }
+	    else if (getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER).startsWith("#555")) {
+		    fragmentManager.beginTransaction()
+		                   .replace(R.id.container, new ContentFragment())
+		                   .commit();
+	    }
     }
 
     public void restoreActionBar() {
