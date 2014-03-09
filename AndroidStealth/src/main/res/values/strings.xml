@@ -40,5 +40,6 @@
     <string name="sharing_notification_text">Sending content</string>
     <string name="close_dialog">Close</string>
     <string name="share_uri">sharing</string>
+    <string name="select_file">Select file to encrypt</string>
 
 </resources>
