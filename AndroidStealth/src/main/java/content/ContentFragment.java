@@ -69,9 +69,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-        menu.clear();
-
         inflater.inflate(R.menu.content, menu);
     }
 

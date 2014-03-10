@@ -1,6 +1,7 @@
 package com.stealth.android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -243,6 +244,12 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getActivity(), StealthSettingActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
 

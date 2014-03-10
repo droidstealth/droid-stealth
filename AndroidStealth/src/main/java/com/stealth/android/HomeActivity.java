@@ -14,7 +14,6 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 import content.ContentFragment;
-import spikes.stealthdialer.StealthDialerFragment;
 
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
@@ -96,7 +95,6 @@ public class HomeActivity extends ActionBarActivity
         }
         return super.onCreateOptionsMenu(menu);
     }
-
     /**
      * Check if the device has AP Wifi support. If not, disable the 'Share Application' menu entry.
      * @param menu that contains the 'Share Application' menu entry.
@@ -114,6 +112,10 @@ public class HomeActivity extends ActionBarActivity
         switch (item.getItemId()){
             case R.id.app_sharing:
                 mSharing.shareApk();
+                return true;
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
+                startActivity(settingsIntent);
                 return true;
             default:
                 break;
