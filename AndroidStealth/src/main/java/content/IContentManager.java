@@ -34,8 +34,9 @@ public interface IContentManager {
     /**
      * Removes a collection of items from storage
      * @param itemCollection The collection of items to be removed
+     * @return whether all ContentItems have been removed successfully
      */
-    public void removeItems(Collection<ContentItem> itemCollection);
+    public boolean removeItems(Collection<ContentItem> itemCollection);
 
     /**
      * Adds a listener to the list

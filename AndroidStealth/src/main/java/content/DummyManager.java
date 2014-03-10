@@ -41,16 +41,25 @@ public class DummyManager implements IContentManager {
     }
 
     @Override
-    public void removeItems(Collection<ContentItem> itemCollection) {
+    public boolean removeItems(Collection<ContentItem> itemCollection) {
+        boolean noFailure = true;
         boolean singleSuccess = false;
         for(ContentItem item : itemCollection){
             boolean removed = mStorage.remove(item);
             if(removed)
                 singleSuccess = true;
+            else
+                noFailure = false;
         }
+
+        //Empty list, we 'failed' anyway
+        if(itemCollection.size() == 0)
+            noFailure = false;
 
         if(singleSuccess)
             notifyListeners();
+
+        return noFailure;
     }
 
     @Override
