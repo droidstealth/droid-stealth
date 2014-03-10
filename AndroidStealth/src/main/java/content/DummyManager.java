@@ -14,8 +14,10 @@ public class DummyManager implements IContentManager {
 
     HashSet<ContentItem> mStorage = new HashSet<ContentItem>();
 
-    public DummyManager(){
-        generateDummyContent();
+    public DummyManager(boolean loadEmpty){
+	    if (!loadEmpty) {
+		    generateDummyContent();
+	    }
     }
 
     @Override
