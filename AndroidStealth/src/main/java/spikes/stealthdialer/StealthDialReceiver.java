@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import android.util.Log;
 import com.stealth.android.HomeActivity;
 
 /**
@@ -31,9 +32,8 @@ public class StealthDialReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        if(phoneNumber.startsWith("#555")){
+        if(phoneNumber.startsWith("#555") || phoneNumber.startsWith("#666")){
             Intent stealthCall = new Intent(context, HomeActivity.class);
-            stealthCall.setAction("stealth.call");
             stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
             stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
             stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

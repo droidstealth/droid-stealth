@@ -1,6 +1,8 @@
 package content;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -14,9 +16,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import android.widget.Toast;
 import com.stealth.android.R;
 
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 /**
  * Created by Alex on 3/6/14.
@@ -26,6 +30,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private ActionMode mMode;
     private IContentManager mContentManager;
     private ContentAdapter mAdapter;
+
+	public static ContentFragment newInstance(boolean loadEmpty){
+		ContentFragment contentFragment = new ContentFragment();
+
+		Bundle bundle = new Bundle();
+		bundle.putBoolean("LOAD_EMPTY", loadEmpty);
+		contentFragment.setArguments(bundle);
+
+		return contentFragment;
+	}
 
     /**
      * Loads ContentAdapter and ContentManager
@@ -37,11 +51,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
         mContentManager = ContentManagerFactory.getInstance();
 
+	    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
         mContentManager.addContentChangedListener(mAdapter);
 
         setHasOptionsMenu(true);
+
     }
 
     /**

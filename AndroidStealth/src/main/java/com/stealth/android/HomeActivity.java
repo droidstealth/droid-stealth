@@ -1,14 +1,18 @@
 package com.stealth.android;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.widget.Toast;
 import content.ContentFragment;
 
 import sharing.APSharing.APSharing;
@@ -49,9 +53,24 @@ public class HomeActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new ContentFragment())
-                .commit();
+	    try {
+		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+		    if (phoneNumber.startsWith("#555")) {
+			    fragmentManager.beginTransaction()
+			            .replace(R.id.container, new ContentFragment())
+			            .commit();
+		    }
+		    else if (phoneNumber.startsWith("#666")) {
+			    // TODO wipe data here if activity mode is 'panic'
+			    fragmentManager.beginTransaction()
+			                   .replace(R.id.container, new ContentFragment())
+			                   .commit();
+		    }
+	    }
+	    catch (NullPointerException e) {
+		    e.printStackTrace();
+		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
+	    }
     }
 
     public void restoreActionBar() {

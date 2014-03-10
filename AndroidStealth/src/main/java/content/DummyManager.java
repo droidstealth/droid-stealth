@@ -15,7 +15,7 @@ public class DummyManager implements IContentManager {
     HashSet<ContentItem> mStorage = new HashSet<ContentItem>();
 
     public DummyManager(){
-        generateDummyContent();
+	    generateDummyContent();
     }
 
     @Override
@@ -41,16 +41,25 @@ public class DummyManager implements IContentManager {
     }
 
     @Override
-    public void removeItems(Collection<ContentItem> itemCollection) {
+    public boolean removeItems(Collection<ContentItem> itemCollection) {
+        boolean noFailure = true;
         boolean singleSuccess = false;
         for(ContentItem item : itemCollection){
             boolean removed = mStorage.remove(item);
             if(removed)
                 singleSuccess = true;
+            else
+                noFailure = false;
         }
+
+        //Empty list, we 'failed' anyway
+        if(itemCollection.size() == 0)
+            noFailure = false;
 
         if(singleSuccess)
             notifyListeners();
+
+        return noFailure;
     }
 
     @Override
@@ -79,4 +88,11 @@ public class DummyManager implements IContentManager {
         for(int i = 0; i < 30; i++)
             mStorage.add(new ContentItem(new File("/"), false, "Test " + i));
     }
+
+	@Override
+	public void removeAllContent(){
+		for(ContentItem contentItem : mStorage){
+			mStorage.remove(contentItem);
+		}
+	}
 }
