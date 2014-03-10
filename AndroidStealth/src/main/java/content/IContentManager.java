@@ -49,4 +49,6 @@ public interface IContentManager {
      * @return whether the listener has been successfully removed
      */
     public boolean removeContentChangedListener(ContentChangedListener listener);
+
+	public void removeAllContent();
 }

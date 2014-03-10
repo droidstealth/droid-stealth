@@ -1,6 +1,8 @@
 package content;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.stealth.android.R;
 
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 /**
  * Created by Alex on 3/6/14.
@@ -27,10 +30,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private ActionMode mMode;
     private IContentManager mContentManager;
     private ContentAdapter mAdapter;
-	private static boolean loadEmpty;
 
-	public ContentFragment(boolean loadEmpty){
-		this.loadEmpty = loadEmpty;
+	public static ContentFragment newInstance(boolean loadEmpty){
+		ContentFragment contentFragment = new ContentFragment();
+
+		Bundle bundle = new Bundle();
+		bundle.putBoolean("LOAD_EMPTY", loadEmpty);
+		contentFragment.setArguments(bundle);
+
+		return contentFragment;
 	}
 
     /**
@@ -41,7 +49,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContentManager = ContentManagerFactory.getInstance(loadEmpty);
+        mContentManager = ContentManagerFactory.getInstance();
+
+	    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
@@ -49,12 +59,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
         setHasOptionsMenu(true);
 
-	    if(loadEmpty){
-		    Toast.makeText(getActivity().getApplicationContext(), "Data hidden. Would wipe in panic mode", Toast.LENGTH_SHORT).show();
-	    }
-	    else{
-	        Toast.makeText(getActivity().getApplicationContext(), "Showing data.", Toast.LENGTH_SHORT).show();
-	    }
     }
 
     /**
