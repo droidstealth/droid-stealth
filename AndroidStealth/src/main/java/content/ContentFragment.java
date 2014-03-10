@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import android.widget.Toast;
 import com.stealth.android.R;
 
 import java.util.ArrayList;
@@ -26,6 +27,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private ActionMode mMode;
     private IContentManager mContentManager;
     private ContentAdapter mAdapter;
+	private static boolean loadEmpty;
+
+	public ContentFragment(boolean loadEmpty){
+		this.loadEmpty = loadEmpty;
+	}
 
     /**
      * Loads ContentAdapter and ContentManager
@@ -35,13 +41,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContentManager = ContentManagerFactory.getInstance();
+        mContentManager = ContentManagerFactory.getInstance(loadEmpty);
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
         mContentManager.addContentChangedListener(mAdapter);
 
         setHasOptionsMenu(true);
+
+	    if(loadEmpty){
+		    Toast.makeText(getActivity().getApplicationContext(), "Data hidden. Would wipe in panic mode", Toast.LENGTH_SHORT).show();
+	    }
+	    else{
+	        Toast.makeText(getActivity().getApplicationContext(), "Showing data.", Toast.LENGTH_SHORT).show();
+	    }
     }
 
     /**
