@@ -1,7 +1,9 @@
 package com.stealth.android;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -56,13 +58,13 @@ public class HomeActivity extends ActionBarActivity
 		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		    if (phoneNumber.startsWith("#555")) {
 			    fragmentManager.beginTransaction()
-			            .replace(R.id.container, new ContentFragment(false))
+			            .replace(R.id.container, new ContentFragment())
 			            .commit();
 		    }
 		    else if (phoneNumber.startsWith("#666")) {
 			    // TODO wipe data here if activity mode is 'panic'
 			    fragmentManager.beginTransaction()
-			                   .replace(R.id.container, new ContentFragment(true))
+			                   .replace(R.id.container, new ContentFragment())
 			                   .commit();
 		    }
 	    }

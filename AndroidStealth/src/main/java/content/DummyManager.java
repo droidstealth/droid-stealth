@@ -14,10 +14,8 @@ public class DummyManager implements IContentManager {
 
     HashSet<ContentItem> mStorage = new HashSet<ContentItem>();
 
-    public DummyManager(boolean loadEmpty){
-	    if (!loadEmpty) {
-		    generateDummyContent();
-	    }
+    public DummyManager(){
+	    generateDummyContent();
     }
 
     @Override
@@ -81,4 +79,11 @@ public class DummyManager implements IContentManager {
         for(int i = 0; i < 30; i++)
             mStorage.add(new ContentItem(new File("/"), false, "Test " + i));
     }
+
+	@Override
+	public void removeAllContent(){
+		for(ContentItem contentItem : mStorage){
+			mStorage.remove(contentItem);
+		}
+	}
 }
