@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.stealth.android.R;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +30,7 @@ import sharing.SharingUtils;
  * Created by Alex on 2/26/14.
  */
 public class APSharing implements HttpServerService.StopListener {
-    public static final String CUSTOM_AP = "CUSTOM_AP";
     public static final int SSIDLength = 8;
-    public static final String PREF_PASS_KEY = "PREF_PASS_KEY";
-    public static final String PREF_SSID_KEY = "PREF_SSID_KEY";
 
     private int mOriginalWifiState;
     private boolean isSharing = false;
@@ -66,13 +65,13 @@ public class APSharing implements HttpServerService.StopListener {
         isSharing = true;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-        boolean customAP = preferences.getBoolean(CUSTOM_AP, false);
+        boolean customAP = preferences.getBoolean(mAppContext.getString(R.string.key_custom_sharing), false);
 
         String pass = null;
 
         if(customAP){
-            mSsid = preferences.getString(PREF_SSID_KEY, null);
-            pass = preferences.getString(PREF_PASS_KEY, null);
+            mSsid = preferences.getString(mAppContext.getString(R.string.key_pref_ssid), null);
+            pass = preferences.getString(mAppContext.getString(R.string.key_pref_pass), null);
         }
 
         //Value couldn't be found or custom AP wasn't set. Generate simple wifi configuration
