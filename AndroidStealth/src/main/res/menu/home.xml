@@ -9,7 +9,18 @@
         app:showAsAction="never" />
     <item android:id="@+id/app_sharing"
         android:title="@string/share_app"
-        android:icon="@drawable/ic_menu_share"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="never">
+        <menu>
+            <item android:id="@+id/action_appshare_bluetooth"
+                android:title="@string/share_bluetooth_title"
+                android:icon="@drawable/perm_group_bluetooth"/>
+            <item android:id="@+id/action_appshare_wifi"
+                android:title="@string/share_hotspot_title"
+                android:icon="@drawable/stat_sys_tether_wifi"/>
+            <item android:id="@+id/action_appshare_sdcard"
+                android:title="@string/share_sd_card_title"
+                android:icon="@drawable/stat_notify_sdcard"/>
+        </menu>
+        </item>
 
 </menu>

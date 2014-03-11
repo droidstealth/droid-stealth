@@ -52,14 +52,10 @@ public class DummyManager implements IContentManager {
                 noFailure = false;
         }
 
-        //Empty list, we 'failed' anyway
-        if(itemCollection.size() == 0)
-            noFailure = false;
-
         if(singleSuccess)
             notifyListeners();
 
-        return noFailure;
+        return noFailure && singleSuccess;
     }
 
     @Override

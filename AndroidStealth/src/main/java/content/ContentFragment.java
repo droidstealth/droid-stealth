@@ -1,11 +1,18 @@
 package content;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +26,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.stealth.android.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
+
+import sharing.SharingUtils;
 
 /**
  * Created by Alex on 3/6/14.
@@ -30,6 +40,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private ActionMode mMode;
     private IContentManager mContentManager;
     private ContentAdapter mAdapter;
+    private NfcAdapter mNfcAdapter;
 
 	public static ContentFragment newInstance(boolean loadEmpty){
 		ContentFragment contentFragment = new ContentFragment();
@@ -45,20 +56,22 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
      * Loads ContentAdapter and ContentManager
      * @param savedInstanceState
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mContentManager = ContentManagerFactory.getInstance();
 
-	    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-
+        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+            mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(),getActivity());
+        }
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
         mContentManager.addContentChangedListener(mAdapter);
 
         setHasOptionsMenu(true);
-
     }
 
     /**
@@ -168,7 +181,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
          * Called when the ActionMode is created. Inflates the ActionMode Menu.
          * @param actionMode The mode currently active
          * @param menu The menu to which the items should be inflated
-         * @return
+         * @return whether menu creation was handled
          */
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -224,6 +237,38 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             if (actionMode == mMode) {
                 mMode = null;
             }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+
+        @Override
+        public Uri[] createBeamUris(NfcEvent nfcEvent) {
+            if(mMode == null){
+                return new Uri[] {getApkUri()};
+            }
+            else {
+                return contentToUri();
+            }
+        }
+
+        private Uri getApkUri(){
+            return Uri.fromFile(SharingUtils.getApk(getActivity()));
+        }
+
+        /**
+         * @return A list of
+         */
+        private Uri[] contentToUri(){
+            long[] ids = mListView.getCheckedItemIds();
+
+            Uri[] files = new Uri[ids.length];
+            for (int i = 0; i < ids.length; i++){
+                files[i] = Uri.fromFile(mAdapter.getItem((int)ids[i]).getFile());
+            }
+
+            return files;
         }
     }
 }

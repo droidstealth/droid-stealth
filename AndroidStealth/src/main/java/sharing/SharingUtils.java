@@ -176,6 +176,8 @@ public class SharingUtils {
         return configuration;
     }
 
+
+
     /**
      * Gets the current IP address of the wifi connection. In the case of a wifi AP, it returns its
      * own host address, needed to share links with

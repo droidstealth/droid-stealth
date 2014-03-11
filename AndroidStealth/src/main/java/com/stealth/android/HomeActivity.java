@@ -1,7 +1,9 @@
 package com.stealth.android;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.SubMenu;
 import android.widget.Toast;
 import content.ContentFragment;
 
@@ -20,6 +23,8 @@ import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    private static final int REQUEST_ENABLE_BT = 3250275;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -53,7 +58,10 @@ public class HomeActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-	    try {
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new ContentFragment())
+                .commit();
+	    /*try {
 		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		    if (phoneNumber.startsWith("#555")) {
 			    fragmentManager.beginTransaction()
@@ -70,7 +78,7 @@ public class HomeActivity extends ActionBarActivity
 	    catch (NullPointerException e) {
 		    e.printStackTrace();
 		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
-	    }
+	    }*/
     }
 
     public void restoreActionBar() {
@@ -101,17 +109,34 @@ public class HomeActivity extends ActionBarActivity
      */
     private void checkHotspotAvailability(Menu menu) {
         MenuItem appSharingItem = menu.findItem(R.id.app_sharing);
+        SubMenu subMenu = appSharingItem.getSubMenu();
 
         if(!SharingUtils.hasAPWifiSupport(this)){
-            appSharingItem.setEnabled(false);
+            subMenu.findItem(R.id.action_appshare_wifi).setEnabled(false);
         }
+        if(!SharingUtils.hasBluetoothSupport()){
+            subMenu.findItem(R.id.action_appshare_bluetooth).setEnabled(false);
+        }
+        if(!SharingUtils.hasRemovableExternalStorage()){
+            subMenu.findItem(R.id.action_appshare_sdcard).setEnabled(false);
+        }
+
+        if(!subMenu.hasVisibleItems())
+            appSharingItem.setEnabled(false);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.app_sharing:
+            case R.id.action_appshare_wifi:
                 mSharing.shareApk();
+                return true;
+            case R.id.action_appshare_bluetooth:
+                Intent intent = new  Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("application/zip");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(SharingUtils.getApk(this)));
+                startActivity(intent);
                 return true;
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
