@@ -1,11 +1,15 @@
 package content;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,16 +20,20 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import android.widget.Toast;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
+
+import spikes.filepicker.EncryptionService;
 
 /**
  * Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+    private static final int REQUEST_CHOOSER = 1234;
+
     private AbsListView mListView;
     private ActionMode mMode;
     private IContentManager mContentManager;
@@ -49,9 +57,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContentManager = ContentManagerFactory.getInstance();
-
-	    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        mContentManager = ContentManagerFactory.getInstance(getActivity());
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
@@ -93,7 +99,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     /**
-     * Called when a MenuItem is clicked. Handles adding of items //TODO
+     * Called when a MenuItem is clicked. Handles adding of items
      * @param item
      * @return
      */
@@ -101,10 +107,40 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.content_add:
-                //TODO filepicker goes here
+                Intent getContentIntent = FileUtils.createGetContentIntent();
+                Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+                startActivityForResult(intent, REQUEST_CHOOSER);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Listens for the return of the get content intent. Adds the items if successful
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case REQUEST_CHOOSER:
+
+                if (resultCode == Activity.RESULT_OK) {
+
+                    final Uri uri = data.getData();
+
+                    // Get the File path from the Uri
+                    String path = FileUtils.getPath(getActivity(), uri);
+
+                    // Alternatively, use FileUtils.getFile(Context, Uri)
+                    if (path != null && FileUtils.isLocal(path)) {
+                        File selected = new File(path);
+                        mContentManager.addItem(selected);
+                    }
+                }
+                break;
         }
     }
 

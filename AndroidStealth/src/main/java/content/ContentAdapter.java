@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.stealth.android.R;
 
@@ -62,6 +63,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
         if(view == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
         }
+
+        ((TextView)view.findViewById(R.id.file_text)).setText(getItem(i).getFileName());
 
         return view;
     }

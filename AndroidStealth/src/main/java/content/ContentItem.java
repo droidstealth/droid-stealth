@@ -8,18 +8,14 @@ import java.io.File;
  */
 public class ContentItem {
     private File mFile;
-    private boolean mEncrypted;
     private String mFileName;
 
-    public ContentItem(File mFile, boolean mEncrypted, String mFileName) {
+    public ContentItem(File mFile, String mFileName) {
         this.mFile = mFile;
-        this.mEncrypted = mEncrypted;
         this.mFileName = mFileName;
     }
 
     public File getFile() { return mFile; }
-
-    public boolean isEncrypted() { return mEncrypted; }
 
     public String getFileName() { return mFileName; }
 }
