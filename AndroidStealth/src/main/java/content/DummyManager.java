@@ -26,10 +26,11 @@ public class DummyManager implements IContentManager {
     }
 
     @Override
-    public void addItem(File item) {
+    public boolean addItem(File item) {
         mStorage.add(new ContentItem(item, item.getName()));
 
         notifyListeners();
+        return true;
     }
 
     @Override

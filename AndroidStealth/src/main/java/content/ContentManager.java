@@ -1,10 +1,6 @@
 package content;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.util.Log;
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,7 +8,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -41,11 +36,13 @@ public class ContentManager implements IContentManager {
     }
 
     @Override
-    public void addItem(File item) {
+    public boolean addItem(File item) {
         try {
             copyFile(item, new File(mDataDir, item.getName()));
             notifyListeners();
+            return true;
         } catch (IOException e) {
+            return false;
         }
     }
 
