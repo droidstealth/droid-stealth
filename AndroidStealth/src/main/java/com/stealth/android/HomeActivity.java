@@ -56,21 +56,20 @@ public class HomeActivity extends ActionBarActivity
 	    try {
 		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		    if (phoneNumber.startsWith("#555")) {
-			    fragmentManager.beginTransaction()
-			            .replace(R.id.container, new ContentFragment())
-			            .commit();
+                // TODO some actions
 		    }
 		    else if (phoneNumber.startsWith("#666")) {
 			    // TODO wipe data here if activity mode is 'panic'
-			    fragmentManager.beginTransaction()
-			                   .replace(R.id.container, new ContentFragment())
-			                   .commit();
+                // TODO some other actions
 		    }
 	    }
 	    catch (NullPointerException e) {
 		    e.printStackTrace();
 		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
 	    }
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new ContentFragment())
+                .commit();
     }
 
     public void restoreActionBar() {

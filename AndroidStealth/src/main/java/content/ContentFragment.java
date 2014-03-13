@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,11 +16,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import android.widget.Toast;
 import com.stealth.android.R;
 
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
 
 /**
  * Created by Alex on 3/6/14.
@@ -51,7 +48,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         super.onCreate(savedInstanceState);
 
         mContentManager = ContentManagerFactory.getInstance();
-        Log.e("STEALTH", "Wtf bro");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         mMode = null;
@@ -197,7 +193,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                     case R.id.action_share:
                         //TODO share goes here
                         break;
-                    case R.id.action_remove:
+                    case R.id.action_shred:
                         ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
                         for (long id: selected) {
                             itemArrayList.add(mAdapter.getItem((int)id));
