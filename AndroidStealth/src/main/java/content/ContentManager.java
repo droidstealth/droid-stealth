@@ -49,8 +49,9 @@ public class ContentManager implements IContentManager {
     @Override
     public boolean removeItem(ContentItem item) {
         boolean removed = item.getFile().delete();
-        if(removed)
+        if(removed){
             notifyListeners();
+        }
         return removed;
     }
 
@@ -60,26 +61,31 @@ public class ContentManager implements IContentManager {
         boolean singleSuccess = false;
         for(ContentItem item : itemCollection){
             boolean removed = item.getFile().delete();
-            if(removed)
+            if(removed){
                 singleSuccess = true;
-            else
+            }
+            else{
                 noFailure = false;
+            }
         }
 
         //Empty list, we 'failed' anyway
-        if(itemCollection.size() == 0)
+        if(itemCollection.size() == 0){
             noFailure = false;
+        }
 
-        if(singleSuccess)
+        if(singleSuccess){
             notifyListeners();
+        }
 
         return noFailure;
     }
 
     @Override
     public void addContentChangedListener(ContentChangedListener listener) {
-        if(!mListeners.contains(listener))
+        if(!mListeners.contains(listener)){
             mListeners.add(listener);
+        }
     }
 
     @Override
@@ -89,16 +95,18 @@ public class ContentManager implements IContentManager {
 
     @Override
     public void removeAllContent() {
-        for(File file: mDataDir.listFiles())
+        for(File file: mDataDir.listFiles()){
             file.delete();
+        }
     }
 
     /**
      * Notifies all listeners of a change in content
      */
     private void notifyListeners(){
-        for(ContentChangedListener listener : mListeners)
+        for(ContentChangedListener listener : mListeners){
             listener.contentChanged();
+        }
     }
 
     /**

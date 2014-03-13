@@ -10,7 +10,7 @@ public class ContentManagerFactory {
 
 	/**
 	 * Making this constructor private makes sure Java doesn't offer a generated one, from which a CMF could be created
-	 * which then could create a second DummyManager, which would be undesired
+	 * which then could create a second ContentManager, which would be undesired
 	 */
 	private ContentManagerFactory() {
 		throw new IllegalStateException("Using the ContentManagerFactory constructor is illegal");
