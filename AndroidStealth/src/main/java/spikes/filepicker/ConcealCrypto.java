@@ -29,6 +29,15 @@ public class ConcealCrypto implements ICrypto {
                 new SystemNativeCryptoLibrary());
     }
 
+    /**
+     * Encrypts the unencrypted file. Can throw a lot of errors
+     * @param encrypted
+     * @param unencrypted
+     * @param entityName
+     * @throws IOException
+     * @throws CryptoInitializationException
+     * @throws KeyChainException
+     */
     @Override
     public void encrypt(File encrypted, File unencrypted, String entityName) throws IOException, CryptoInitializationException, KeyChainException {
         doFileChecks(unencrypted, encrypted);
@@ -40,6 +49,15 @@ public class ConcealCrypto implements ICrypto {
         copyStreams(from, to);
     }
 
+    /**
+     * Decrypts the encrypted file. Can also throw a lot of errors
+     * @param encrypted
+     * @param unencrypted
+     * @param entityName
+     * @throws IOException
+     * @throws CryptoInitializationException
+     * @throws KeyChainException
+     */
     @Override
     public void decrypt(File encrypted, File unencrypted, String entityName) throws IOException, CryptoInitializationException, KeyChainException {
         doFileChecks(encrypted, unencrypted);
@@ -52,7 +70,12 @@ public class ConcealCrypto implements ICrypto {
         copyStreams(from, to);
     }
 
-    //copies the contents of the InputStream to the OutputStream
+    /**
+     * copies the contents of the InputStream to the OutputStream
+     * @param from
+     * @param to
+     * @throws IOException
+     */
     private void copyStreams(InputStream from, OutputStream to) throws IOException{
         try {
             byte[] buffer = new byte[4096]; // To hold file contents
@@ -70,18 +93,18 @@ public class ConcealCrypto implements ICrypto {
         // Always close the streams, even if exceptions were thrown
         finally {
             if (from != null)
-                try {
                     from.close();
-                } catch (IOException e) {
-                }
             if (to != null)
-                try {
                     to.close();
-                } catch (IOException e) {
-                }
         }
     }
 
+    /**
+     * Check whether files are usuable for encryption/decryption
+     * @param from
+     * @param to
+     * @throws IOException
+     */
     private void doFileChecks(File from, File to) throws IOException{
         //we can't work with a non-existing file
         if(!from.exists())
