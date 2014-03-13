@@ -1,5 +1,7 @@
 package content;
 
+import android.widget.Toast;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +26,8 @@ public class DummyManager implements IContentManager {
     }
 
     @Override
-    public void addItem(ContentItem item) {
-        mStorage.add(item);
+    public void addItem(File item) {
+        mStorage.add(new ContentItem(item, item.getName()));
 
         notifyListeners();
     }
@@ -86,7 +88,7 @@ public class DummyManager implements IContentManager {
      */
     private void generateDummyContent(){
         for(int i = 0; i < 30; i++)
-            mStorage.add(new ContentItem(new File("/"), false, "Test " + i));
+            mStorage.add(new ContentItem(new File("/"), "Test " + i));
     }
 
 	@Override

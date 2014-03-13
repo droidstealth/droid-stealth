@@ -57,7 +57,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContentManager = ContentManagerFactory.getInstance();
+        mContentManager = ContentManagerFactory.getInstance(getActivity());
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
@@ -108,7 +108,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         switch (item.getItemId()){
             case R.id.content_add:
                 Intent getContentIntent = FileUtils.createGetContentIntent();
-
                 Intent intent = Intent.createChooser(getContentIntent, "Select a file");
                 startActivityForResult(intent, REQUEST_CHOOSER);
                 return true;
@@ -158,6 +157,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         return true;
     }
 
+    /**
+     * Listens for the return of the get content intent. Adds the items if successful
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
@@ -173,19 +178,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                     // Alternatively, use FileUtils.getFile(Context, Uri)
                     if (path != null && FileUtils.isLocal(path)) {
                         File selected = new File(path);
-                        File encrypted = new File(selected.getParentFile(), "encryptedtest");
-
-
-                        Intent encryptIntent = new Intent(getActivity(), EncryptionService.class);
-                        encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, selected.getPath());
-                        encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, encrypted.getPath());
-                        //TODO this is just for testing. Needs better safeguard against filechanges and stuff
-                        encryptIntent.putExtra(EncryptionService.ENTITY_KEY, encrypted.getName());
-                        //just encrypting for now
-                        encryptIntent.putExtra(EncryptionService.ENCRYPT_KEY, true);
-
-                        getActivity().startService(encryptIntent);
-                        Log.d("com.stealth.android", "Started service!");
+                        mContentManager.addItem(selected);
                     }
                 }
                 break;
