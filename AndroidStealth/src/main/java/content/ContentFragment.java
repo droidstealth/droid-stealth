@@ -99,7 +99,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     /**
-     * Called when a MenuItem is clicked. Handles adding of items //TODO
+     * Called when a MenuItem is clicked. Handles adding of items
      * @param item
      * @return
      */
@@ -113,6 +113,34 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Listens for the return of the get content intent. Adds the items if successful
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case REQUEST_CHOOSER:
+
+                if (resultCode == Activity.RESULT_OK) {
+
+                    final Uri uri = data.getData();
+
+                    // Get the File path from the Uri
+                    String path = FileUtils.getPath(getActivity(), uri);
+
+                    // Alternatively, use FileUtils.getFile(Context, Uri)
+                    if (path != null && FileUtils.isLocal(path)) {
+                        File selected = new File(path);
+                        mContentManager.addItem(selected);
+                    }
+                }
+                break;
         }
     }
 
@@ -155,34 +183,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         }
 
         return true;
-    }
-
-    /**
-     * Listens for the return of the get content intent. Adds the items if successful
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case REQUEST_CHOOSER:
-
-                if (resultCode == Activity.RESULT_OK) {
-
-                    final Uri uri = data.getData();
-
-                    // Get the File path from the Uri
-                    String path = FileUtils.getPath(getActivity(), uri);
-
-                    // Alternatively, use FileUtils.getFile(Context, Uri)
-                    if (path != null && FileUtils.isLocal(path)) {
-                        File selected = new File(path);
-                        mContentManager.addItem(selected);
-                    }
-                }
-                break;
-        }
     }
 
     /**

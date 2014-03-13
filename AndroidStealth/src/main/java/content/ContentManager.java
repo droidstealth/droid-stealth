@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * ContentManager which copies the files to the local data directory
  * Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
@@ -25,8 +26,6 @@ public class ContentManager implements IContentManager {
 
     public ContentManager(Context context){
         mDataDir = context.getExternalFilesDir(null);
-
-
     }
 
     @Override
@@ -105,6 +104,12 @@ public class ContentManager implements IContentManager {
             listener.contentChanged();
     }
 
+    /**
+     * Helper function to copy a file internally
+     * @param sourceFile
+     * @param destFile
+     * @throws IOException
+     */
     private static void copyFile(File sourceFile, File destFile) throws IOException {
         if(!destFile.exists()) {
             destFile.createNewFile();

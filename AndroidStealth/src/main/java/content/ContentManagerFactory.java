@@ -17,6 +17,7 @@ public class ContentManagerFactory {
 	}
 
 	/**
+     * @param context Used to retrieve application info, such as data folder location for the ContentManager
 	 * @return Returns an instance of the ContentManager
 	 */
 	public static IContentManager getInstance(Context context) {
