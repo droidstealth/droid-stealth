@@ -1,5 +1,7 @@
 package content;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,8 +87,9 @@ public class DummyManager implements IContentManager {
      * Generates dummy content to test with
      */
     private void generateDummyContent(){
-        for(int i = 0; i < 30; i++)
+        for(int i = 0; i < 30; i++) {
             mStorage.add(new ContentItem(new File("/"), false, "Test " + i));
+        }
     }
 
 	@Override

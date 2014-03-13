@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,8 +51,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         super.onCreate(savedInstanceState);
 
         mContentManager = ContentManagerFactory.getInstance();
-
-	    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        Log.e("STEALTH", "Wtf bro");
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);

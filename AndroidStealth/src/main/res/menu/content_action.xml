@@ -7,6 +7,11 @@
         android:showAsAction="always"
         />
     <item
+        android:id="@+id/action_lock"
+        android:icon="@android:drawable/ic_lock_idle_lock"
+        android:showAsAction="always"
+        />
+    <item
         android:id="@+id/action_share"
         android:icon="@android:drawable/ic_menu_share"
         android:showAsAction="always"/>
