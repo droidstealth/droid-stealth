@@ -21,8 +21,9 @@ public class ContentManagerFactory {
 	 * @return Returns an instance of the ContentManager
 	 */
 	public static IContentManager getInstance(Context context) {
-        if(Instance == null)
+        if(Instance == null){
             Instance = new ContentManager(context);
+        }
 		return Instance;
 	}
 }
