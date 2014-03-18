@@ -11,25 +11,15 @@ import content.ContentFragment;
  * Created by Joris Z. van den Oever on 3/13/14.
  */
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
-    private Instrumentation mInstr;
-    private String mBadNumber;
-    private String mEntryNumber;
-    private String mDeleteNumber;
-
 
     public HomeActivityTest() {
-        super("com.stealth.android", HomeActivity.class);
+        super(HomeActivity.class);
     }
 
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mInstr = getInstrumentation();
-        //TODO: Update this to go from the config? Or test setup? Example right now anyway.
-        mBadNumber = "#12345";
-        mEntryNumber = "#555";
-        mDeleteNumber = "#666";
     }
 
     /**
@@ -42,6 +32,11 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     public void testWrongPhoneNumberIntent(){
+        //TODO: Update this to go from the config? Or test setup? Example right now anyway.
+        String mBadNumber = "#12345";
+        String mEntryNumber = "#555";
+        String mDeleteNumber = "#666";
+
         Intent newCall = new Intent();
         newCall.addCategory(Intent.CATEGORY_LAUNCHER);
         newCall.putExtra(Intent.EXTRA_PHONE_NUMBER, mBadNumber);
@@ -59,6 +54,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         setActivityIntent(newCall);
         home = getActivity();
 
+        //TODO: Later test for stuff getting shown or deleted but not implemented yet.
         container = home.getSupportFragmentManager().findFragmentById(R.id.container);
         assertEquals(ContentFragment.class, container.getClass());
         home.finish();
@@ -69,7 +65,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         setActivityIntent(newCall);
         home = getActivity();
 
-        //TODO: Later test for stuff getting deleted but not implemented yet.
         container = home.getSupportFragmentManager().findFragmentById(R.id.container);
         assertEquals(ContentFragment.class, container.getClass());
     }
