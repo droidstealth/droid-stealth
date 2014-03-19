@@ -1,6 +1,5 @@
 package content;
 
-import android.content.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,131 +9,170 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import android.content.Context;
+
 /**
- * ContentManager which copies the files to the local data directory
- * Created by Alex on 13-3-14.
+ * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
-    private File mDataDir;
+	private File mDataDir;
 
-    private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
+	private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
 
-    public ContentManager(Context context){
-        mDataDir = context.getExternalFilesDir(null);
-    }
+	public ContentManager(Context context) {
+		mDataDir = context.getExternalFilesDir(null);
+	}
 
-    @Override
-    public Collection<ContentItem> getStoredContent() {
-        File[] files = mDataDir.listFiles();
-        ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+	/**
+	 * Helper function to copy a file internally
+	 *
+	 * @param sourceFile
+	 * @param destFile
+	 * @throws IOException
+	 */
+	private static void copyFile(File sourceFile, File destFile) throws IOException {
+		if (!destFile.exists()) {
+			destFile.createNewFile();
+		}
 
-        for(File file : files){
-            itemArrayList.add(new ContentItem(file, file.getName()));
-        }
+		FileChannel source = null;
+		FileChannel destination = null;
 
-        return itemArrayList;
-    }
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			destination.transferFrom(source, 0, source.size());
+		}
+		finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+	}
 
-    @Override
-    public boolean addItem(File item) {
-        try {
-            copyFile(item, new File(mDataDir, item.getName()));
-            notifyListeners();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+	@Override
+	public Collection<ContentItem> getStoredContent() {
+		File[] files = mDataDir.listFiles();
+		ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
 
-    @Override
-    public boolean removeItem(ContentItem item) {
-        boolean removed = item.getFile().delete();
-        if(removed){
-            notifyListeners();
-        }
-        return removed;
-    }
+		for (File file : files) {
+			itemArrayList.add(new ContentItem(file, file.getName()));
+		}
 
-    @Override
-    public boolean removeItems(Collection<ContentItem> itemCollection) {
-        boolean noFailure = true;
-        boolean singleSuccess = false;
-        for(ContentItem item : itemCollection){
-            boolean removed = item.getFile().delete();
-            if(removed){
-                singleSuccess = true;
-            }
-            else{
-                noFailure = false;
-            }
-        }
+		return itemArrayList;
+	}
 
-        //Empty list, we 'failed' anyway
-        if(itemCollection.size() == 0){
-            noFailure = false;
-        }
+	@Override
+	public boolean addItem(File item) {
+		try {
+			copyFile(item, new File(mDataDir, item.getName()));
+			notifyListeners();
+			return true;
+		}
+		catch (IOException e) {
+			return false;
+		}
+	}
 
-        if(singleSuccess){
-            notifyListeners();
-        }
+	@Override
+	public boolean removeItem(ContentItem item) {
+		boolean removed = item.getFile().delete();
+		if (removed) {
+			notifyListeners();
+		}
+		return removed;
+	}
 
-        return noFailure;
-    }
+	/**
+	 * Encrypts all files in the {@param contentItemCollection}.
+	 * @return true if ALL files are encrypted successfully, false otherwise.
+	 */
+	public boolean encryptItems(Collection<ContentItem> contentItemCollection){
+		boolean success = true;
 
-    @Override
-    public void addContentChangedListener(ContentChangedListener listener) {
-        if(!mListeners.contains(listener)){
-            mListeners.add(listener);
-        }
-    }
+		for(ContentItem contentItem : contentItemCollection){
+			success = contentItem.encrypt() && success;
+		}
 
-    @Override
-    public boolean removeContentChangedListener(ContentChangedListener listener) {
-        return mListeners.remove(listener);
-    }
+		return success;
+	}
 
-    @Override
-    public void removeAllContent() {
-        for(File file: mDataDir.listFiles()){
-            file.delete();
-        }
-    }
+	public boolean encryptItem(ContentItem contentItem){
+		return contentItem.encrypt();
+	}
 
-    /**
-     * Notifies all listeners of a change in content
-     */
-    private void notifyListeners(){
-        for(ContentChangedListener listener : mListeners){
-            listener.contentChanged();
-        }
-    }
+	/**
+	 * Decrypts all files in the {@param contentItemCollection}.
+	 * @return true if ALL files are decrypted successfully, false otherwise.
+	 */
+	public boolean decryptItems(Collection<ContentItem> contentItemCollection){
+		boolean success = true;
 
-    /**
-     * Helper function to copy a file internally
-     * @param sourceFile
-     * @param destFile
-     * @throws IOException
-     */
-    private static void copyFile(File sourceFile, File destFile) throws IOException {
-        if(!destFile.exists()) {
-            destFile.createNewFile();
-        }
+		for(ContentItem contentItem : contentItemCollection){
+			success = contentItem.decrypt() && success;
+		}
 
-        FileChannel source = null;
-        FileChannel destination = null;
+		return success;
+	}
 
-        try {
-            source = new FileInputStream(sourceFile).getChannel();
-            destination = new FileOutputStream(destFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
-                source.close();
-            }
-            if(destination != null) {
-                destination.close();
-            }
-        }
-    }
+	public boolean decryptItem(ContentItem contentItem){
+		return contentItem.decrypt();
+	}
+
+	@Override
+	public boolean removeItems(Collection<ContentItem> itemCollection) {
+		boolean noFailure = true;
+		boolean singleSuccess = false;
+		for (ContentItem item : itemCollection) {
+			boolean removed = item.getFile().delete();
+			if (removed) {
+				singleSuccess = true;
+			}
+			else {
+				noFailure = false;
+			}
+		}
+
+		//Empty list, we 'failed' anyway
+		if (itemCollection.size() == 0) {
+			noFailure = false;
+		}
+
+		if (singleSuccess) {
+			notifyListeners();
+		}
+
+		return noFailure;
+	}
+
+	@Override
+	public void addContentChangedListener(ContentChangedListener listener) {
+		if (!mListeners.contains(listener)) {
+			mListeners.add(listener);
+		}
+	}
+
+	@Override
+	public boolean removeContentChangedListener(ContentChangedListener listener) {
+		return mListeners.remove(listener);
+	}
+
+	@Override
+	public void removeAllContent() {
+		for (File file : mDataDir.listFiles()) {
+			file.delete();
+		}
+	}
+
+	/**
+	 * Notifies all listeners of a change in content
+	 */
+	private void notifyListeners() {
+		for (ContentChangedListener listener : mListeners) {
+			listener.contentChanged();
+		}
+	}
 }
