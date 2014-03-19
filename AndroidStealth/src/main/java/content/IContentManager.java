@@ -40,6 +40,11 @@ public interface IContentManager {
      */
     public boolean removeItems(Collection<ContentItem> itemCollection);
 
+	public boolean decryptItems(Collection<ContentItem> itemCollection);
+	public boolean decryptItem(ContentItem contentItem);
+	public boolean encryptItems(Collection<ContentItem> itemCollection);
+	public boolean encryptItem(ContentItem contentItem);
+
     /**
      * Adds a listener to the list
      * @param listener listener to be added

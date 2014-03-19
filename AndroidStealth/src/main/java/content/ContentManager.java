@@ -1,34 +1,32 @@
 package content;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.Channels;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
+import com.facebook.crypto.exception.CryptoInitializationException;
+import com.facebook.crypto.exception.KeyChainException;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
  * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
+	private ConcealCrypto crypto;
 	private File mDataDir;
-
 	private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
 
 	public ContentManager(Context context) {
 		mDataDir = context.getExternalFilesDir(null);
+		crypto = new ConcealCrypto(context);
+		System.out.println("mDataDir: " + mDataDir.toString());
 	}
 
 	/**
@@ -38,7 +36,7 @@ public class ContentManager implements IContentManager {
 	 * @param destFile
 	 * @throws IOException
 	 */
-	private static void copyFileWithoutEncryption(File sourceFile, File destFile) throws IOException {
+	private static void copyFile(File sourceFile, File destFile) throws IOException {
 		if (!destFile.exists()) {
 			destFile.createNewFile();
 		}
@@ -50,6 +48,8 @@ public class ContentManager implements IContentManager {
 			source = new FileInputStream(sourceFile).getChannel();
 			destination = new FileOutputStream(destFile).getChannel();
 			destination.transferFrom(source, 0, source.size());
+
+			System.out.println("Encrypted the file");
 		}
 		finally {
 			if (source != null) {
@@ -61,37 +61,25 @@ public class ContentManager implements IContentManager {
 		}
 	}
 
-	private static void copyFileWithEncryption(File sourceFile, File destFile) throws IOException {
-		if(!destFile.exists()){
-			destFile.createNewFile();
+	@Override
+	public boolean encryptItem(ContentItem contentItem) {
+		try {
+			// TODO Determine correct arguments for method below
+			crypto.encrypt(new File(contentItem.getFileName()), contentItem.getFile(), contentItem.getFileName());
+			return true;
 		}
-
-		FileChannel source = null;
-		WritableByteChannel destination = null;
-
-		try{
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = Channels.newChannel(new CipherOutputStream(new FileOutputStream(destFile), Cipher.getInstance("CBC")));
-
-			source.transferTo(0, source.size(), destination);
-		}
-		catch (NoSuchAlgorithmException e) {
+		catch (KeyChainException e) {
 			e.printStackTrace();
 		}
-		catch (NoSuchPaddingException e) {
+		catch (CryptoInitializationException e) {
 			e.printStackTrace();
 		}
-		finally{
-			if(source != null){
-				source.close();
-			}
-			if(destination != null){
-				destination.close();
-			}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		return false;
 	}
-
-
 
 	@Override
 	public Collection<ContentItem> getStoredContent() {
@@ -108,7 +96,7 @@ public class ContentManager implements IContentManager {
 	@Override
 	public boolean addItem(File item) {
 		try {
-			copyFileWithoutEncryption(item, new File(mDataDir, item.getName()));
+			copyFile(item, new File(mDataDir, item.getName()));
 			notifyListeners();
 			return true;
 		}
@@ -128,38 +116,72 @@ public class ContentManager implements IContentManager {
 
 	/**
 	 * Encrypts all files in the {@param contentItemCollection}.
+	 *
 	 * @return true if ALL files are encrypted successfully, false otherwise.
 	 */
-	public boolean encryptItems(Collection<ContentItem> contentItemCollection){
+	@Override
+	public boolean encryptItems(Collection<ContentItem> contentItemCollection) {
 		boolean success = true;
 
-		for(ContentItem contentItem : contentItemCollection){
-			success = contentItem.encrypt() && success;
+		for (ContentItem contentItem : contentItemCollection) {
+			success = encryptItem(contentItem) && success;
 		}
 
+		if (success) {
+			System.out.println("Encrypted items:");
+		}
+		else{
+			System.out.println("Encrypted with errors:");
+		}
+		for(ContentItem contentItem : contentItemCollection){
+			System.out.println("\t"+contentItem.getFileName());
+		}
 		return success;
-	}
-
-	public boolean encryptItem(ContentItem contentItem){
-		return contentItem.encrypt();
 	}
 
 	/**
 	 * Decrypts all files in the {@param contentItemCollection}.
+	 *
 	 * @return true if ALL files are decrypted successfully, false otherwise.
 	 */
-	public boolean decryptItems(Collection<ContentItem> contentItemCollection){
+	@Override
+	public boolean decryptItems(Collection<ContentItem> contentItemCollection) {
 		boolean success = true;
 
-		for(ContentItem contentItem : contentItemCollection){
-			success = contentItem.decrypt() && success;
+		for (ContentItem contentItem : contentItemCollection) {
+			success = decryptItem(contentItem) && success;
 		}
 
+		if (success) {
+			System.out.println("Decrypted items:");
+		}
+		else{
+			System.out.println("Decrypted with errors:");
+		}
+		for(ContentItem contentItem : contentItemCollection){
+			System.out.println("\t"+contentItem.getFileName());
+		}
 		return success;
 	}
 
-	public boolean decryptItem(ContentItem contentItem){
-		return contentItem.decrypt();
+	@Override
+	public boolean decryptItem(ContentItem contentItem) {
+		try {
+			// TODO Determine correct arguments for method below
+			this.crypto.decrypt(contentItem.getFile(), new File(contentItem.getFileName()), contentItem.getFileName());
+			return true;
+		}
+		catch (KeyChainException e) {
+			e.printStackTrace();
+		}
+		catch (CryptoInitializationException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	@Override

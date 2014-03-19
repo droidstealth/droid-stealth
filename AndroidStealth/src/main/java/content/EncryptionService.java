@@ -1,4 +1,4 @@
-package spikes.filepicker;
+package content;
 
 import android.app.Service;
 import android.content.Intent;

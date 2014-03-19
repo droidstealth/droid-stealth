@@ -45,7 +45,7 @@
             </intent-filter>
         </receiver>
 
-		<service android:name="spikes.filepicker.EncryptionService" />
+		<service android:name="content.EncryptionService" />
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:icon="@drawable/ic_chooser"
