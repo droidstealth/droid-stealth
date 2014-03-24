@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -65,7 +68,7 @@ public class ContentManager implements IContentManager {
 	public boolean encryptItem(ContentItem contentItem) {
 		try {
 			// TODO Determine correct arguments for method below
-			crypto.encrypt(new File(contentItem.getFileName()), contentItem.getFile(), contentItem.getFileName());
+			crypto.encrypt(new File(mDataDir, contentItem.getFileName()), contentItem.getFile(), contentItem.getFileName());
 			return true;
 		}
 		catch (KeyChainException e) {
@@ -128,13 +131,13 @@ public class ContentManager implements IContentManager {
 		}
 
 		if (success) {
-			System.out.println("Encrypted items:");
+            Log.i(this.getClass().toString(),"Encrypted items:");
 		}
 		else{
-			System.out.println("Encrypted with errors:");
+			Log.i(this.getClass().toString(), "Encrypted with errors:");
 		}
 		for(ContentItem contentItem : contentItemCollection){
-			System.out.println("\t"+contentItem.getFileName());
+			Log.i(this.getClass().toString(), "\t"+contentItem.getFileName());
 		}
 		return success;
 	}
@@ -167,8 +170,10 @@ public class ContentManager implements IContentManager {
 	@Override
 	public boolean decryptItem(ContentItem contentItem) {
 		try {
+            File cacheDir = Environment.getDownloadCacheDirectory();
+            File tempFile = File.createTempFile(contentItem.getFileName(), "tmp", cacheDir);
 			// TODO Determine correct arguments for method below
-			this.crypto.decrypt(contentItem.getFile(), new File(contentItem.getFileName()), contentItem.getFileName());
+			this.crypto.decrypt(contentItem.getFile(), tempFile, contentItem.getFileName());
 			return true;
 		}
 		catch (KeyChainException e) {
