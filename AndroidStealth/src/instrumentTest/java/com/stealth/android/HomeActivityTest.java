@@ -20,10 +20,12 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
     }
 
     /**
      * Test to make sure the home is empty unless called with the right intent.
+     * TODO: Determine correct precondition for the activity though a null container seems about right
      */
     public void testPreconditions() {
         HomeActivity home = getActivity();
