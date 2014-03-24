@@ -67,8 +67,10 @@ public class ContentManager implements IContentManager {
 	@Override
 	public boolean encryptItem(ContentItem contentItem) {
 		try {
+			File cacheDir = Environment.getDownloadCacheDirectory();
+			File tempFile = File.createTempFile(contentItem.getFileName(), "tmp", cacheDir);
 			// TODO Determine correct arguments for method below
-			crypto.encrypt(new File(mDataDir, contentItem.getFileName()), contentItem.getFile(), contentItem.getFileName());
+			crypto.encrypt(tempFile, contentItem.getFile(), contentItem.getFileName());
 			return true;
 		}
 		catch (KeyChainException e) {
