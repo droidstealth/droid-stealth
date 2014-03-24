@@ -1,5 +1,6 @@
 package content;
 
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -21,8 +22,9 @@ public interface IContentManager {
     /**
      * Adds a new item to the storage
      * @param item the item to be added
+     * @return whether the item was added successfully
      */
-    public void addItem(ContentItem item);
+    public boolean addItem(File item);
 
     /**
      * Removes an item from the storage
