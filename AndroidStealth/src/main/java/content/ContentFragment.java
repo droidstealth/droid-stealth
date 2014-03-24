@@ -247,26 +247,24 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 						break;
 				}
 
-			}
-			actionMode.finish();
-			return true;
-		}
+            }
+            actionMode.finish();
+            return true;
+        }
 
-		/**
-		 * Called when the ActionMode is finalized. Unchecks all items in view.
-		 *
-		 * @param actionMode
-		 */
-		@Override
-		public void onDestroyActionMode(ActionMode actionMode) {
-			// Destroying action mode, deselect all items
-			for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
-				mListView.setItemChecked(i, false);
-			}
+        /**
+         * Called when the ActionMode is finalized. Unchecks all items in view.
+         * @param actionMode
+         */
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            // Destroying action mode, deselect all items
+            for (int i = 0; i < mListView.getAdapter().getCount(); i++)
+                mListView.setItemChecked(i, false);
 
-			if (actionMode == mMode) {
-				mMode = null;
-			}
-		}
-	}
+            if (actionMode == mMode) {
+                mMode = null;
+            }
+        }
+    }
 }
