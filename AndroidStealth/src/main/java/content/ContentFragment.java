@@ -58,6 +58,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         super.onCreate(savedInstanceState);
 
         mContentManager = ContentManagerFactory.getInstance(getActivity());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         mMode = null;
         mAdapter = new ContentAdapter(mContentManager);
@@ -232,7 +233,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                     case R.id.action_share:
                         //TODO share goes here
                         break;
-                    case R.id.action_remove:
+                    case R.id.action_shred:
                         ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
                         for (long id: selected) {
                             itemArrayList.add(mAdapter.getItem((int)id));
