@@ -1,8 +1,11 @@
 package content;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -95,6 +98,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
         mListView.setAdapter(mAdapter);
+
+        // TODO move to proper location. This is just for demo/testing:
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("All files locked");
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setIcon(R.drawable.ic_menu_lock);
 
         return content;
     }
