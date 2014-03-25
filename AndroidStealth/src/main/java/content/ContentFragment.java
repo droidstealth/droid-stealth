@@ -114,138 +114,159 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	}
 
-	/**
-	 * Listens for the return of the get content intent. Adds the items if successful
-	 *
-	 * @param requestCode
-	 * @param resultCode
-	 * @param data
-	 */
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-			case REQUEST_CHOOSER:
+    /**
+     * Listens for the return of the get content intent. Adds the items if successful
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case REQUEST_CHOOSER:
 
-				if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
 
-					final Uri uri = data.getData();
+                    final Uri uri = data.getData();
 
-					// Get the File path from the Uri
-					String path = FileUtils.getPath(getActivity(), uri);
+                    // Get the File path from the Uri
+                    String path = FileUtils.getPath(getActivity(), uri);
 
-					// Alternatively, use FileUtils.getFile(Context, Uri)
-					if (path != null && FileUtils.isLocal(path)) {
-						File selected = new File(path);
-						mContentManager.addItem(selected);
-					}
-				}
-				break;
-		}
-	}
+                    // Alternatively, use FileUtils.getFile(Context, Uri)
+                    if (path != null && FileUtils.isLocal(path)) {
+                        File selected = new File(path);
+                        mContentManager.addItem(selected);
+                    }
+                }
+                break;
+        }
+    }
 
-	/**
-	 * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode. If the view is in
-	 * ActionMode, check whether any items are still checked after the click.
-	 *
-	 * @param adapterView
-	 * @param view
-	 * @param position
-	 * @param l
-	 */
-	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-		if (mMode != null) {
-			disableIfNoneChecked();
-		}
-		else {
-			mListView.setItemChecked(position, false);
-		}
-	}
+    /**
+     * Depending on the selection, this should enable/disable certain actions.
+     * For instance:
+     * One can only share files that are unlocked
+     * One can only lock files that are unlocked or being unlocked
+     * One can only unlock files that are locked or being locked
+     */
+    public void handleActionButtons() {
+        // TODO
+    }
 
-	/**
-	 * Enables ActionMode if it's not active. Otherwise make sure the ActionMode can still be active.
-	 *
-	 * @param adapterView
-	 * @param view
-	 * @param position
-	 * @param l
-	 * @return
-	 */
-	@Override
-	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+    /**
+     * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode.
+     * If the view is in ActionMode, check whether any items are still checked after the click.
+     * @param adapterView
+     * @param view
+     * @param position
+     * @param l
+     */
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(mMode != null) {
+            disableIfNoneChecked();
+        }
+        else {
+            // so we want to try to see how it feels if clicking on a file always starts the
+            // selection UI
+            mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            mMode = ((ActionBarActivity)getActivity())
+                    .startSupportActionMode(new ContentShareMultiModeListener());
+            mListView.setItemChecked(position, true);
+        }
+        handleActionButtons();
+    }
 
-		if (mMode == null) {
-			mListView.setItemChecked(position, true);
-			mMode = ((ActionBarActivity) getActivity())
-					.startSupportActionMode(new ContentShareMultiModeListener());
-		}
-		else {
-			disableIfNoneChecked();
-		}
+    /**
+     * Enables ActionMode if it's not active. Otherwise make sure the ActionMode can still be active.
+     * @param adapterView
+     * @param view
+     * @param position
+     * @param l
+     * @return
+     */
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-		return true;
-	}
+        if (mMode == null) {
+            mListView.setItemChecked(position, true);
+            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            mMode = ((ActionBarActivity)getActivity())
+                    .startSupportActionMode(new ContentShareMultiModeListener());
+        }
+        else {
+            disableIfNoneChecked();
+        }
+        handleActionButtons();
 
-	/**
-	 * Disables the ActionMode if no more items are checked
-	 */
-	private void disableIfNoneChecked() {
-		if (mListView.getCheckedItemIds().length == 0) {
-			mMode.finish();
-		}
-	}
+        return true;
+    }
 
-	/**
-	 * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html Helper
-	 * class which shows the CAB and
-	 */
-	private class ContentShareMultiModeListener implements ActionMode.Callback {
+    /**
+     * Disables the ActionMode if no more items are checked
+     */
+    private void disableIfNoneChecked(){
+        if(mListView.getCheckedItemIds().length == 0){
+            mMode.finish();
+        }
+    }
 
-		/**
-		 * Called when the ActionMode is created. Inflates the ActionMode Menu.
-		 *
-		 * @param actionMode The mode currently active
-		 * @param menu       The menu to which the items should be inflated
-		 * @return
-		 */
-		@Override
-		public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-			MenuInflater inflater = getActivity().getMenuInflater();
-			inflater.inflate(R.menu.content_action, menu);
-			return true;
-		}
+    /**
+     * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html
+     * Helper class which shows the CAB and
+     */
+    private class ContentShareMultiModeListener implements ActionMode.Callback {
 
-		@Override
-		public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-			return false;
-		}
+        /**
+         * Called when the ActionMode is created. Inflates the ActionMode Menu.
+         * @param actionMode The mode currently active
+         * @param menu The menu to which the items should be inflated
+         * @return
+         */
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.content_action, menu);
+            return true;
+        }
 
-		/**
-		 * Called when an ActionItem is clicked. Handles removal and sharing of ContentItem
-		 *
-		 * @param actionMode The mode currently active
-		 * @param menuItem   The ActionItem clicked
-		 * @return
-		 */
-		@Override
-		public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-			long[] selected = mListView.getCheckedItemIds();
-			if (selected.length > 0) {
-				ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
-				for (long id : selected) {
-					itemArrayList.add(mAdapter.getItem((int) id));
-				}
-				switch (menuItem.getItemId()) {
-					case R.id.action_share:
-						//TODO share goes here
-						mContentManager.encryptItems(itemArrayList);
-						break;
-					case R.id.action_remove:
-						//                        mContentManager.removeItems(itemArrayList);
-						mContentManager.decryptItems(itemArrayList);
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
 
-						break;
-				}
+        /**
+         * Called when an ActionItem is clicked. Handles removal and sharing of ContentItem
+         * @param actionMode The mode currently active
+         * @param menuItem The ActionItem clicked
+         * @return
+         */
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            long[] selected = mListView.getCheckedItemIds();
+            if (selected.length > 0) {
+                switch (menuItem.getItemId()){
+                    case R.id.action_lock:
+                        //TODO lock goes here
+                        break;
+                    case R.id.action_unlock:
+                        //TODO unlock goes here
+                        break;
+                    case R.id.action_share:
+                        //TODO share goes here
+                        break;
+                    case R.id.action_remove:
+                        //TODO unlock files if necessary, remove from list (don't delete file)
+                        break;
+                    case R.id.action_shred:
+                        ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+                        for (long id: selected) {
+                            itemArrayList.add(mAdapter.getItem((int)id));
+                        }
+                        mContentManager.removeItems(itemArrayList);
+
+                        break;
+                }
 
             }
             actionMode.finish();
