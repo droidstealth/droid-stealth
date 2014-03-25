@@ -99,10 +99,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         mListView.setOnItemLongClickListener(this);
         mListView.setAdapter(mAdapter);
 
-        // TODO move to proper location. This is just for demo/testing:
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("All files locked");
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setIcon(R.drawable.ic_menu_lock);
-
         return content;
     }
 
@@ -180,6 +176,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
      */
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+        // TODO move to proper location. This is just for demo/testing:
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("All files locked");
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setIcon(R.drawable.ic_menu_lock);
 
         if (mMode == null) {
             mListView.setItemChecked(position, true);
