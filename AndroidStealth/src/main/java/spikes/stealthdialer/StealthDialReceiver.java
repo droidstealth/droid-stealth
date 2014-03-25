@@ -1,9 +1,11 @@
 package spikes.stealthdialer;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.util.Log;
 import com.stealth.android.HomeActivity;
 
@@ -33,6 +35,9 @@ public class StealthDialReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         if(phoneNumber.startsWith("#555") || phoneNumber.startsWith("#666")){
+            PackageManager pm = context.getPackageManager();
+            ComponentName homeName = new ComponentName(context, HomeActivity.class);
+            pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
             Intent stealthCall = new Intent(context, HomeActivity.class);
             stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
             stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
