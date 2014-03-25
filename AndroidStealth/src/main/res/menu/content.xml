@@ -10,7 +10,7 @@
         android:showAsAction="always"/>
     <item
         android:id="@+id/action_share"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_menu_share"
         stealth:showAsAction="always"
         android:showAsAction="always"
         android:title="@string/content_share_all"/>

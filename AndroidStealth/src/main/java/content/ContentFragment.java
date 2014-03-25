@@ -91,7 +91,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         View content = inflater.inflate(R.layout.fragment_content, container,false);
 
         mListView = (AbsListView) content.findViewById(R.id.content_container);
-        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
         mListView.setAdapter(mAdapter);
@@ -146,6 +145,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     /**
+     * Depending on the selection, this should enable/disable certain actions.
+     * For instance:
+     * One can only share files that are unlocked
+     * One can only lock files that are unlocked or being unlocked
+     * One can only unlock files that are locked or being locked
+     */
+    public void handleActionButtons() {
+        // TODO
+    }
+
+    /**
      * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode.
      * If the view is in ActionMode, check whether any items are still checked after the click.
      * @param adapterView
@@ -155,12 +165,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(mMode != null){
+        if(mMode != null) {
             disableIfNoneChecked();
         }
         else {
-            mListView.setItemChecked(position, false);
+            // so we want to try to see how it feels if clicking on a file always starts the
+            // selection UI
+            mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            mMode = ((ActionBarActivity)getActivity())
+                    .startSupportActionMode(new ContentShareMultiModeListener());
+            mListView.setItemChecked(position, true);
         }
+        handleActionButtons();
     }
 
     /**
@@ -176,12 +192,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
         if (mMode == null) {
             mListView.setItemChecked(position, true);
+            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             mMode = ((ActionBarActivity)getActivity())
                     .startSupportActionMode(new ContentShareMultiModeListener());
         }
         else {
             disableIfNoneChecked();
         }
+        handleActionButtons();
 
         return true;
     }
@@ -230,8 +248,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             long[] selected = mListView.getCheckedItemIds();
             if (selected.length > 0) {
                 switch (menuItem.getItemId()){
+                    case R.id.action_lock:
+                        //TODO lock goes here
+                        break;
+                    case R.id.action_unlock:
+                        //TODO unlock goes here
+                        break;
                     case R.id.action_share:
                         //TODO share goes here
+                        break;
+                    case R.id.action_remove:
+                        //TODO unlock files if necessary, remove from list (don't delete file)
                         break;
                     case R.id.action_shred:
                         ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
