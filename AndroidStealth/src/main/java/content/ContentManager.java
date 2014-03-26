@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +12,9 @@ import java.util.List;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
-
+import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
  * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
@@ -64,23 +62,27 @@ public class ContentManager implements IContentManager {
 		}
 	}
 
-	@Override
-	public boolean encryptItem(ContentItem contentItem) {
+	private boolean encryptItem(ContentItem contentItem) {
 		try {
-			File cacheDir = Environment.getDownloadCacheDirectory();
-			File tempFile = File.createTempFile(contentItem.getFileName(), "tmp", cacheDir);
-			// TODO Determine correct arguments for method below
-			crypto.encrypt(tempFile, contentItem.getFile(), contentItem.getFileName());
-			return true;
+			Log.i(this.getClass().toString() + ".encryptItem",
+					"Encrypting file " + contentItem.getFile().getAbsolutePath());
+			File encryptedFile = new File(mDataDir+"/"+contentItem.getFileName()+".CRYPT");
+			encryptedFile.createNewFile();
+
+//			Log.i(this.getClass().toString()+".encryptItem", "Created file: "+encryptedFile.getAbsolutePath());
+
+			crypto.encrypt(encryptedFile, contentItem.getFile(), contentItem.getFileName());
+
+			return contentItem.getFile().delete();
 		}
 		catch (KeyChainException e) {
-			e.printStackTrace();
+			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
 		}
 		catch (CryptoInitializationException e) {
-			e.printStackTrace();
+			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
 		}
 
 		return false;
@@ -120,7 +122,7 @@ public class ContentManager implements IContentManager {
 	}
 
 	/**
-	 * Encrypts all files in the {@param contentItemCollection}.
+	 * Encrypts all files in the {@param contentItemCollection}. Deletes the original file after encrypting them.
 	 *
 	 * @return true if ALL files are encrypted successfully, false otherwise.
 	 */
@@ -133,19 +135,22 @@ public class ContentManager implements IContentManager {
 		}
 
 		if (success) {
-            Log.i(this.getClass().toString(),"Encrypted items:");
+			Log.i(this.getClass().toString(), "Encrypted items:");
 		}
-		else{
-			Log.i(this.getClass().toString(), "Encrypted with errors:");
+		else {
+			Log.e(this.getClass().toString(), "Encrypted with errors:");
 		}
-		for(ContentItem contentItem : contentItemCollection){
-			Log.i(this.getClass().toString(), "\t"+contentItem.getFileName());
+		for (ContentItem contentItem : contentItemCollection) {
+			Log.e(this.getClass().toString(), contentItem.getFile().getAbsolutePath());
 		}
+
+		notifyListeners();
+
 		return success;
 	}
 
 	/**
-	 * Decrypts all files in the {@param contentItemCollection}.
+	 * Decrypts all files in the {@param contentItemCollection}. Deletes the encrypted files after decrypting them.
 	 *
 	 * @return true if ALL files are decrypted successfully, false otherwise.
 	 */
@@ -158,34 +163,47 @@ public class ContentManager implements IContentManager {
 		}
 
 		if (success) {
-			System.out.println("Decrypted items:");
+			Log.i(this.getClass().toString()+".decryptItems", "Decrypted items:");
 		}
-		else{
-			System.out.println("Decrypted with errors:");
+		else {
+			Log.w(this.getClass().toString()+".decryptItems","Decrypted with errors:");
 		}
-		for(ContentItem contentItem : contentItemCollection){
-			System.out.println("\t"+contentItem.getFileName());
+		for (ContentItem contentItem : contentItemCollection) {
+			System.out.println("\t" + contentItem.getFileName());
 		}
+
+		notifyListeners();
+
 		return success;
 	}
 
-	@Override
 	public boolean decryptItem(ContentItem contentItem) {
 		try {
-            File cacheDir = Environment.getDownloadCacheDirectory();
-            File tempFile = File.createTempFile(contentItem.getFileName(), "tmp", cacheDir);
-			// TODO Determine correct arguments for method below
-			this.crypto.decrypt(contentItem.getFile(), tempFile, contentItem.getFileName());
-			return true;
+			// Remove .CRYPT from filename
+			String filename = mDataDir+"/"+contentItem.getFileName();
+			filename = filename.substring(0, filename.length() - 6);
+
+			// Create target file
+			File decryptedFile = new File(filename);
+			decryptedFile.createNewFile();
+
+			this.crypto.decrypt(contentItem.getFile(), decryptedFile, contentItem.getFileName());
+
+			return contentItem.getFile().delete();
 		}
 		catch (KeyChainException e) {
-			e.printStackTrace();
+			Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
 		}
 		catch (CryptoInitializationException e) {
-			e.printStackTrace();
+			Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			if (e instanceof NativeGCMCipherException) {
+				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
+				contentItem.getFile().delete();
+			}
+			else
+				Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
 		}
 
 		return false;

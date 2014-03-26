@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -245,12 +246,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             long[] selected = mListView.getCheckedItemIds();
             if (selected.length > 0) {
-                switch (menuItem.getItemId()){
+	            ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+	            for(long id : selected){
+		            itemArrayList.add(mAdapter.getItem((int)id));
+	            }
+	            switch (menuItem.getItemId()){
                     case R.id.action_lock:
-                        //TODO lock goes here
+	                    mContentManager.encryptItems(itemArrayList);
                         break;
                     case R.id.action_unlock:
-                        //TODO unlock goes here
+	                    mContentManager.decryptItems(itemArrayList);
                         break;
                     case R.id.action_share:
                         //TODO share goes here
@@ -259,10 +264,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                         //TODO unlock files if necessary, remove from list (don't delete file)
                         break;
                     case R.id.action_shred:
-                        ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
-                        for (long id: selected) {
-                            itemArrayList.add(mAdapter.getItem((int)id));
-                        }
                         mContentManager.removeItems(itemArrayList);
 
                         break;
