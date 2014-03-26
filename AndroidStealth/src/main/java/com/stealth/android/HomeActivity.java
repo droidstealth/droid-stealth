@@ -50,6 +50,9 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        if(BuildConfig.DEBUG)
+            return;
+
         PackageManager pm = getPackageManager();
         ComponentName homeName = new ComponentName(this, HomeActivity.class);
         if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT){
@@ -61,10 +64,20 @@ public class HomeActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-	    /*try {
+
+        if(BuildConfig.DEBUG){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new ContentFragment())
+                    .commit();
+            return;
+        }
+
+        try {
 		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		    if (phoneNumber.startsWith("#555")) {
-                // TODO some actions
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new ContentFragment())
+                        .commit();
 		    }
 		    else if (phoneNumber.startsWith("#666")) {
 			    // TODO wipe data here if activity mode is 'panic'
@@ -74,10 +87,8 @@ public class HomeActivity extends ActionBarActivity
 	    catch (NullPointerException e) {
 		    e.printStackTrace();
 		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
-	    }*/
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new ContentFragment())
-                .commit();
+	    }
+
     }
 
     public void restoreActionBar() {
