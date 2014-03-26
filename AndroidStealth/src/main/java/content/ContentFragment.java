@@ -135,8 +135,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case CAMERA_REQUEST:
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                //TODO handle image
+                if (resultCode == Activity.RESULT_OK) {
+
+                    // TODO Copy the file to other directory or whatever you want
+
+                    // mContext is the context of the activity
+                    if (data.getData() != null) {
+                        getActivity().getContentResolver().delete(data.getData(), null, null);
+                    }
+                }
+                break;
             case REQUEST_CHOOSER:
 
                 if (resultCode == Activity.RESULT_OK) {
@@ -178,6 +186,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(mMode != null) {
+            if (mListView.getChoiceMode() == ListView.CHOICE_MODE_SINGLE
+                    && mListView.isItemChecked(position)) {
+                // disable the item at given position so it's more easy for the user
+                // to deselect a file. The main purpose is usability.
+                mListView.setItemChecked(position, false);
+            }
             disableIfNoneChecked();
         }
         else {

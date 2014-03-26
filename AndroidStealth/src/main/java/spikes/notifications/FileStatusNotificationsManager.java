@@ -29,6 +29,17 @@ public class FileStatusNotificationsManager {
         mContext = context;
     }
 
+    private static final int NOTIFICATION_ID_LOCKING = 1;
+    private static final int NOTIFICATION_ID_UNLOCKING = 2;
+    private static final int NOTIFICATION_ID_UNLOCKED = 3;
+
+    /**
+     * Hides the notification for indicating the user that files are currently being locked.
+     */
+    public void hideFilesLocking() {
+        cancel(NOTIFICATION_ID_LOCKING);
+    }
+
     /**
      * Show the notification for indicating the user that files are currently being locked.
      */
@@ -47,10 +58,18 @@ public class FileStatusNotificationsManager {
         mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
         mBuilder.setContentTitle(EZ.str(R.string.notification_locking_title));
         mBuilder.setContentText(EZ.str(R.string.notification_locking_sub));
+        mBuilder.setOngoing(true);
 
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
-        build(mBuilder, 0);
+        build(mBuilder, NOTIFICATION_ID_LOCKING);
+    }
+
+    /**
+     * Hides the notification for indicating the user that files are currently being locked.
+     */
+    public void hideFilesUnlocking() {
+        cancel(NOTIFICATION_ID_UNLOCKING);
     }
 
     /**
@@ -75,7 +94,14 @@ public class FileStatusNotificationsManager {
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
         mBuilder.setContentIntent(generatePendingIntent());
-        build(mBuilder, 1);
+        build(mBuilder, NOTIFICATION_ID_UNLOCKING);
+    }
+
+    /**
+     * Hide the notification for indicating the user that files are currently in the unlocked state.
+     */
+    public void hideFilesUnlocked() {
+        cancel(NOTIFICATION_ID_UNLOCKED);
     }
 
     /**
@@ -86,9 +112,10 @@ public class FileStatusNotificationsManager {
         mBuilder.setSmallIcon(R.drawable.ic_stat_unlocked);
         mBuilder.setContentTitle(EZ.str(R.string.notification_unlocked_title));
         mBuilder.setContentText(EZ.str(R.string.notification_unlocked_sub));
+        mBuilder.setOngoing(true);
 
         mBuilder.setContentIntent(generatePendingIntent());
-        build(mBuilder, 2);
+        build(mBuilder, NOTIFICATION_ID_UNLOCKED);
     }
 
     /**
@@ -99,15 +126,27 @@ public class FileStatusNotificationsManager {
     private void build(NotificationCompat.Builder notification, int id) {
         NotificationManager mNotificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
         mNotificationManager.notify(id, notification.build());
     }
 
     /**
-     * Generates the intent. //TODO create the intent for locking files
+     * Cancels the notification
+     * @param id the id of the notification, allows changing this notification
+     */
+    private void cancel(int id) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(id);
+    }
+
+    /**
+     * Generates the intent.
      * @return
      */
     private PendingIntent generatePendingIntent() {
+
+        //TODO create the intent for messaging encryption service to lock the files
+
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(mContext, HomeActivity.class);
 
