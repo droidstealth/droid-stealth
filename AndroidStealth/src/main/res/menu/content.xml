@@ -9,37 +9,9 @@
         stealth:showAsAction="always"
         android:showAsAction="always"/>
     <item
-        android:id="@+id/action_share"
-        android:icon="@drawable/ic_menu_share"
+        android:id="@+id/content_make"
+        android:icon="@drawable/ic_menu_make"
+        android:title="@string/content_add"
         stealth:showAsAction="always"
-        android:showAsAction="always"
-        android:title="@string/content_share_all"/>
-    <item
-        android:id="@+id/action_lock"
-        android:icon="@drawable/ic_menu_lock"
-        stealth:showAsAction="always"
-        android:showAsAction="always"
-        android:title="@string/content_lock_hide_all"
-        />
-    <item
-        android:id="@+id/action_unlock"
-        android:icon="@drawable/ic_menu_unlock"
-        stealth:showAsAction="always"
-        android:showAsAction="always"
-        android:title="@string/content_unlock_show_all"
-        />
-    <item
-        android:id="@+id/action_shred"
-        android:icon="@drawable/ic_menu_shred"
-        stealth:showAsAction="never"
-        android:showAsAction="never"
-        android:title="@string/content_shred_all"
-        />
-    <item
-        android:id="@+id/action_remove"
-        android:icon="@drawable/ic_menu_remove"
-        stealth:showAsAction="never"
-        android:showAsAction="never"
-        android:title="@string/content_remove_all"
-        />
+        android:showAsAction="always"/>
 </menu>

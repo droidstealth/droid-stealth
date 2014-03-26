@@ -13,10 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.widget.Toast;
+
+import com.stealth.utils.EZ;
+
+import java.io.File;
+
 import content.ContentFragment;
 
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
+import spikes.notifications.FileStatusNotificationsManager;
 import spikes.stealthdialer.StealthDialReceiver;
 
 public class HomeActivity extends ActionBarActivity
@@ -38,6 +44,11 @@ public class HomeActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        EZ.setContext(this);
+
+        FileStatusNotificationsManager.get().showFilesLocking();
+        FileStatusNotificationsManager.get().showFilesUnlocking();
+        FileStatusNotificationsManager.get().showFilesUnlocked();
 
         mSharing = new APSharing(this);
 

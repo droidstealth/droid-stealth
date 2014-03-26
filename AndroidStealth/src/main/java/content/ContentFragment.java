@@ -1,14 +1,15 @@
 package content;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -36,6 +37,7 @@ import spikes.filepicker.EncryptionService;
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private static final int REQUEST_CHOOSER = 1234;
+    private static final int CAMERA_REQUEST = 1888;
 
     private AbsListView mListView;
     private ActionMode mMode;
@@ -114,6 +116,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                 Intent intent = Intent.createChooser(getContentIntent, "Select a file");
                 startActivityForResult(intent, REQUEST_CHOOSER);
                 return true;
+            case R.id.content_make:
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -128,6 +134,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
+            case CAMERA_REQUEST:
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                //TODO handle image
             case REQUEST_CHOOSER:
 
                 if (resultCode == Activity.RESULT_OK) {
