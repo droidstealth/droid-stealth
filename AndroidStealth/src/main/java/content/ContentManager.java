@@ -50,7 +50,7 @@ public class ContentManager implements IContentManager {
 			destination = new FileOutputStream(destFile).getChannel();
 			destination.transferFrom(source, 0, source.size());
 
-			System.out.println("Encrypted the file");
+			System.out.println("Copied the file");
 		}
 		finally {
 			if (source != null) {
