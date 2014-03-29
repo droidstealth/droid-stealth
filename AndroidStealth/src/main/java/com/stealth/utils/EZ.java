@@ -1,6 +1,10 @@
 package com.stealth.utils;
 
+import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
+import android.os.Handler;
+import android.widget.Toast;
 
 /**
  * Read: easy :)
@@ -35,5 +39,36 @@ public class EZ {
      */
     public static String str(int resource) {
         return sContext.getResources().getString(resource);
+    }
+
+    /**
+     * Show a toast message (automatically runs this on main thread)
+     * @param message_resource the string resource to show in a toast
+     */
+    public static void toast(int message_resource) {
+        toast(str(message_resource));
+    }
+
+    /**
+     * Show a toast message (automatically runs this on main thread)
+     * @param message the message to show in a toast
+     */
+    public static void toast(final String message) {
+        runOnMain(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), message,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Give a runnable to run on the main thread, for instance to modify the UI code
+     * from a different thread
+     * @param run The runnable to run on the main thread
+     */
+    public static void runOnMain(Runnable run) {
+        new Handler(getContext().getMainLooper()).post(run);
     }
 }

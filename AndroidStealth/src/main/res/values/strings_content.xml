@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><resources>
+
+    <string name="content_fail_thumb">Could not create thumbnail</string>
+    <string name="content_fail_clean">Could not clean up</string>
+    <string name="content_fail_original_delete">Could not delete the original file. Please do it manually.</string>
+</resources>

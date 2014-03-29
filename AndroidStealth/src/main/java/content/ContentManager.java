@@ -1,6 +1,14 @@
 package content;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.android.R;
+import com.stealth.utils.EZ;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,11 +24,14 @@ import java.util.List;
  */
 public class ContentManager implements IContentManager {
     private File mDataDir;
+    private File mThumbDir;
 
     private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
 
     public ContentManager(Context context){
         mDataDir = context.getExternalFilesDir(null);
+        mThumbDir = new File(mDataDir, "_thumbs");
+        mThumbDir.mkdir();
     }
 
     @Override
@@ -35,15 +46,53 @@ public class ContentManager implements IContentManager {
         return itemArrayList;
     }
 
-    @Override
-    public boolean addItem(File item) {
+    /**
+     * Creates the thumbnail for an item and saves it in the thumbnail folder
+     * @param item the file to generate the thumbnail of
+     * @return the created thumbnail
+     */
+    public File createThumbnail(File item) {
         try {
-            copyFile(item, new File(mDataDir, item.getName()));
-            notifyListeners();
-            return true;
+            Bitmap thumb = FileUtils.getThumbnail(EZ.getContext(), item);
+            if (thumb == null) return null;
+            File thumbFile = new File(mThumbDir, item.getName());
+            FileOutputStream out = new FileOutputStream(thumbFile);
+            thumb.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+            return thumbFile;
         } catch (IOException e) {
-            return false;
+            e.printStackTrace();
+            return null;
         }
+    }
+
+    @Override
+    public boolean addItem(final File item) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File target = new File(mDataDir, item.getName());
+                File thumb = null;
+                try {
+                    // create thumbnail
+                    thumb = createThumbnail(item);
+                    if (thumb == null) EZ.toast(R.string.content_fail_thumb);
+                    // copy to our folder
+                    copyFile(item, target);
+                    // delete original
+                    boolean removed = item.delete();
+                    if (!removed) EZ.toast(R.string.content_fail_original_delete);
+                    // notify that we are done
+                    notifyListeners();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // cleanup
+                    if (target.exists() && !target.delete()) EZ.toast(R.string.content_fail_clean);
+                    if (thumb != null && thumb.exists() && !thumb.delete()) EZ.toast(R.string.content_fail_clean);
+                }
+            }
+        }).start();
+        return true;
     }
 
     @Override
@@ -101,10 +150,22 @@ public class ContentManager implements IContentManager {
     }
 
     /**
-     * Notifies all listeners of a change in content
+     * Notifies all listeners of a change in content. Tries to do it on the UI thread!
      */
     private void notifyListeners(){
-        for(ContentChangedListener listener : mListeners){
+        EZ.runOnMain(new Runnable() {
+            @Override
+            public void run() {
+                notifyListenersNow();
+            }
+        });
+    }
+
+    /**
+     * Notifies all listeners of a change in content as we speak.
+     */
+    private void notifyListenersNow() {
+        for (ContentChangedListener listener : mListeners){
             listener.contentChanged();
         }
     }
