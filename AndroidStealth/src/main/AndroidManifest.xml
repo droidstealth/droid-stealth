@@ -30,7 +30,7 @@
             android:parentActivityName="com.stealth.android.HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="HomeActivity" />
+                android:value="com.stealth.android.HomeActivity" />
         </activity>
 
         <service android:name="sharing.APSharing.HttpServerService"

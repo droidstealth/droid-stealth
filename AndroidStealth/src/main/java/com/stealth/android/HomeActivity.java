@@ -2,8 +2,10 @@ package com.stealth.android;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -50,12 +52,21 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean navlearned = sp.getBoolean("navigation_drawer_learned", false);
+        Log.w("App Drawer: State", "Navigation Drawer learned is: " + navlearned);
         PackageManager pm = getPackageManager();
         ComponentName homeName = new ComponentName(this, HomeActivity.class);
         if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT){
             Log.w("Hiding: Disable", "Disabling app drawer icon.");
             pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.finish();
     }
 
     @Override
