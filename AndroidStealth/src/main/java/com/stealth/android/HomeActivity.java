@@ -1,9 +1,12 @@
 package com.stealth.android;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import content.ContentFragment;
 
+import content.EncryptionService;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 import spikes.stealthdialer.StealthDialReceiver;
@@ -34,7 +38,40 @@ public class HomeActivity extends ActionBarActivity
 
     private APSharing mSharing;
 
-    @Override
+	private EncryptionService mEncryptionService;
+
+	private boolean mIsBound;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+			mEncryptionService = ((EncryptionService.ServiceBinder)iBinder).getService();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName componentName) {
+			mEncryptionService = null;
+		}
+	};
+
+	void doBindService(){
+		bindService(new Intent(HomeActivity.this, EncryptionService.class), mConnection, Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+	}
+
+	void doUnbindService(){
+		if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
+	}
+
+	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		doUnbindService();
+	}
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -56,6 +93,8 @@ public class HomeActivity extends ActionBarActivity
             Log.w("Hiding: Disable", "Disabling app drawer icon.");
             pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
+
+	    doBindService();
     }
 
     @Override

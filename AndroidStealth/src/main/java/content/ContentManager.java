@@ -244,7 +244,7 @@ public class ContentManager implements IContentManager {
 	/**
 	 * Notifies all listeners of a change in content
 	 */
-	private void notifyListeners() {
+	public void notifyListeners() {
 		for (ContentChangedListener listener : mListeners) {
 			listener.contentChanged();
 		}

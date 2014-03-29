@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class EncryptionService extends Service {
 	public static final String ENTITY_KEY = "ENTITY";
 	//whether the service should encrypt or decrypt
 	public static final String MODE_KEY = "MODE";
+	private IBinder mBinder;
 
 	ConcealCrypto mEncrypter;
 
@@ -39,12 +41,12 @@ public class EncryptionService extends Service {
 		//use a scheduled thread pool for the running of our crypto system
 		cryptoExecutor = Executors.newScheduledThreadPool(PoolSize);
 		mEncrypter = new ConcealCrypto(this);
+		mBinder = new ServiceBinder();
 	}
 
-	//no binding necessary here
 	@Override
 	public IBinder onBind(Intent intent) {
-		return null;
+		return mBinder;
 	}
 
 	@Override
@@ -110,11 +112,9 @@ public class EncryptionService extends Service {
 			}
 			catch (KeyChainException e) {
 				Log.e("EncryptionService", "KeychainException!", e);
-				//TODO log?
 			}
 			catch (CryptoInitializationException e) {
 				Log.e("EncryptionService", "CryptoInitializationException!", e);
-				//TODO log?
 			}
 			catch (IOException e) {
 				Log.e("EncryptionService", "IOException", e);
@@ -122,8 +122,13 @@ public class EncryptionService extends Service {
 				if (e instanceof NativeGCMCipherException) {
 					encryptedFile.delete();
 				}
-				//TODO log?
 			}
+		}
+	}
+
+	public class ServiceBinder extends Binder{
+		public EncryptionService getService(){
+			return EncryptionService.this;
 		}
 	}
 }
