@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -465,28 +467,43 @@ public class FileUtils {
             try {
                 cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.MediaColumns._ID }, MediaStore.MediaColumns.DATA + "=?", new String[] {getPath(context, uri)}, null);
                 //cursor = resolver.query(uri, null, null, null, null);
-                if (cursor.moveToFirst()) {
+                if (true || cursor.moveToFirst()) {
                     Log.e("STEALTH", "Step 3 " + mimeType + " ; " + uri.getPath());
-                    final int id = Integer.valueOf(cursor.getString(0));
+                    final int id = 0;
+                    //final int id = Integer.valueOf(cursor.getString(0));
                     if (DEBUG)
                         Log.e(TAG, "Got thumb ID: " + id);
 
                     Log.e("STEALTH", "Step 4 " + mimeType + " ; " + uri.getPath());
                     if (isVideo(mimeType)) {
                         Log.e("STEALTH", "WTFFFFF through createVideoThumbnail? "+mimeType);
-                        bm = MediaStore.Video.Thumbnails.getThumbnail(
-                                resolver,
-                                id,
-                                MediaStore.Video.Thumbnails.MINI_KIND,
-                                null);
+//                        bm = MediaStore.Video.Thumbnails.getThumbnail(
+//                                resolver,
+//                                id,
+//                                MediaStore.Video.Thumbnails.MINI_KIND,
+//                                null);
+                        bm = ThumbnailUtils.createVideoThumbnail(
+                                getPath(context, uri),
+                                MediaStore.Video.Thumbnails.MINI_KIND);
                     }
                     else if (isImage(mimeType)) {
                         Log.e("STEALTH", "WTFFFFF through images getThumbnail? " + mimeType);
-                        bm = MediaStore.Images.Thumbnails.getThumbnail(
-                                resolver,
-                                id,
-                                MediaStore.Images.Thumbnails.MINI_KIND,
-                                null);
+//                        bm = MediaStore.Images.Thumbnails.getThumbnail(
+//                                resolver,
+//                                id,
+//                                MediaStore.Images.Thumbnails.MINI_KIND,
+//                                null);
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        Bitmap bitmap = BitmapFactory.decodeFile(getPath(context, uri), options);
+                        bm = ThumbnailUtils.extractThumbnail(bitmap, 512, 384); // same as MediaStore.Image.Thumbnails.MINI_KIND
+                    }
+
+                    if (bm.getWidth() < bm.getHeight()) {
+                        // rotate if thumb is portrait
+                        Matrix m = new Matrix();
+                        m.postRotate(90);
+                        bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
                     }
                     Log.e("STEALTH", "Step 5 " + mimeType + " ; " + uri.getPath());
                 } else {

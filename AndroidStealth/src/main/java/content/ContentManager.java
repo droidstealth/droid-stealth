@@ -3,6 +3,7 @@ package content;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.util.Log;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -53,12 +54,11 @@ public class ContentManager implements IContentManager {
      */
     public File createThumbnail(File item) {
         try {
-            EZ.toast(FileUtils.getMimeType(item));
             Bitmap thumb = FileUtils.getThumbnail(EZ.getContext(), item);
             if (thumb == null) return null;
-            File thumbFile = new File(mThumbDir, item.getName());
+            File thumbFile = new File(mThumbDir, item.getName() + ".jpg");
             FileOutputStream out = new FileOutputStream(thumbFile);
-            thumb.compress(Bitmap.CompressFormat.PNG, 90, out);
+            thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.close();
             return thumbFile;
         } catch (IOException e) {
@@ -75,11 +75,11 @@ public class ContentManager implements IContentManager {
                 File target = new File(mDataDir, item.getName());
                 File thumb = null;
                 try {
-                    // create thumbnail
-                    thumb = createThumbnail(item);
-                    if (thumb == null) EZ.toast(R.string.content_fail_thumb);
                     // copy to our folder
                     copyFile(item, target);
+                    // create thumbnail
+                    thumb = createThumbnail(target);
+                    if (thumb == null) EZ.toast(R.string.content_fail_thumb);
                     // delete original
                     boolean removed = item.delete();
                     if (!removed) EZ.toast(R.string.content_fail_original_delete);
