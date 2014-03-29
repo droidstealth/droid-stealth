@@ -53,6 +53,7 @@ public class ContentManager implements IContentManager {
      */
     public File createThumbnail(File item) {
         try {
+            EZ.toast(FileUtils.getMimeType(item));
             Bitmap thumb = FileUtils.getThumbnail(EZ.getContext(), item);
             if (thumb == null) return null;
             File thumbFile = new File(mThumbDir, item.getName());

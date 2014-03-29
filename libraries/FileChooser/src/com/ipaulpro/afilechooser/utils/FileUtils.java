@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -96,6 +97,30 @@ public class FileUtils {
      */
     public static boolean isMediaUri(Uri uri) {
         return "media".equalsIgnoreCase(uri.getAuthority());
+    }
+
+    /**
+     * @return True if mime type is video or image
+     * @author OlivierHokke
+     */
+    public static boolean isImageOrVideo(String mimeType) {
+        return isVideo(mimeType) || isImage(mimeType);
+    }
+
+    /**
+     * @return True if mime type is video
+     * @author OlivierHokke
+     */
+    public static boolean isVideo(String mimeType) {
+        return mimeType.startsWith("video/");
+    }
+
+    /**
+     * @return True if mime type is image
+     * @author OlivierHokke
+     */
+    public static boolean isImage(String mimeType) {
+        return mimeType.startsWith("image/");
     }
 
     /**
@@ -426,41 +451,54 @@ public class FileUtils {
         if (DEBUG)
             Log.d(TAG, "Attempting to get thumbnail");
 
-        if (!isMediaUri(uri)) {
+        if (!isMediaUri(uri) && !isImageOrVideo(mimeType)) {
             Log.e(TAG, "You can only retrieve thumbnails for images and videos.");
             return null;
         }
 
+        Log.e("STEALTH", "Step 1 " + mimeType + " ; " + uri.getPath());
         Bitmap bm = null;
         if (uri != null) {
             final ContentResolver resolver = context.getContentResolver();
             Cursor cursor = null;
+            Log.e("STEALTH", "Step 2 " + mimeType + " ; " + uri.getPath());
             try {
-                cursor = resolver.query(uri, null, null, null, null);
+                cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.MediaColumns._ID }, MediaStore.MediaColumns.DATA + "=?", new String[] {getPath(context, uri)}, null);
+                //cursor = resolver.query(uri, null, null, null, null);
                 if (cursor.moveToFirst()) {
-                    final int id = cursor.getInt(0);
+                    Log.e("STEALTH", "Step 3 " + mimeType + " ; " + uri.getPath());
+                    final int id = Integer.valueOf(cursor.getString(0));
                     if (DEBUG)
-                        Log.d(TAG, "Got thumb ID: " + id);
+                        Log.e(TAG, "Got thumb ID: " + id);
 
-                    if (mimeType.contains("video")) {
+                    Log.e("STEALTH", "Step 4 " + mimeType + " ; " + uri.getPath());
+                    if (isVideo(mimeType)) {
+                        Log.e("STEALTH", "WTFFFFF through createVideoThumbnail? "+mimeType);
                         bm = MediaStore.Video.Thumbnails.getThumbnail(
                                 resolver,
                                 id,
                                 MediaStore.Video.Thumbnails.MINI_KIND,
                                 null);
                     }
-                    else if (mimeType.contains(FileUtils.MIME_TYPE_IMAGE)) {
+                    else if (isImage(mimeType)) {
+                        Log.e("STEALTH", "WTFFFFF through images getThumbnail? " + mimeType);
                         bm = MediaStore.Images.Thumbnails.getThumbnail(
                                 resolver,
                                 id,
                                 MediaStore.Images.Thumbnails.MINI_KIND,
                                 null);
                     }
+                    Log.e("STEALTH", "Step 5 " + mimeType + " ; " + uri.getPath());
+                } else {
+                    Log.e("STEALTH", "FUUUUUUUU.....");
                 }
             } catch (Exception e) {
+                Log.e("STEALTH", "Step 6 " + mimeType + " ; " + uri.getPath(), e);
+                e.printStackTrace();
                 if (DEBUG)
                     Log.e(TAG, "getThumbnail", e);
             } finally {
+                Log.e("STEALTH", "Step 7 " + mimeType + " ; " + uri.getPath());
                 if (cursor != null)
                     cursor.close();
             }
