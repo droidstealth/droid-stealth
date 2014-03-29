@@ -3,10 +3,12 @@ package content;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -22,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -31,6 +35,7 @@ import com.stealth.utils.IOnResult;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import spikes.filepicker.EncryptionService;
 
@@ -174,6 +179,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     /**
+     * Remembers which item is currently being selected in single selecton mode
+     */
+    private int mSingleSelected;
+
+    /**
      * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode.
      * If the view is in ActionMode, check whether any items are still checked after the click.
      * @param adapterView
@@ -184,12 +194,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(mMode != null) {
-            if (mListView.getChoiceMode() == ListView.CHOICE_MODE_SINGLE
-                    && mListView.isItemChecked(position)) {
-                // disable the item at given position so it's more easy for the user
-                // to deselect a file. The main purpose is usability.
-                mListView.setItemChecked(position, false);
+            if (mListView.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
+                if (mSingleSelected == position && mListView.isItemChecked(position)) {
+                    // the item was already previously set to true, but now we pressed it again, so
+                    // let's disable it. Selection mode will stop afterwards, because in theory
+                    // nothing is selected anymore.
+                    mListView.setItemChecked(position, false);
+                }
+            } else {
+                mMode.setTitle(EZ.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+                setActionModeIcon(R.drawable.ic_select_multi);
             }
+            mSingleSelected = position;
             disableIfNoneChecked();
         }
         else {
@@ -199,6 +215,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             mMode = ((ActionBarActivity)getActivity())
                     .startSupportActionMode(new ContentShareMultiModeListener());
             mListView.setItemChecked(position, true);
+            mSingleSelected = position;
+
+            mMode.setTitle(EZ.str(R.string.action_select_single));
+            setActionModeIcon(R.drawable.ic_select_single);
         }
         handleActionButtons();
     }
@@ -214,22 +234,37 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-        // TODO move to proper location. This is just for demo/testing:
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("All files locked");
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setIcon(R.drawable.ic_menu_lock);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         if (mMode == null) {
-            mListView.setItemChecked(position, true);
-            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             mMode = ((ActionBarActivity)getActivity())
                     .startSupportActionMode(new ContentShareMultiModeListener());
+            mListView.setItemChecked(position, true);
         }
         else {
+            mMode.setTitle(EZ.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+            setActionModeIcon(R.drawable.ic_select_multi);
+
+            mListView.setItemChecked(position, !mListView.isItemChecked(position));
             disableIfNoneChecked();
         }
         handleActionButtons();
 
         return true;
+    }
+
+    /**
+     * Sets the resource of the action mode in a hacky way
+     * @param resource
+     */
+    private void setActionModeIcon(int resource) {
+        try {
+            int doneButtonId = Resources.getSystem().getIdentifier("action_mode_close_button", "id", "android");
+            LinearLayout layout = (LinearLayout) getActivity().findViewById(doneButtonId);
+            ((ImageView) layout.getChildAt(0)).setImageResource(resource);
+        } catch (Exception e) {
+            // could not set image
+        }
     }
 
     /**
