@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
-import android.os.Environment;
+import android.content.Intent;
 import android.util.Log;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
@@ -27,7 +27,6 @@ public class ContentManager implements IContentManager {
 	public ContentManager(Context context) {
 		mDataDir = context.getExternalFilesDir(null);
 		crypto = new ConcealCrypto(context);
-		System.out.println("mDataDir: " + mDataDir.toString());
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class ContentManager implements IContentManager {
 			destination = new FileOutputStream(destFile).getChannel();
 			destination.transferFrom(source, 0, source.size());
 
-			System.out.println("Copied the file");
+			Log.d("ContentManager.copyFile", "Copied the file");
 		}
 		finally {
 			if (source != null) {
@@ -62,25 +61,35 @@ public class ContentManager implements IContentManager {
 		}
 	}
 
-	private boolean encryptItem(ContentItem contentItem) {
+	private boolean encryptItem(ContentItem contentItem, Context context) {
+
 		try {
-			Log.i(this.getClass().toString() + ".encryptItem",
-					"Encrypting file " + contentItem.getFile().getAbsolutePath());
-			File encryptedFile = new File(mDataDir+"/"+contentItem.getFileName()+".CRYPT");
+			Log.d(this.getClass().toString()+".encryptItem", "Encrypting file " + contentItem.getFile().getAbsolutePath());
+			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
 			encryptedFile.createNewFile();
 
-//			Log.i(this.getClass().toString()+".encryptItem", "Created file: "+encryptedFile.getAbsolutePath());
+			Intent encryptIntent = new Intent(context, EncryptionService.class);
+			encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, contentItem.getFile().getPath());
+			encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, encryptedFile.getPath());
+			//TODO this is just for testing. Needs better safeguard against filechanges and stuff
+			encryptIntent.putExtra(EncryptionService.ENTITY_KEY, encryptedFile.getName());
+			encryptIntent.putExtra(EncryptionService.MODE_KEY, ConcealCrypto.CryptoMode.ENCRYPT);
 
-			crypto.encrypt(encryptedFile, contentItem.getFile(), contentItem.getFileName());
+			context.startService(encryptIntent);
 
-			return contentItem.getFile().delete();
+			Log.d(this.getClass().toString()+".encryptItem", "Started service!");
+
+			//			crypto.encrypt(encryptedFile, contentItem.getFile(), contentItem.getFileName());
+
+//			return contentItem.getFile().delete();
+			return true;
 		}
-		catch (KeyChainException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		}
-		catch (CryptoInitializationException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		}
+		//		catch (KeyChainException e) {
+		//			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
+		//		}
+		//		catch (CryptoInitializationException e) {
+		//			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
+		//		}
 		catch (IOException e) {
 			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
 		}
@@ -127,11 +136,11 @@ public class ContentManager implements IContentManager {
 	 * @return true if ALL files are encrypted successfully, false otherwise.
 	 */
 	@Override
-	public boolean encryptItems(Collection<ContentItem> contentItemCollection) {
+	public boolean encryptItems(Collection<ContentItem> contentItemCollection, Context context) {
 		boolean success = true;
 
 		for (ContentItem contentItem : contentItemCollection) {
-			success = encryptItem(contentItem) && success;
+			success = encryptItem(contentItem, context) && success;
 		}
 
 		if (success) {
@@ -155,18 +164,18 @@ public class ContentManager implements IContentManager {
 	 * @return true if ALL files are decrypted successfully, false otherwise.
 	 */
 	@Override
-	public boolean decryptItems(Collection<ContentItem> contentItemCollection) {
+	public boolean decryptItems(Collection<ContentItem> contentItemCollection, Context context) {
 		boolean success = true;
 
 		for (ContentItem contentItem : contentItemCollection) {
-			success = decryptItem(contentItem) && success;
+			success = decryptItem(contentItem, context) && success;
 		}
 
 		if (success) {
-			Log.i(this.getClass().toString()+".decryptItems", "Decrypted items:");
+			Log.i(this.getClass().toString() + ".decryptItems", "Decrypted items:");
 		}
 		else {
-			Log.w(this.getClass().toString()+".decryptItems","Decrypted with errors:");
+			Log.w(this.getClass().toString() + ".decryptItems", "Decrypted with errors:");
 		}
 		for (ContentItem contentItem : contentItemCollection) {
 			System.out.println("\t" + contentItem.getFileName());
@@ -177,33 +186,43 @@ public class ContentManager implements IContentManager {
 		return success;
 	}
 
-	public boolean decryptItem(ContentItem contentItem) {
+	public boolean decryptItem(ContentItem contentItem, Context context) {
 		try {
 			// Remove .CRYPT from filename
-			String filename = mDataDir+"/"+contentItem.getFileName();
+			String filename = mDataDir + "/" + contentItem.getFileName();
 			filename = filename.substring(0, filename.length() - 6);
 
 			// Create target file
 			File decryptedFile = new File(filename);
 			decryptedFile.createNewFile();
 
-			this.crypto.decrypt(contentItem.getFile(), decryptedFile, contentItem.getFileName());
+			Intent encryptIntent = new Intent(context, EncryptionService.class);
+			encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, contentItem.getFile().getPath());
+			encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, decryptedFile.getPath());
+			//TODO this is just for testing. Needs better safeguard against filechanges and stuff
+			encryptIntent.putExtra(EncryptionService.ENTITY_KEY, contentItem.getFileName());
+			encryptIntent.putExtra(EncryptionService.MODE_KEY, ConcealCrypto.CryptoMode.DECRYPT);
 
-			return contentItem.getFile().delete();
+			context.startService(encryptIntent);
+//			this.crypto.decrypt(contentItem.getFile(), decryptedFile, contentItem.getFileName());
+
+//			return contentItem.getFile().delete();
+			return true;
 		}
-		catch (KeyChainException e) {
-			Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
-		}
-		catch (CryptoInitializationException e) {
-			Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
-		}
+//		catch (KeyChainException e) {
+//			Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
+//		}
+//		catch (CryptoInitializationException e) {
+//			Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
+//		}
 		catch (IOException e) {
 			if (e instanceof NativeGCMCipherException) {
 				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
 				contentItem.getFile().delete();
 			}
-			else
-				Log.e(this.getClass().toString()+".decryptItem", "Error in decrypting data", e);
+			else {
+				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
+			}
 		}
 
 		return false;

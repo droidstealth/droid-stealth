@@ -3,6 +3,8 @@ package content;
 import java.io.File;
 import java.util.Collection;
 
+import android.content.Context;
+
 /**
  * Created by Alex on 3/6/14.
  */
@@ -40,8 +42,8 @@ public interface IContentManager {
      */
     public boolean removeItems(Collection<ContentItem> itemCollection);
 
-	public boolean decryptItems(Collection<ContentItem> itemCollection);
-	public boolean encryptItems(Collection<ContentItem> itemCollection);
+	public boolean decryptItems(Collection<ContentItem> itemCollection, Context context);
+	public boolean encryptItems(Collection<ContentItem> itemCollection, Context context);
 
     /**
      * Adds a listener to the list

@@ -134,4 +134,15 @@ public class ConcealCrypto implements ICrypto {
 			to.delete();
 		}
 	}
+
+	public enum CryptoMode {
+		ENCRYPT("encrypt"),
+		DECRYPT("decrypt");
+
+		String key;
+
+		CryptoMode(String string){
+			this.key = string;
+		}
+	}
 }
