@@ -447,7 +447,7 @@ public class FileUtils {
      * @param uri
      * @param mimeType
      * @return
-     * @author paulburke
+     * @author paulburke, OlivierHokke
      */
     public static Bitmap getThumbnail(Context context, Uri uri, String mimeType) {
         if (DEBUG)
@@ -459,27 +459,33 @@ public class FileUtils {
         }
 
         Bitmap bm = null;
-        if (uri != null) {
-            try {
-                if (isVideo(mimeType)) {
+        if (uri != null)
+        {
+            try
+            {
+                if (isVideo(mimeType))
+                {
                     bm = ThumbnailUtils.createVideoThumbnail(
                             getPath(context, uri),
                             MediaStore.Video.Thumbnails.MINI_KIND);
                 }
-                else if (isImage(mimeType)) {
+                else if (isImage(mimeType))
+                {
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                     Bitmap bitmap = BitmapFactory.decodeFile(getPath(context, uri), options);
                     bm = ThumbnailUtils.extractThumbnail(bitmap, 512, 384); // same as MINI_KIND
                 }
-
-                if (bm != null && bm.getWidth() < bm.getHeight()) {
+                if (bm != null && bm.getWidth() < bm.getHeight())
+                {
                     // rotate if thumb is portrait
                     Matrix m = new Matrix();
                     m.postRotate(90);
                     bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
                 if (DEBUG) Log.e(TAG, "getThumbnail", e);
             }
