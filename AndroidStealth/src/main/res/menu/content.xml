@@ -3,15 +3,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:stealth="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/content_add_media"
-        android:icon="@drawable/ic_menu_add_media"
-        android:title="@string/content_add_media"
-        stealth:showAsAction="always"
-        android:showAsAction="always"/>
-    <item
-        android:id="@+id/content_add_file"
-        android:icon="@drawable/ic_menu_add_file"
-        android:title="@string/content_add_file"
+        android:id="@+id/content_add"
+        android:icon="@drawable/ic_menu_add"
+        android:title="@string/content_add"
         stealth:showAsAction="always"
         android:showAsAction="always"/>
     <item
