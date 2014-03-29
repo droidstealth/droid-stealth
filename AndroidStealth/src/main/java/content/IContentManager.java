@@ -1,5 +1,7 @@
 package content;
 
+import com.stealth.utils.IOnResult;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -22,23 +24,23 @@ public interface IContentManager {
     /**
      * Adds a new item to the storage
      * @param item the item to be added
-     * @return whether the item was added successfully
+     * @param callback the callback that notifies if the item was added successfully
      */
-    public boolean addItem(File item);
+    public void addItem(File item, IOnResult<Boolean> callback);
 
     /**
      * Removes an item from the storage
      * @param item the item that should be removed
-     * @return whether the item has been successfully removed
+     * @param callback the callback that notifies if the item was removed successfully
      */
-    public boolean removeItem(ContentItem item);
+    public void removeItem(ContentItem item, IOnResult<Boolean> callback);
 
     /**
      * Removes a collection of items from storage
      * @param itemCollection The collection of items to be removed
-     * @return whether all ContentItems have been removed successfully
+     * @param callback the callback that notifies if the items were removed successfully
      */
-    public boolean removeItems(Collection<ContentItem> itemCollection);
+    public void removeItems(Collection<ContentItem> itemCollection, IOnResult<Boolean> callback);
 
     /**
      * Adds a listener to the list
@@ -53,5 +55,9 @@ public interface IContentManager {
      */
     public boolean removeContentChangedListener(ContentChangedListener listener);
 
-	public void removeAllContent();
+    /**
+     * Removes everything
+     * @param callback the callback that notifies if everything was removed successfully
+     */
+	public void removeAllContent(IOnResult<Boolean> callback);
 }

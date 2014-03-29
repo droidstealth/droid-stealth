@@ -9,6 +9,7 @@ import android.util.Log;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
 import com.stealth.utils.EZ;
+import com.stealth.utils.IOnResult;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,6 +49,15 @@ public class ContentManager implements IContentManager {
     }
 
     /**
+     * Gets the thumbnail of a file
+     * @param item the file to find the thumbnail file of
+     * @return the thumbnail file
+     */
+    public File getThumbnailFile(File item) {
+        return new File(mThumbDir, item.getName() + ".jpg");
+    }
+
+    /**
      * Creates the thumbnail for an item and saves it in the thumbnail folder
      * @param item the file to generate the thumbnail of
      * @return the created thumbnail
@@ -56,7 +66,7 @@ public class ContentManager implements IContentManager {
         try {
             Bitmap thumb = FileUtils.getThumbnail(EZ.getContext(), item);
             if (thumb == null) return null;
-            File thumbFile = new File(mThumbDir, item.getName() + ".jpg");
+            File thumbFile = getThumbnailFile(item);
             FileOutputStream out = new FileOutputStream(thumbFile);
             thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.close();
@@ -68,67 +78,118 @@ public class ContentManager implements IContentManager {
     }
 
     @Override
-    public boolean addItem(final File item) {
+    public void addItem(final File item, final IOnResult<Boolean> callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // init
                 File target = new File(mDataDir, item.getName());
                 File thumb = null;
-                try {
+                String mimeType = FileUtils.getMimeType(item);
+                boolean isMedia = FileUtils.isImageOrVideo(mimeType);
+
+                try
+                {
                     // copy to our folder
                     copyFile(item, target);
+
                     // create thumbnail
                     thumb = createThumbnail(target);
-                    if (thumb == null) EZ.toast(R.string.content_fail_thumb);
+                    if (isMedia && thumb == null) {
+                        EZ.toast(R.string.content_fail_thumb);
+                    }
+
                     // delete original
                     boolean removed = item.delete();
-                    if (!removed) EZ.toast(R.string.content_fail_original_delete);
+                    if (!removed) {
+                        EZ.toast(R.string.content_fail_original_delete);
+                    }
+
                     // notify that we are done
                     notifyListeners();
-                } catch (IOException e) {
+                    if (callback != null)
+                        callback.onResult(true);
+                }
+                catch (IOException e)
+                {
                     e.printStackTrace();
+
                     // cleanup
                     if (target.exists() && !target.delete()) EZ.toast(R.string.content_fail_clean);
                     if (thumb != null && thumb.exists() && !thumb.delete()) EZ.toast(R.string.content_fail_clean);
+
+                    // notify that we are done
+                    if (callback != null)
+                        callback.onResult(false);
                 }
             }
         }).start();
-        return true;
+    }
+
+    /**
+     * Removes a file completely right now in current thread,
+     * including its thumbnail and encrypted version
+     * @param contentItem the file to remove
+     * @return whether it completely succeeded
+     */
+    public boolean removeItemNow(ContentItem contentItem) {
+        File file = contentItem.getFile();
+        File thumb = getThumbnailFile(file);
+        boolean success = true;
+        // TODO remove encrypted files
+        // TODO make sure file is removed from any queue etc
+        if (thumb.exists()) success &= thumb.delete();
+        success &= file.delete();
+        return success;
     }
 
     @Override
-    public boolean removeItem(ContentItem item) {
-        boolean removed = item.getFile().delete();
-        if(removed){
-            notifyListeners();
-        }
-        return removed;
+    public void removeItem(final ContentItem item, final IOnResult<Boolean> callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean removed = removeItemNow(item);
+                if(removed){
+                    notifyListeners();
+                }
+                if (callback != null)
+                    callback.onResult(removed);
+            }
+        }).start();
     }
 
     @Override
-    public boolean removeItems(Collection<ContentItem> itemCollection) {
-        boolean noFailure = true;
-        boolean singleSuccess = false;
-        for(ContentItem item : itemCollection){
-            boolean removed = item.getFile().delete();
-            if(removed){
-                singleSuccess = true;
+    public void removeItems(Collection<ContentItem> itemCollection, final IOnResult<Boolean> callback) {
+        // make copy in case it changes while we are executing in another thread
+        final ContentItem[] items = itemCollection.toArray((ContentItem[])java.lang.reflect.Array.newInstance(ContentItem.class, itemCollection.size()));
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                int failures = 0;
+                boolean singleSuccess = false;
+                for(ContentItem item : items){
+                    if(removeItemNow(item))
+                        singleSuccess |= true;
+                    else failures++;
+                }
+                if (failures > 0) {
+                    EZ.toast(EZ.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+                }
+                if(singleSuccess){
+                    notifyListeners();
+                }
+
+                if (callback != null)
+                    callback.onResult(failures == 0);
             }
-            else{
-                noFailure = false;
-            }
-        }
+        }).start();
+    }
 
-        //Empty list, we 'failed' anyway
-        if(itemCollection.size() == 0){
-            noFailure = false;
-        }
-
-        if(singleSuccess){
-            notifyListeners();
-        }
-
-        return noFailure;
+    @Override
+    public void removeAllContent(final IOnResult<Boolean> callback) {
+        removeItems(getStoredContent(), callback);
     }
 
     @Override
@@ -143,12 +204,6 @@ public class ContentManager implements IContentManager {
         return mListeners.remove(listener);
     }
 
-    @Override
-    public void removeAllContent() {
-        for(File file: mDataDir.listFiles()){
-            file.delete();
-        }
-    }
 
     /**
      * Notifies all listeners of a change in content. Tries to do it on the UI thread!

@@ -58,7 +58,7 @@ public class EZ {
             @Override
             public void run() {
                 Toast.makeText(getContext(), message,
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -26,6 +26,8 @@ import android.widget.ListView;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
+import com.stealth.utils.EZ;
+import com.stealth.utils.IOnResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,7 +149,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                     // Alternatively, use FileUtils.getFile(Context, Uri)
                     if (path != null && FileUtils.isLocal(path)) {
                         File selected = new File(path);
-                        mContentManager.addItem(selected);
+                        mContentManager.addItem(selected, new IOnResult<Boolean>() {
+                            @Override
+                            public void onResult(Boolean result) {
+                                if (result) EZ.toast(R.string.content_success_add);
+                                else EZ.toast(R.string.content_fail_add);
+                            }
+                        });
                     }
                 }
                 break;
@@ -285,7 +293,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                         for (long id: selected) {
                             itemArrayList.add(mAdapter.getItem((int)id));
                         }
-                        mContentManager.removeItems(itemArrayList);
+
+                        mContentManager.removeItems(itemArrayList, new IOnResult<Boolean>() {
+                            @Override
+                            public void onResult(Boolean result) {
+                                if (result) EZ.toast(R.string.content_success_shred);
+                                else EZ.toast(R.string.content_fail_shred);
+                            }
+                        });
 
                         break;
                 }
