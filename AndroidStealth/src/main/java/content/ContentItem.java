@@ -8,7 +8,6 @@ import java.io.File;
 public class ContentItem {
 	private File mFile;
 	private String mFileName;
-	private boolean encrypted = false;
 
 	public ContentItem(File mFile, String mFileName) {
 		this.mFile = mFile;
@@ -24,7 +23,7 @@ public class ContentItem {
 	}
 
 	public boolean isEncrypted() {
-		return encrypted;
+		return mFileName.endsWith(".CRYPT");
 	}
 
 }

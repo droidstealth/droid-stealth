@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
+import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
 
@@ -49,7 +49,7 @@ public class EncryptionService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(this.getClass().toString()+".onStartCommand", "Received service start command!");
+		Log.d(this.getClass().toString() + ".onStartCommand", "Received service start command!");
 		File encryptedFile = new File(intent.getStringExtra(ENCRYPTED_PATH_KEY));
 		File unencryptedFile = new File(intent.getStringExtra(UNENCRYPTED_PATH_KEY));
 		String entityName = intent.getStringExtra(ENTITY_KEY);
@@ -61,7 +61,7 @@ public class EncryptionService extends Service {
 
 		cryptoExecutor.submit(cryptoTask);
 
-		Log.d(this.getClass().toString()+".onStartCommand", "submitted task!");
+		Log.d(this.getClass().toString() + ".onStartCommand", "submitted task!");
 		//Don't redeliver or restart. The threading handles everything properly.
 		return START_NOT_STICKY;
 	}
@@ -93,7 +93,7 @@ public class EncryptionService extends Service {
 		public void run() {
 			try {
 
-				Log.d(this.getClass().toString()+".run", "Starting en/decryption task.");
+				Log.d(this.getClass().toString() + ".run", "Starting en/decryption task.");
 
 				switch (cryptoMode) {
 					case ENCRYPT:
@@ -106,7 +106,7 @@ public class EncryptionService extends Service {
 						break;
 				}
 
-				Log.d(this.getClass().toString()+".run", "Finished task!");
+				Log.d(this.getClass().toString() + ".run", "Finished task!");
 			}
 			catch (KeyChainException e) {
 				Log.e("EncryptionService", "KeychainException!", e);
@@ -118,6 +118,10 @@ public class EncryptionService extends Service {
 			}
 			catch (IOException e) {
 				Log.e("EncryptionService", "IOException", e);
+				// This is the error we cannot explain yet, but we want the app to behave as expected; delete the source file.
+				if (e instanceof NativeGCMCipherException) {
+					encryptedFile.delete();
+				}
 				//TODO log?
 			}
 		}

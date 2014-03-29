@@ -13,8 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
-import com.facebook.crypto.exception.CryptoInitializationException;
-import com.facebook.crypto.exception.KeyChainException;
 
 /**
  * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
@@ -64,32 +62,18 @@ public class ContentManager implements IContentManager {
 	private boolean encryptItem(ContentItem contentItem, Context context) {
 
 		try {
-			Log.d(this.getClass().toString()+".encryptItem", "Encrypting file " + contentItem.getFile().getAbsolutePath());
+			Log.d(this.getClass().toString() + ".encryptItem",
+					"Encrypting file " + contentItem.getFile().getAbsolutePath());
 			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
 			encryptedFile.createNewFile();
 
-			Intent encryptIntent = new Intent(context, EncryptionService.class);
-			encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, contentItem.getFile().getPath());
-			encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, encryptedFile.getPath());
-			//TODO this is just for testing. Needs better safeguard against filechanges and stuff
-			encryptIntent.putExtra(EncryptionService.ENTITY_KEY, encryptedFile.getName());
-			encryptIntent.putExtra(EncryptionService.MODE_KEY, ConcealCrypto.CryptoMode.ENCRYPT);
+			sendEncryptIntent(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
+					ConcealCrypto.CryptoMode.ENCRYPT,
+					context);
+			Log.d(this.getClass().toString() + ".encryptItem", "Started service!");
 
-			context.startService(encryptIntent);
-
-			Log.d(this.getClass().toString()+".encryptItem", "Started service!");
-
-			//			crypto.encrypt(encryptedFile, contentItem.getFile(), contentItem.getFileName());
-
-//			return contentItem.getFile().delete();
 			return true;
 		}
-		//		catch (KeyChainException e) {
-		//			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		//		}
-		//		catch (CryptoInitializationException e) {
-		//			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		//		}
 		catch (IOException e) {
 			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
 		}
@@ -196,25 +180,9 @@ public class ContentManager implements IContentManager {
 			File decryptedFile = new File(filename);
 			decryptedFile.createNewFile();
 
-			Intent encryptIntent = new Intent(context, EncryptionService.class);
-			encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, contentItem.getFile().getPath());
-			encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, decryptedFile.getPath());
-			//TODO this is just for testing. Needs better safeguard against filechanges and stuff
-			encryptIntent.putExtra(EncryptionService.ENTITY_KEY, contentItem.getFileName());
-			encryptIntent.putExtra(EncryptionService.MODE_KEY, ConcealCrypto.CryptoMode.DECRYPT);
-
-			context.startService(encryptIntent);
-//			this.crypto.decrypt(contentItem.getFile(), decryptedFile, contentItem.getFileName());
-
-//			return contentItem.getFile().delete();
-			return true;
+			return sendEncryptIntent(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
+					ConcealCrypto.CryptoMode.DECRYPT, context);
 		}
-//		catch (KeyChainException e) {
-//			Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
-//		}
-//		catch (CryptoInitializationException e) {
-//			Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
-//		}
 		catch (IOException e) {
 			if (e instanceof NativeGCMCipherException) {
 				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
@@ -280,5 +248,20 @@ public class ContentManager implements IContentManager {
 		for (ContentChangedListener listener : mListeners) {
 			listener.contentChanged();
 		}
+	}
+
+	private boolean sendEncryptIntent(File encrypted, File unencrypted, String entityName,
+	                                  ConcealCrypto.CryptoMode mode, Context context) {
+
+		Intent encryptIntent = new Intent(context, EncryptionService.class);
+		encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, encrypted.getPath());
+		encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, unencrypted.getPath());
+		//TODO this is just for testing. Needs better safeguard against filechanges and stuff
+		encryptIntent.putExtra(EncryptionService.ENTITY_KEY, entityName);
+		encryptIntent.putExtra(EncryptionService.MODE_KEY, mode);
+
+		context.startService(encryptIntent);
+
+		return true;
 	}
 }
