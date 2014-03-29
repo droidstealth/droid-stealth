@@ -111,7 +111,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.content_add:
+            case R.id.content_add_media:
+                Intent getMediaContentIntent = FileUtils.createGetMediaContentIntent();
+                Intent mediaIntent = Intent.createChooser(getMediaContentIntent, "Select an image/video");
+                startActivityForResult(mediaIntent, REQUEST_CHOOSER);
+                return true;
+            case R.id.content_add_file:
                 Intent getContentIntent = FileUtils.createGetContentIntent();
                 Intent intent = Intent.createChooser(getContentIntent, "Select a file");
                 startActivityForResult(intent, REQUEST_CHOOSER);

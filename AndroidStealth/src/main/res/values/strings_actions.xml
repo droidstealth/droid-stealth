@@ -7,6 +7,8 @@
     <string name="content_remove">Remove from list&#8230;</string>
 
     <string name="content_add">Add file(s)</string>
+    <string name="content_add_media">Add image/video</string>
+    <string name="content_add_file">Add file</string>
     <string name="content_lock_hide_all">Lock &amp; hide all</string>
     <string name="content_unlock_show_all">Unlock &amp; show all</string>
     <string name="content_share_all">Share all using&#8230;</string>
