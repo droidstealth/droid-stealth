@@ -1,14 +1,11 @@
 package content;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.util.Log;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
-import com.stealth.utils.EZ;
+import com.stealth.utils.Utils;
 import com.stealth.utils.IOnResult;
 
 import java.io.File;
@@ -64,7 +61,7 @@ public class ContentManager implements IContentManager {
      */
     public File createThumbnail(File item) {
         try {
-            Bitmap thumb = FileUtils.getThumbnail(EZ.getContext(), item);
+            Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item);
             if (thumb == null) return null;
             File thumbFile = getThumbnailFile(item);
             FileOutputStream out = new FileOutputStream(thumbFile);
@@ -96,13 +93,13 @@ public class ContentManager implements IContentManager {
                     // create thumbnail
                     thumb = createThumbnail(target);
                     if (isMedia && thumb == null) {
-                        EZ.toast(R.string.content_fail_thumb);
+                        Utils.toast(R.string.content_fail_thumb);
                     }
 
                     // delete original
                     boolean removed = item.delete();
                     if (!removed) {
-                        EZ.toast(R.string.content_fail_original_delete);
+                        Utils.toast(R.string.content_fail_original_delete);
                     }
 
                     // notify that we are done
@@ -115,8 +112,8 @@ public class ContentManager implements IContentManager {
                     e.printStackTrace();
 
                     // cleanup
-                    if (target.exists() && !target.delete()) EZ.toast(R.string.content_fail_clean);
-                    if (thumb != null && thumb.exists() && !thumb.delete()) EZ.toast(R.string.content_fail_clean);
+                    if (target.exists() && !target.delete()) Utils.toast(R.string.content_fail_clean);
+                    if (thumb != null && thumb.exists() && !thumb.delete()) Utils.toast(R.string.content_fail_clean);
 
                     // notify that we are done
                     if (callback != null)
@@ -175,7 +172,7 @@ public class ContentManager implements IContentManager {
                     else failures++;
                 }
                 if (failures > 0) {
-                    EZ.toast(EZ.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+                    Utils.toast(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
                 }
                 if(singleSuccess){
                     notifyListeners();
@@ -209,7 +206,7 @@ public class ContentManager implements IContentManager {
      * Notifies all listeners of a change in content. Tries to do it on the UI thread!
      */
     private void notifyListeners(){
-        EZ.runOnMain(new Runnable() {
+        Utils.runOnMain(new Runnable() {
             @Override
             public void run() {
                 notifyListenersNow();

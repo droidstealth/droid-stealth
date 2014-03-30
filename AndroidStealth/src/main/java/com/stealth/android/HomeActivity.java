@@ -12,18 +12,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import android.widget.Toast;
-
-import com.stealth.utils.EZ;
-
-import java.io.File;
+import com.stealth.utils.Utils;
 
 import content.ContentFragment;
 
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 import spikes.notifications.FileStatusNotificationsManager;
-import spikes.stealthdialer.StealthDialReceiver;
 
 public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -44,7 +39,7 @@ public class HomeActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        EZ.setContext(this);
+        Utils.setContext(this);
 
         FileStatusNotificationsManager.get().showFilesLocking();
         FileStatusNotificationsManager.get().showFilesUnlocking();
@@ -67,6 +62,14 @@ public class HomeActivity extends ActionBarActivity
             Log.w("Hiding: Disable", "Disabling app drawer icon.");
             pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FileStatusNotificationsManager.get().hideFilesLocking();
+        FileStatusNotificationsManager.get().hideFilesUnlocking();
+        FileStatusNotificationsManager.get().hideFilesUnlocked();
     }
 
     @Override

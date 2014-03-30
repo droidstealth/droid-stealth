@@ -6,21 +6,23 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Read: easy :)
  * This class provides some quick utils to shorten our code and make it more readable.
  * Created by Olivier Hokke on 3/26/14.
  */
-public class EZ {
+public class Utils {
 
-    private static Context sContext;
+    private static WeakReference<Context> sContext;
 
     /**
      * Set the context value of the main activity, so others can easily access it.
      * @param context
      */
     public static void setContext(Context context) {
-        sContext = context;
+        sContext = new WeakReference<Context>(context.getApplicationContext());
     }
 
     /**
@@ -29,7 +31,7 @@ public class EZ {
      * @return
      */
     public static Context getContext() {
-        return sContext;
+        return sContext.get();
     }
 
     /**
@@ -38,7 +40,7 @@ public class EZ {
      * @return the string value of the string resource
      */
     public static String str(int resource) {
-        return sContext.getResources().getString(resource);
+        return getContext().getResources().getString(resource);
     }
 
     /**

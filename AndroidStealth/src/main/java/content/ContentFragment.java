@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,14 +25,11 @@ import android.widget.ListView;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
-import com.stealth.utils.EZ;
+import com.stealth.utils.Utils;
 import com.stealth.utils.IOnResult;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import spikes.filepicker.EncryptionService;
 
 /**
  * Created by Alex on 3/6/14.
@@ -157,8 +149,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                         mContentManager.addItem(selected, new IOnResult<Boolean>() {
                             @Override
                             public void onResult(Boolean result) {
-                                if (result) EZ.toast(R.string.content_success_add);
-                                else EZ.toast(R.string.content_fail_add);
+                                if (result) Utils.toast(R.string.content_success_add);
+                                else Utils.toast(R.string.content_fail_add);
                             }
                         });
                     }
@@ -202,7 +194,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                     mListView.setItemChecked(position, false);
                 }
             } else {
-                mMode.setTitle(EZ.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+                mMode.setTitle(Utils.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
                 setActionModeIcon(R.drawable.ic_select_multi);
             }
             mSingleSelected = position;
@@ -217,7 +209,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             mListView.setItemChecked(position, true);
             mSingleSelected = position;
 
-            mMode.setTitle(EZ.str(R.string.action_select_single));
+            mMode.setTitle(Utils.str(R.string.action_select_single));
             setActionModeIcon(R.drawable.ic_select_single);
         }
         handleActionButtons();
@@ -242,7 +234,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
             mListView.setItemChecked(position, true);
         }
         else {
-            mMode.setTitle(EZ.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+            mMode.setTitle(Utils.str(R.string.action_select_multi).replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
             setActionModeIcon(R.drawable.ic_select_multi);
 
             mListView.setItemChecked(position, !mListView.isItemChecked(position));
@@ -332,8 +324,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
                         mContentManager.removeItems(itemArrayList, new IOnResult<Boolean>() {
                             @Override
                             public void onResult(Boolean result) {
-                                if (result) EZ.toast(R.string.content_success_shred);
-                                else EZ.toast(R.string.content_fail_shred);
+                                if (result) Utils.toast(R.string.content_success_shred);
+                                else Utils.toast(R.string.content_fail_shred);
                             }
                         });
 

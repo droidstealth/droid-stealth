@@ -9,7 +9,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
-import com.stealth.utils.EZ;
+import com.stealth.utils.Utils;
 
 /**
  * This class provides easy control of the notifications for this app.
@@ -19,7 +19,7 @@ public class FileStatusNotificationsManager {
     private static FileStatusNotificationsManager sInstance = null;
     public static FileStatusNotificationsManager get() {
         if (sInstance == null) {
-            sInstance = new FileStatusNotificationsManager(EZ.getContext());
+            sInstance = new FileStatusNotificationsManager(Utils.getContext());
         }
         return sInstance;
     }
@@ -56,8 +56,8 @@ public class FileStatusNotificationsManager {
     public void showFilesLocking(int progressMax, int progressCurrent) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
-        mBuilder.setContentTitle(EZ.str(R.string.notification_locking_title));
-        mBuilder.setContentText(EZ.str(R.string.notification_locking_sub));
+        mBuilder.setContentTitle(Utils.str(R.string.notification_locking_title));
+        mBuilder.setContentText(Utils.str(R.string.notification_locking_sub));
         mBuilder.setOngoing(true);
 
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
@@ -88,8 +88,8 @@ public class FileStatusNotificationsManager {
     public void showFilesUnlocking(int progressMax, int progressCurrent) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_unlocking);
-        mBuilder.setContentTitle(EZ.str(R.string.notification_unlocking_title));
-        mBuilder.setContentText(EZ.str(R.string.notification_unlocking_sub));
+        mBuilder.setContentTitle(Utils.str(R.string.notification_unlocking_title));
+        mBuilder.setContentText(Utils.str(R.string.notification_unlocking_sub));
 
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
@@ -110,8 +110,8 @@ public class FileStatusNotificationsManager {
     public void showFilesUnlocked() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_unlocked);
-        mBuilder.setContentTitle(EZ.str(R.string.notification_unlocked_title));
-        mBuilder.setContentText(EZ.str(R.string.notification_unlocked_sub));
+        mBuilder.setContentTitle(Utils.str(R.string.notification_unlocked_title));
+        mBuilder.setContentText(Utils.str(R.string.notification_unlocked_sub));
         mBuilder.setOngoing(true);
 
         mBuilder.setContentIntent(generatePendingIntent());
