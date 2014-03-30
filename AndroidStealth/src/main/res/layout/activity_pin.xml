@@ -205,15 +205,15 @@
         <ImageButton
             style="@style/PinButtonAction"
             android:id="@+id/pin_cancel"
-            android:src="@drawable/ic_menu_lock"/>
+            android:src="@drawable/ic_pin_cancel"/>
         <ImageButton
             style="@style/PinButtonAction"
             android:id="@+id/pin_accept"
-            android:src="@drawable/ic_menu_lock" />
+            android:src="@drawable/ic_pin_accept" />
         <ImageButton
             style="@style/PinButtonAction"
             android:id="@+id/pin_delete"
-            android:src="@drawable/ic_menu_lock" />
+            android:src="@drawable/ic_pin_delete" />
     </TableRow>
 
 </TableLayout>
