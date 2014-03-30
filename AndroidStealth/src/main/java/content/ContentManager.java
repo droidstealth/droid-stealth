@@ -121,8 +121,6 @@ public class ContentManager implements IContentManager {
 			Log.e(this.getClass().toString(), contentItem.getFile().getAbsolutePath());
 		}
 
-		notifyListeners();
-
 		return success;
 	}
 
@@ -182,8 +180,6 @@ public class ContentManager implements IContentManager {
 			System.out.println("\t" + contentItem.getFileName());
 		}
 
-		notifyListeners();
-
 		return success;
 	}
 
@@ -203,6 +199,8 @@ public class ContentManager implements IContentManager {
 			taskFuture.get(1, TimeUnit.MINUTES);
 
 			notifyListeners();
+
+			return true;
 		}
 		catch (IOException e) {
 			if (e instanceof NativeGCMCipherException) {

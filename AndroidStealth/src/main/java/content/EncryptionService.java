@@ -11,7 +11,6 @@ import java.util.concurrent.Future;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -55,27 +54,29 @@ public class EncryptionService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(this.getClass().toString() + ".onStartCommand", "Received service start command!");
-		File encryptedFile = new File(intent.getStringExtra(ENCRYPTED_PATH_KEY));
-		File unencryptedFile = new File(intent.getStringExtra(UNENCRYPTED_PATH_KEY));
-		String entityName = intent.getStringExtra(ENTITY_KEY);
 
-		Bundle bundle = intent.getExtras();
-		CryptoMode mode = (CryptoMode) (bundle != null ? bundle.get(MODE_KEY) : null);
+		throw new IllegalStateException("EncryptionService should not be started through Intent anymore");
 
-		CryptoTask cryptoTask = new CryptoTask(mEncrypter, encryptedFile, unencryptedFile, entityName, mode);
-
-		cryptoExecutor.submit(cryptoTask);
-
-		Log.d(this.getClass().toString() + ".onStartCommand", "submitted task!");
-		//Don't redeliver or restart. The threading handles everything properly.
-		return START_NOT_STICKY;
+		//		Log.d(this.getClass().toString() + ".onStartCommand", "Received service start command!"); File encryptedFile = new File(intent.getStringExtra(ENCRYPTED_PATH_KEY));
+		//		File unencryptedFile = new File(intent.getStringExtra(UNENCRYPTED_PATH_KEY));
+		//		String entityName = intent.getStringExtra(ENTITY_KEY);
+		//
+		//		Bundle bundle = intent.getExtras();
+		//		CryptoMode mode = (CryptoMode) (bundle != null ? bundle.get(MODE_KEY) : null);
+		//
+		//		CryptoTask cryptoTask = new CryptoTask(mEncrypter, encryptedFile, unencryptedFile, entityName, mode, null);
+		//
+		//		cryptoExecutor.submit(cryptoTask);
+		//
+		//		Log.d(this.getClass().toString() + ".onStartCommand", "submitted task!");
+		//		//Don't redeliver or restart. The threading handles everything properly.
+		//		return START_NOT_STICKY;
 	}
 
-	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode){
+	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode) {
 		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode);
 
-		Log.d(this.getClass().toString()+".addCryptoTask", "Submitting new task..");
+		Log.d(this.getClass().toString() + ".addCryptoTask", "Submitting new task..");
 		return cryptoExecutor.submit(task);
 	}
 
@@ -141,8 +142,8 @@ public class EncryptionService extends Service {
 		}
 	}
 
-	public class ServiceBinder extends Binder{
-		public EncryptionService getService(){
+	public class ServiceBinder extends Binder {
+		public EncryptionService getService() {
 			return EncryptionService.this;
 		}
 	}
