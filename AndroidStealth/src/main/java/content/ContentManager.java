@@ -97,7 +97,7 @@ public class ContentManager implements IContentManager {
                     }
 
                     // delete original
-                    boolean removed = item.delete();
+                    boolean removed = Utils.delete(item);
                     if (!removed) {
                         Utils.toast(R.string.content_fail_original_delete);
                     }
@@ -112,8 +112,8 @@ public class ContentManager implements IContentManager {
                     e.printStackTrace();
 
                     // cleanup
-                    if (target.exists() && !target.delete()) Utils.toast(R.string.content_fail_clean);
-                    if (thumb != null && thumb.exists() && !thumb.delete()) Utils.toast(R.string.content_fail_clean);
+                    if (target.exists() && !Utils.delete(target)) Utils.toast(R.string.content_fail_clean);
+                    if (thumb != null && thumb.exists() && !Utils.delete(thumb)) Utils.toast(R.string.content_fail_clean);
 
                     // notify that we are done
                     if (callback != null)
@@ -135,8 +135,8 @@ public class ContentManager implements IContentManager {
         boolean success = true;
         // TODO remove encrypted files
         // TODO make sure file is removed from any queue etc
-        if (thumb.exists()) success &= thumb.delete();
-        success &= file.delete();
+        if (thumb.exists()) success &= Utils.delete(thumb);
+        success &= Utils.delete(file);
         return success;
     }
 
