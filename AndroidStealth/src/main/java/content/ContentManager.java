@@ -1,5 +1,7 @@
 package content;
 
+import static content.ConcealCrypto.CryptoMode;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,9 +10,12 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 
@@ -59,27 +64,6 @@ public class ContentManager implements IContentManager {
 		}
 	}
 
-	private boolean encryptItem(ContentItem contentItem, Context context) {
-
-		try {
-			Log.d(this.getClass().toString() + ".encryptItem",
-					"Encrypting file " + contentItem.getFile().getAbsolutePath());
-			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
-			encryptedFile.createNewFile();
-
-			sendEncryptIntent(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
-					ConcealCrypto.CryptoMode.ENCRYPT,
-					context);
-			Log.d(this.getClass().toString() + ".encryptItem", "Started service!");
-
-			return true;
-		}
-		catch (IOException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		}
-
-		return false;
-	}
 
 	@Override
 	public Collection<ContentItem> getStoredContent() {
@@ -120,11 +104,11 @@ public class ContentManager implements IContentManager {
 	 * @return true if ALL files are encrypted successfully, false otherwise.
 	 */
 	@Override
-	public boolean encryptItems(Collection<ContentItem> contentItemCollection, Context context) {
+	public boolean encryptItems(Collection<ContentItem> contentItemCollection, EncryptionService service) {
 		boolean success = true;
 
 		for (ContentItem contentItem : contentItemCollection) {
-			success = encryptItem(contentItem, context) && success;
+			success = encryptItem(contentItem, service) && success;
 		}
 
 		if (success) {
@@ -142,17 +126,50 @@ public class ContentManager implements IContentManager {
 		return success;
 	}
 
+	private boolean encryptItem(ContentItem contentItem, EncryptionService service) {
+
+		try {
+			Log.d(this.getClass().toString() + ".encryptItem",
+					"Encrypting file " + contentItem.getFile().getAbsolutePath());
+			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
+			encryptedFile.createNewFile();
+
+			Future taskFuture = service.addCryptoTask(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
+					CryptoMode.ENCRYPT);
+
+			taskFuture.get(1, TimeUnit.MINUTES);
+
+			notifyListeners();
+
+			return true;
+		}
+		catch (IOException e) {
+			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
+		}
+		catch (InterruptedException e) {
+			Log.e(this.getClass().toString() + ".encryptItem", "Interrupted while encrypting", e);
+		}
+		catch (ExecutionException e) {
+			Log.e(this.getClass().toString() + ".encryptItem", "Exception while executing encryption", e);
+		}
+		catch (TimeoutException e) {
+			Log.e(this.getClass().toString() + ".encryptItem", "Timed out while waiting for encryption", e);
+		}
+
+		return false;
+	}
+
 	/**
 	 * Decrypts all files in the {@param contentItemCollection}. Deletes the encrypted files after decrypting them.
 	 *
 	 * @return true if ALL files are decrypted successfully, false otherwise.
 	 */
 	@Override
-	public boolean decryptItems(Collection<ContentItem> contentItemCollection, Context context) {
+	public boolean decryptItems(Collection<ContentItem> contentItemCollection, EncryptionService service) {
 		boolean success = true;
 
 		for (ContentItem contentItem : contentItemCollection) {
-			success = decryptItem(contentItem, context) && success;
+			success = decryptItem(contentItem, service) && success;
 		}
 
 		if (success) {
@@ -170,7 +187,7 @@ public class ContentManager implements IContentManager {
 		return success;
 	}
 
-	public boolean decryptItem(ContentItem contentItem, Context context) {
+	public boolean decryptItem(ContentItem contentItem, EncryptionService service) {
 		try {
 			// Remove .CRYPT from filename
 			String filename = mDataDir + "/" + contentItem.getFileName();
@@ -180,8 +197,12 @@ public class ContentManager implements IContentManager {
 			File decryptedFile = new File(filename);
 			decryptedFile.createNewFile();
 
-			return sendEncryptIntent(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
-					ConcealCrypto.CryptoMode.DECRYPT, context);
+			Future taskFuture = service.addCryptoTask(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
+					CryptoMode.DECRYPT);
+
+			taskFuture.get(1, TimeUnit.MINUTES);
+
+			notifyListeners();
 		}
 		catch (IOException e) {
 			if (e instanceof NativeGCMCipherException) {
@@ -191,6 +212,15 @@ public class ContentManager implements IContentManager {
 			else {
 				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
 			}
+		}
+		catch (InterruptedException e) {
+			Log.e(this.getClass().toString()+".decryptItem", "Interrupted while decrypting", e);
+		}
+		catch (ExecutionException e) {
+			Log.e(this.getClass().toString() + ".decryptItem", "Exception while executing decryption", e);
+		}
+		catch (TimeoutException e) {
+			Log.e(this.getClass().toString() + ".decryptItem", "Timed out while waiting for decryption", e);
 		}
 
 		return false;
@@ -248,20 +278,5 @@ public class ContentManager implements IContentManager {
 		for (ContentChangedListener listener : mListeners) {
 			listener.contentChanged();
 		}
-	}
-
-	private boolean sendEncryptIntent(File encrypted, File unencrypted, String entityName,
-	                                  ConcealCrypto.CryptoMode mode, Context context) {
-
-		Intent encryptIntent = new Intent(context, EncryptionService.class);
-		encryptIntent.putExtra(EncryptionService.ENCRYPTED_PATH_KEY, encrypted.getPath());
-		encryptIntent.putExtra(EncryptionService.UNENCRYPTED_PATH_KEY, unencrypted.getPath());
-		//TODO this is just for testing. Needs better safeguard against filechanges and stuff
-		encryptIntent.putExtra(EncryptionService.ENTITY_KEY, entityName);
-		encryptIntent.putExtra(EncryptionService.MODE_KEY, mode);
-
-		context.startService(encryptIntent);
-
-		return true;
 	}
 }

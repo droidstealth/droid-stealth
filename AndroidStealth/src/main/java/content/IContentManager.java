@@ -9,7 +9,10 @@ import android.content.Context;
  * Created by Alex on 3/6/14.
  */
 public interface IContentManager {
-    /**
+
+	void notifyListeners();
+
+	/**
      * A listener interface that gets notified whenever the content in the storage is changed
      */
     public interface ContentChangedListener {
@@ -42,8 +45,8 @@ public interface IContentManager {
      */
     public boolean removeItems(Collection<ContentItem> itemCollection);
 
-	public boolean decryptItems(Collection<ContentItem> itemCollection, Context context);
-	public boolean encryptItems(Collection<ContentItem> itemCollection, Context context);
+	public boolean decryptItems(Collection<ContentItem> itemCollection, EncryptionService service);
+	public boolean encryptItems(Collection<ContentItem> itemCollection, EncryptionService service);
 
     /**
      * Adds a listener to the list

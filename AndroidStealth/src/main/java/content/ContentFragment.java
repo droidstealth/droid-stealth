@@ -4,12 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +37,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ActionMode mMode;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
+	private EncryptionService mEncryptionService;
+	private boolean mIsBound;
 
 	public static ContentFragment newInstance(boolean loadEmpty) {
 		ContentFragment contentFragment = new ContentFragment();
@@ -41,6 +48,44 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		contentFragment.setArguments(bundle);
 
 		return contentFragment;
+	}
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName componentName) {
+			mEncryptionService = null;
+		}
+	};
+
+	void doBindService() {
+		getActivity().getApplicationContext()
+		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+				             Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+	}
+
+	void doUnbindService() {
+		if (mIsBound) {
+			getActivity().getApplicationContext().unbindService(mConnection);
+			mIsBound = false;
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		doUnbindService();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		doBindService();
 	}
 
 	/**
@@ -254,13 +299,23 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				}
 				switch (menuItem.getItemId()) {
 					case R.id.action_lock:
-						mContentManager.encryptItems(itemArrayList, getActivity());
+						if (!mIsBound) {
+							Log.e(this.getClass().toString() + ".onActionItemClicked",
+									"encryptionService was not bound");
+						}
+						mContentManager.encryptItems(itemArrayList, mEncryptionService);
 						break;
 					case R.id.action_unlock:
-						mContentManager.decryptItems(itemArrayList, getActivity());
+						if (!mIsBound) {
+							Log.e(this.getClass().toString() + ".onActionItemClicked",
+									"encryptionService was not bound");
+						}
+						mContentManager.decryptItems(itemArrayList, mEncryptionService);
 						break;
 					case R.id.action_share:
 						//TODO share goes here
+						// Below is a test to see if the binding with the service was ok
+						mEncryptionService.startTestToast();
 						break;
 					case R.id.action_remove:
 						//TODO unlock files if necessary, remove from list (don't delete file)

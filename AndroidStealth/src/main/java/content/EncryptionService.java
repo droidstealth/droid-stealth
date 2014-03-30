@@ -1,9 +1,12 @@
 package content;
 
+import static content.ConcealCrypto.CryptoMode;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,6 +14,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
@@ -57,7 +61,7 @@ public class EncryptionService extends Service {
 		String entityName = intent.getStringExtra(ENTITY_KEY);
 
 		Bundle bundle = intent.getExtras();
-		ConcealCrypto.CryptoMode mode = (ConcealCrypto.CryptoMode) (bundle != null ? bundle.get(MODE_KEY) : null);
+		CryptoMode mode = (CryptoMode) (bundle != null ? bundle.get(MODE_KEY) : null);
 
 		CryptoTask cryptoTask = new CryptoTask(mEncrypter, encryptedFile, unencryptedFile, entityName, mode);
 
@@ -68,6 +72,13 @@ public class EncryptionService extends Service {
 		return START_NOT_STICKY;
 	}
 
+	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode){
+		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode);
+
+		Log.d(this.getClass().toString()+".addCryptoTask", "Submitting new task..");
+		return cryptoExecutor.submit(task);
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -75,15 +86,19 @@ public class EncryptionService extends Service {
 		cryptoExecutor.shutdown();
 	}
 
+	public void startTestToast() {
+		Toast.makeText(getApplicationContext(), "This is a test", Toast.LENGTH_LONG).show();
+	}
+
 	private class CryptoTask implements Runnable {
 		private final ConcealCrypto encrypter;
 		private final File encryptedFile;
 		private final File unencryptedFile;
 		private final String entityName;
-		private final ConcealCrypto.CryptoMode cryptoMode;
+		private final CryptoMode cryptoMode;
 
 		public CryptoTask(ConcealCrypto encrypter, File encryptedFile, File unencryptedFile, String entityName,
-		                  ConcealCrypto.CryptoMode mode) {
+		                  CryptoMode mode) {
 			this.encrypter = encrypter;
 			this.encryptedFile = encryptedFile;
 			this.unencryptedFile = unencryptedFile;

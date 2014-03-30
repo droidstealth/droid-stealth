@@ -1,12 +1,9 @@
 package com.stealth.android;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import content.ContentFragment;
-import content.EncryptionService;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
@@ -32,44 +28,6 @@ public class HomeActivity extends ActionBarActivity
 	 */
 	private CharSequence mTitle;
 	private APSharing mSharing;
-	private EncryptionService mEncryptionService;
-	private boolean mIsBound;
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName componentName) {
-			mEncryptionService = null;
-		}
-	};
-
-	void doBindService() {
-		bindService(new Intent(HomeActivity.this, EncryptionService.class), mConnection, Context.BIND_AUTO_CREATE);
-		mIsBound = true;
-	}
-
-	void doUnbindService() {
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
-	}
-
-	@Override
-	protected void onPause(){
-		super.onPause();
-		doUnbindService();
-	}
-
-	@Override
-	protected void onResume(){
-		super.onResume();
-		doBindService();
-	}
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
