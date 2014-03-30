@@ -4,10 +4,10 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.NFC"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +20,6 @@
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -33,25 +32,28 @@
                 android:value="HomeActivity" />
         </activity>
 
-        <service android:name="sharing.APSharing.HttpServerService"
-            android:label="@string/http_service"/>
+        <service
+            android:name="sharing.APSharing.HttpServerService"
+            android:label="@string/http_service" />
 
         <receiver
             android:name="spikes.stealthdialer.StealthDialReceiver"
             android:enabled="true"
             android:exported="true" >
-            <intent-filter android:priority="1">
+            <intent-filter android:priority="1" >
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-		<service android:name="spikes.filepicker.EncryptionService" />
+        <service android:name="spikes.filepicker.EncryptionService" />
+
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-            android:icon="@drawable/ic_chooser"
             android:enabled="@bool/use_activity"
             android:exported="true"
+            android:icon="@drawable/ic_chooser"
             android:label="@string/choose_file" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -60,6 +62,16 @@
                 <category android:name="android.intent.category.OPENABLE" />
 
                 <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.stealth.android.PinActivity"
+            android:label="@string/title_activity_pin"
+            android:theme="@style/AppTheme.Dialog">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

@@ -7,4 +7,8 @@
     <style name="ButtonBar" parent="@android:style/Holo.Light.ButtonBar.AlertDialog">
     </style>
 
+    <style name="AppTheme.Dialog" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 </resources>
