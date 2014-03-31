@@ -41,10 +41,6 @@ public class HomeActivity extends ActionBarActivity
         setContentView(R.layout.activity_home);
         Utils.setContext(this);
 
-        FileStatusNotificationsManager.get().showFilesLocking();
-        FileStatusNotificationsManager.get().showFilesUnlocking();
-        FileStatusNotificationsManager.get().showFilesUnlocked();
-
         mSharing = new APSharing(this);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -62,14 +58,6 @@ public class HomeActivity extends ActionBarActivity
             Log.w("Hiding: Disable", "Disabling app drawer icon.");
             pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FileStatusNotificationsManager.get().hideFilesLocking();
-        FileStatusNotificationsManager.get().hideFilesUnlocking();
-        FileStatusNotificationsManager.get().hideFilesUnlocked();
     }
 
     @Override
