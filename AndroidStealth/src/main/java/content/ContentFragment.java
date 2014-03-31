@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -362,25 +363,34 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
 			long[] selected = mListView.getCheckedItemIds();
 			if (selected.length > 0) {
+				ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+				for (long id : selected) {
+					itemArrayList.add(mAdapter.getItem((int) id));
+				}
 				switch (menuItem.getItemId()) {
 					case R.id.action_lock:
-						//TODO lock goes here
+						if (!mIsBound) {
+							Log.e(this.getClass().toString() + ".onActionItemClicked",
+									"encryptionService was not bound");
+						}
+						mContentManager.encryptItems(itemArrayList, mEncryptionService);
 						break;
 					case R.id.action_unlock:
-						//TODO unlock goes here
+						if (!mIsBound) {
+							Log.e(this.getClass().toString() + ".onActionItemClicked",
+									"encryptionService was not bound");
+						}
+						mContentManager.decryptItems(itemArrayList, mEncryptionService);
 						break;
 					case R.id.action_share:
 						//TODO share goes here
+						// Below is a test to see if the binding with the service was ok
+						mEncryptionService.startTestToast();
 						break;
 					case R.id.action_remove:
 						//TODO unlock files if necessary, remove from list (don't delete file)
 						break;
 					case R.id.action_shred:
-						ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
-						for (long id : selected) {
-							itemArrayList.add(mAdapter.getItem((int) id));
-						}
-
 						mContentManager.removeItems(itemArrayList, new IOnResult<Boolean>() {
 							@Override
 							public void onResult(Boolean result) {
