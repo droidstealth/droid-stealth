@@ -22,6 +22,9 @@ import java.util.List;
  * Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
+
+    private static final String THUMBS_FOLDER = "_thumbs";
+
     private File mDataDir;
     private File mThumbDir;
 
@@ -29,7 +32,7 @@ public class ContentManager implements IContentManager {
 
     public ContentManager(Context context){
         mDataDir = context.getExternalFilesDir(null);
-        mThumbDir = new File(mDataDir, "_thumbs");
+        mThumbDir = new File(mDataDir, THUMBS_FOLDER);
         mThumbDir.mkdir();
     }
 
@@ -39,6 +42,7 @@ public class ContentManager implements IContentManager {
         ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
 
         for(File file : files){
+            if (!file.getName().equals(THUMBS_FOLDER))
             itemArrayList.add(new ContentItem(file, file.getName()));
         }
 
