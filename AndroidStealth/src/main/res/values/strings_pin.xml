@@ -2,6 +2,8 @@
 <resources>
     <string name="title_activity_pin">PinActivity</string>
 
+    <string name="pin_description_unlock">Please enter your pin</string>
+
     <string name="pin_1">1</string>
     <string name="pin_2">2</string>
     <string name="pin_3">3</string>

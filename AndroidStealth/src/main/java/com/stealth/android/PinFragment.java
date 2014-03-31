@@ -19,10 +19,9 @@ import android.widget.TextView;
  *
  */
 public class PinFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_DESCRIPTION_RESOURCE = "pinDescription";
-    private static final String ARG_PIN = "pinCode";
+    public static final String ARG_DESCRIPTION_RESOURCE = "pinDescription";
+    public static final String ARG_PIN = "pinCode";
 
     private int mDescriptionResource;
     private String mPin;
@@ -64,6 +63,10 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_pin, container, false);
+
+        // TODO use Utils class from master
+        ((TextView)root.findViewById(R.id.pin_description)).setText(
+                root.getContext().getResources().getString(mDescriptionResource));
 
         root.findViewById(R.id.pin_0_container).setOnClickListener(this);
         root.findViewById(R.id.pin_1_container).setOnClickListener(this);
@@ -122,6 +125,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
      * Remove a character from the pin
      */
     public void pinPop() {
+        if (mPin.length() == 0) return;
         mPin = mPin.substring(0, mPin.length() - 1);
         updatePin();
     }
