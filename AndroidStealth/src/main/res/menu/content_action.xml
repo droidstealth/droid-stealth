@@ -5,29 +5,29 @@
         android:id="@+id/action_share"
         android:icon="@drawable/ic_menu_share"
         android:showAsAction="always"
-        android:title="@string/content_share"/>
+        android:title="@string/action_share"/>
     <item
         android:id="@+id/action_lock"
         android:icon="@drawable/ic_menu_lock"
         android:showAsAction="always"
-        android:title="@string/content_lock_hide"
+        android:title="@string/action_lock_hide"
         />
     <item
         android:id="@+id/action_unlock"
         android:icon="@drawable/ic_menu_unlock"
         android:showAsAction="ifRoom"
-        android:title="@string/content_unlock_show"
+        android:title="@string/action_unlock_show"
         />
     <item
         android:id="@+id/action_shred"
         android:icon="@drawable/ic_menu_shred"
         android:showAsAction="ifRoom"
-        android:title="@string/content_shred"
+        android:title="@string/action_shred"
         />
     <item
         android:id="@+id/action_remove"
         android:icon="@drawable/ic_menu_remove"
         android:showAsAction="ifRoom"
-        android:title="@string/content_remove"
+        android:title="@string/action_remove"
         />
 </menu>

@@ -1,13 +1,17 @@
 package content;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.stealth.android.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +66,14 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
     public View getView(int i, View view, ViewGroup viewGroup) {
         if(view == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
+        }
+
+        File thumb = ((ContentManager)mContentManager).getThumbnailFile(getItem(i).getFile());
+        if (thumb.exists()) {
+            Bitmap bm = BitmapFactory.decodeFile(thumb.getPath());
+            if (bm != null) {
+            ((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(bm);
+            }
         }
 
         ((TextView)view.findViewById(R.id.file_text)).setText(getItem(i).getFileName());

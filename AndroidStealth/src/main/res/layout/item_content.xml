@@ -8,6 +8,7 @@
     android:padding="@dimen/content_item_padding"
     android:background="@drawable/content_item_background" >
     <ImageView
+        android:id="@+id/file_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -18,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:maxLines="1"
+        android:gravity="center"
+        android:maxLines="2"
         android:ellipsize="middle"/>
 </content.CheckableLinearLayout>

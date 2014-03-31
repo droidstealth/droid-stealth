@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><resources>
+
+    <string name="content_fail_thumb">Could not create thumbnail</string>
+    <string name="content_fail_clean">Could not clean up</string>
+    <string name="content_fail_delete">Could not delete {COUNT} file(s). Perhaps it was in use, it didn\'t exist anymore, or we don\'t have the rights.</string>
+    <string name="content_fail_original_delete">Could not delete the original file. Please do it manually.</string>
+    <string name="content_fail_add">Could not add selected file completely due to unknown reasons.</string>
+    <string name="content_success_add">Added selected file successfully.</string>
+    <string name="content_fail_shred">Could not shred selected file(s) due to unknown reasons.</string>
+    <string name="content_success_shred">Shredded selected file(s) successfully.</string>
+</resources>

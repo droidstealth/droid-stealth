@@ -29,6 +29,7 @@ public class HomeActivity extends ActionBarActivity
 	private CharSequence mTitle;
 	private APSharing mSharing;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
@@ -57,6 +58,7 @@ public class HomeActivity extends ActionBarActivity
 	public void onNavigationDrawerItemSelected(int position) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		/*try {
+
 		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		    if (phoneNumber.startsWith("#555")) {
                 // TODO some actions
