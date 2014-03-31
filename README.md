@@ -20,3 +20,5 @@ Create a user-friendly data management experience. That is, provide an intuitive
 Far-future goals
 ----------------
 Connecting the application to other (non-internet) means of communicating data.
+
+Suggestions for this README? Create an issue.
