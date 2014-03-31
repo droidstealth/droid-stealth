@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import pin.PinActivity;
+
 /**
  * Implementation of App Widget functionality.
  */

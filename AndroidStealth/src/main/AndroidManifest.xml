@@ -67,7 +67,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.stealth.android.PinActivity"
+            android:name="pin.PinActivity"
             android:label="@string/title_activity_pin"
             android:theme="@style/AppTheme.Dialog" >
             <intent-filter>

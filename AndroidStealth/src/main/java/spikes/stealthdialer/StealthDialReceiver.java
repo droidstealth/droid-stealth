@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
-import android.util.Log;
+
 import com.stealth.android.HomeActivity;
+import com.stealth.utils.Utils;
+
+import pin.PinManager;
 
 /**
  * Creates BroadcastReceiver that listens for Intent.ACTION_NEW_OUTGOING_CALL
@@ -33,18 +36,9 @@ public class StealthDialReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        if(phoneNumber.startsWith("#555") || phoneNumber.startsWith("#666")){
-            PackageManager pm = context.getPackageManager();
-            ComponentName homeName = new ComponentName(context, HomeActivity.class);
-            pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
-            Intent stealthCall = new Intent(context, HomeActivity.class);
-            stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-            stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
-            stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(stealthCall);
-
-            setResultData(null);
-        }
+        Utils.setContext(context);
+        String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        boolean success = HomeActivity.launch(context, pin);
+        setResultData(null);
     }
 }

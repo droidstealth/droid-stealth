@@ -1,24 +1,21 @@
-package com.stealth.android;
+package pin;
 
-import android.app.Activity;
-import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.RemoteViews;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
+
+import com.stealth.android.HomeActivity;
+import com.stealth.android.R;
+import com.stealth.utils.Utils;
 
 public class PinActivity extends FragmentActivity implements PinFragment.OnPinResult {
 
@@ -28,6 +25,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
+        Utils.setContext(getApplicationContext());
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -55,25 +53,12 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 
     @Override
     public void onPinEntry(String pin) {
-        Context context = getApplicationContext();
         mPinFrag.pinClear();
-        if (pin.startsWith("#")) {
-            // TODO make it work normally... instead of just opening the home activity
-            Toast.makeText(context, "YAY!!!", Toast.LENGTH_SHORT).show();
-
-            try {
-                String uri = "tel:" + Uri.encode(pin.trim());
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse(uri));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            } catch (Exception e) {
-                Log.e("STEALTH", "SOM TIN WONG", e);
-            }
-
+        if (HomeActivity.launch(getApplicationContext(), pin)) {
+            finish();
         } else {
-            Toast.makeText(context, "NAAY..", Toast.LENGTH_SHORT).show();
+            Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            mPinFrag.getView().startAnimation(shake);
         }
     }
 

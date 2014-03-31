@@ -1,4 +1,4 @@
-package com.stealth.android;
+package pin;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,11 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.stealth.android.R;
+import com.stealth.utils.Utils;
+
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link com.stealth.android.PinFragment.OnPinResult} interface
+ * {@link PinFragment.OnPinResult} interface
  * to handle interaction events.
  * Use the {@link PinFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -52,6 +55,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mDescriptionResource = getArguments().getInt(ARG_DESCRIPTION_RESOURCE);
             mPin = getArguments().getString(ARG_PIN);

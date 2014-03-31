@@ -3,6 +3,7 @@
     <string name="title_activity_pin">PinActivity</string>
 
     <string name="pin_description_unlock">Please enter your pin</string>
+    <string name="pin_description_unlocked">Welcome, mister Bond.</string>
 
     <string name="pin_1">1</string>
     <string name="pin_2">2</string>

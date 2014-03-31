@@ -1,6 +1,7 @@
 package com.stealth.android;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.stealth.utils.Utils;
 
 import content.ContentFragment;
 
+import pin.PinManager;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 import spikes.notifications.FileStatusNotificationsManager;
@@ -34,6 +36,46 @@ public class HomeActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     private APSharing mSharing;
+
+    /**
+     * Launch the HomeActivity by providing a pin
+     * @param context the context to use for the launch
+     * @param pin the actual pin code that is used to launch us
+     * @return whether activity could launch
+     */
+    public static boolean launch(Context context, String pin)
+    {
+        if (!PinManager.get().isPin(pin)) return false;
+        try
+        {
+            PackageManager pm = context.getPackageManager();
+            ComponentName homeName = new ComponentName(context, HomeActivity.class);
+
+            if (pm != null)
+            {
+                // make sure activity can be called
+                pm.setComponentEnabledSetting(
+                        homeName,
+                        PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+                        PackageManager.DONT_KILL_APP);
+            }
+
+            Intent stealthCall = new Intent(context, HomeActivity.class);
+            stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+            stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, pin.trim());
+            stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(stealthCall);
+
+            Utils.toast(R.string.pin_description_unlocked);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Log.e("STEALTH", "Could not launch stealth app", e);
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +106,7 @@ public class HomeActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 	    /*try {
-		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+		    String phoneNumber = getIntent().getStringExtra(PinManager.EXTRA_PIN);
 		    if (phoneNumber.startsWith("#555")) {
                 // TODO some actions
 		    }
