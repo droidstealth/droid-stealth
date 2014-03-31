@@ -58,7 +58,6 @@ public class FileStatusNotificationsManager {
         mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
         mBuilder.setContentTitle(Utils.str(R.string.notification_locking_title));
         mBuilder.setContentText(Utils.str(R.string.notification_locking_sub));
-        mBuilder.setOngoing(true);
 
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
