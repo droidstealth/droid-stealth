@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-public class PinActivity extends FragmentActivity implements PinFragment.OnFragmentInteractionListener {
+public class PinActivity extends FragmentActivity implements PinFragment.OnPinResult {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,12 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnFragm
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri){
-        // TODO
+    public void onPinEntry(String pin) {
+        
+    }
+
+    @Override
+    public void onPinCancel() {
+
     }
 }

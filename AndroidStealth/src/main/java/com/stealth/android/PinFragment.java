@@ -1,7 +1,6 @@
 package com.stealth.android;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PinFragment.OnFragmentInteractionListener} interface
+ * {@link com.stealth.android.PinFragment.OnPinResult} interface
  * to handle interaction events.
  * Use the {@link PinFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -22,16 +21,13 @@ import android.widget.TextView;
 public class PinFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_DESCRIPTION_RESOURCE = "pinDescription";
+    private static final String ARG_PIN = "pinCode";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int mDescriptionResource;
+    private String mPin;
 
-    private String mPin = "";
-
-    private OnFragmentInteractionListener mListener;
+    private OnPinResult mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -45,8 +41,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
     public static PinFragment newInstance(String param1, String param2) {
         PinFragment fragment = new PinFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_DESCRIPTION_RESOURCE, R.string.unknown);
+        args.putString(ARG_PIN, "");
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,8 +54,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mDescriptionResource = getArguments().getInt(ARG_DESCRIPTION_RESOURCE);
+            mPin = getArguments().getString(ARG_PIN);
         }
     }
 
@@ -92,18 +88,11 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
         return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnPinResult) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -161,8 +150,15 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
             case R.id.pin_asterisk_container: pinAdd("*"); break;
             case R.id.pin_hashtag_container: pinAdd("#"); break;
             case R.id.pin_delete: pinPop(); break;
-            case R.id.pin_accept: /* TODO */ break;
-            case R.id.pin_cancel: getActivity().finish(); break;
+
+            case R.id.pin_accept:
+                if(mListener != null)
+                    mListener.onPinEntry(mPin);
+                break;
+            case R.id.pin_cancel:
+                if(mListener != null)
+                    mListener.onPinCancel();
+                break;
         }
     }
 
@@ -175,18 +171,11 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Allows interaction with this fragment
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public interface OnPinResult {
+        public void onPinEntry(String pin);
+        public void onPinCancel();
     }
 
 }
