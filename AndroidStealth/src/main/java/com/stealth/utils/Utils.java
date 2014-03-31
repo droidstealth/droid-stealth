@@ -48,6 +48,7 @@ public class Utils {
      * @return the string value of the string resource
      */
     public static String str(int resource) {
+        if (getContext() == null) return "";
         return getContext().getResources().getString(resource);
     }
 
@@ -79,12 +80,9 @@ public class Utils {
      * @param run The runnable to run on the main thread
      */
     public static void runOnMain(Runnable run) {
+        if (getContext() == null) return;
         new Handler(getContext().getMainLooper()).post(run);
     }
-
-//    public static boolean delete(File deletableFile) {
-//        return 0 < Utils.getContext().getContentResolver().delete(Uri.parse(deletableFile.toString()), null, null);
-//    }
 
     /**
      * Created this method because the normal file.delete() does not always work properly and this
@@ -103,7 +101,7 @@ public class Utils {
      */
     public static boolean deleteImage(File f)
     {
-        if (!FileUtils.isImage(FileUtils.getMimeType(f))) {
+        if (!FileUtils.isImage(FileUtils.getMimeType(f)) || getContext() == null) {
             return false;
         }
 
@@ -137,7 +135,7 @@ public class Utils {
      */
     public static boolean deleteVideo(File f)
     {
-        if (!FileUtils.isVideo(FileUtils.getMimeType(f))) {
+        if (!FileUtils.isVideo(FileUtils.getMimeType(f)) || getContext() == null) {
             return false;
         }
 
