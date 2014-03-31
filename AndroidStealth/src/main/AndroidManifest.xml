@@ -78,6 +78,7 @@
         <receiver android:name="com.stealth.android.StealthButton" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.stealth.android.StealthButton.ACTION_BUTTON_PRESS" />
             </intent-filter>
 
             <meta-data
