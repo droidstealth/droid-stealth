@@ -1,10 +1,12 @@
 package content;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
+import com.stealth.preferences.Directories;
 import com.stealth.utils.Utils;
 import com.stealth.utils.IOnResult;
 
@@ -23,26 +25,17 @@ import java.util.List;
  */
 public class ContentManager implements IContentManager {
 
-    private static final String THUMBS_FOLDER = "_thumbs";
-
-    private File mDataDir;
-    private File mThumbDir;
-
     private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
 
-    public ContentManager(Context context){
-        mDataDir = context.getExternalFilesDir(null);
-        mThumbDir = new File(mDataDir, THUMBS_FOLDER);
-        mThumbDir.mkdir();
-    }
+    public ContentManager(Context context) { }
 
     @Override
     public Collection<ContentItem> getStoredContent() {
-        File[] files = mDataDir.listFiles();
+        File[] files = Directories.files().listFiles();
         ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
 
         for(File file : files){
-            if (!file.getName().equals(THUMBS_FOLDER))
+            if (!file.getName().equals(Directories.FOLDER_THUMBS))
             itemArrayList.add(new ContentItem(file, file.getName()));
         }
 
@@ -55,7 +48,7 @@ public class ContentManager implements IContentManager {
      * @return the thumbnail file
      */
     public File getThumbnailFile(File item) {
-        return new File(mThumbDir, item.getName() + ".jpg");
+        return new File(Directories.thumbs(), item.getName() + ".jpg");
     }
 
     /**
@@ -84,7 +77,7 @@ public class ContentManager implements IContentManager {
             @Override
             public void run() {
                 // init
-                File target = new File(mDataDir, item.getName());
+                File target = new File(Directories.files(), item.getName());
                 File thumb = null;
                 String mimeType = FileUtils.getMimeType(item);
                 boolean isMedia = FileUtils.isImageOrVideo(mimeType);
@@ -92,7 +85,7 @@ public class ContentManager implements IContentManager {
                 try
                 {
                     // copy to our folder
-                    copyFile(item, target);
+                    Utils.copyFile(item, target);
 
                     // create thumbnail
                     thumb = createThumbnail(target);
@@ -224,35 +217,6 @@ public class ContentManager implements IContentManager {
     private void notifyListenersNow() {
         for (ContentChangedListener listener : mListeners){
             listener.contentChanged();
-        }
-    }
-
-    /**
-     * Helper function to copy a file internally
-     * @param sourceFile
-     * @param destFile
-     * @throws IOException
-     */
-    private static void copyFile(File sourceFile, File destFile) throws IOException {
-        if(!destFile.exists()) {
-            destFile.createNewFile();
-        }
-
-        FileChannel source = null;
-        FileChannel destination = null;
-
-        try {
-            source = new FileInputStream(sourceFile).getChannel();
-            destination = new FileOutputStream(destFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
-                source.close();
-            }
-            if(destination != null) {
-                destination.close();
-            }
         }
     }
 }

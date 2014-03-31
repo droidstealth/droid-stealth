@@ -13,8 +13,16 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.channels.FileChannel;
+import java.util.Random;
 
 /**
  * Read: easy :)
@@ -22,6 +30,8 @@ import java.lang.ref.WeakReference;
  * Created by Olivier Hokke on 3/26/14.
  */
 public class Utils {
+
+    private static final int MAX_RANDOM_STRING_LENGTH = 15;
 
     private static WeakReference<Context> sContext;
 
@@ -50,6 +60,38 @@ public class Utils {
     public static String str(int resource) {
         if (getContext() == null) return "";
         return getContext().getResources().getString(resource);
+    }
+
+    /**
+     * Read a file as plain text
+     * @param resource the file to read
+     * @return the contents of the file
+     */
+    public static String read(File resource) throws IOException
+    {
+        StringBuilder text = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(resource));
+        String line;
+
+        while ((line = br.readLine()) != null)
+        {
+            text.append(line);
+            text.append('\n');
+        }
+
+        return text.toString();
+    }
+
+    /**
+     * Read a file as plain text
+     * @param resource the file to read
+     * @return the contents of the file
+     */
+    public static void write(File resource, String contents) throws IOException
+    {
+        FileWriter out = new FileWriter(resource);
+        out.write(contents);
+        out.close();
     }
 
     /**
@@ -82,6 +124,61 @@ public class Utils {
     public static void runOnMain(Runnable run) {
         if (getContext() == null) return;
         new Handler(getContext().getMainLooper()).post(run);
+    }
+
+    /**
+     * Generates a random string of a random size
+     * @return
+     */
+    public static String randomString() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(MAX_RANDOM_STRING_LENGTH);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
+
+    /**
+     * Helper function to copy a file internally
+     * @param sourceFile the source file to copy
+     * @param destFile the destination file to copy
+     * @throws IOException
+     */
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if(!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        }
+        finally {
+            if(source != null) {
+                source.close();
+            }
+            if(destination != null) {
+                destination.close();
+            }
+        }
+    }
+
+    /**
+     * Gets random file name for temporary file reading and writing
+     * @param extension the extension to use for this file
+     * @return the temporary file
+     */
+    public static File getRandomCacheFile(String extension)
+    {
+        return new File(getContext().getCacheDir(), randomString() + "." + extension);
     }
 
     /**
