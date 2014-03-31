@@ -23,6 +23,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -99,6 +102,30 @@ public class FileUtils {
     }
 
     /**
+     * @return True if mime type is video or image
+     * @author OlivierHokke
+     */
+    public static boolean isImageOrVideo(String mimeType) {
+        return isVideo(mimeType) || isImage(mimeType);
+    }
+
+    /**
+     * @return True if mime type is video
+     * @author OlivierHokke
+     */
+    public static boolean isVideo(String mimeType) {
+        return mimeType.startsWith("video/");
+    }
+
+    /**
+     * @return True if mime type is image
+     * @author OlivierHokke
+     */
+    public static boolean isImage(String mimeType) {
+        return mimeType.startsWith("image/");
+    }
+
+    /**
      * Convert File into Uri.
      *
      * @param file
@@ -146,7 +173,7 @@ public class FileUtils {
         String extension = getExtension(file.getName());
 
         if (extension.length() > 0)
-            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.substring(1));
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.substring(1).toLowerCase());
 
         return "application/octet-stream";
     }
@@ -420,49 +447,47 @@ public class FileUtils {
      * @param uri
      * @param mimeType
      * @return
-     * @author paulburke
+     * @author paulburke, OlivierHokke
      */
     public static Bitmap getThumbnail(Context context, Uri uri, String mimeType) {
         if (DEBUG)
             Log.d(TAG, "Attempting to get thumbnail");
 
-        if (!isMediaUri(uri)) {
+        if (!isMediaUri(uri) && !isImageOrVideo(mimeType)) {
             Log.e(TAG, "You can only retrieve thumbnails for images and videos.");
             return null;
         }
 
         Bitmap bm = null;
-        if (uri != null) {
-            final ContentResolver resolver = context.getContentResolver();
-            Cursor cursor = null;
-            try {
-                cursor = resolver.query(uri, null, null, null, null);
-                if (cursor.moveToFirst()) {
-                    final int id = cursor.getInt(0);
-                    if (DEBUG)
-                        Log.d(TAG, "Got thumb ID: " + id);
-
-                    if (mimeType.contains("video")) {
-                        bm = MediaStore.Video.Thumbnails.getThumbnail(
-                                resolver,
-                                id,
-                                MediaStore.Video.Thumbnails.MINI_KIND,
-                                null);
-                    }
-                    else if (mimeType.contains(FileUtils.MIME_TYPE_IMAGE)) {
-                        bm = MediaStore.Images.Thumbnails.getThumbnail(
-                                resolver,
-                                id,
-                                MediaStore.Images.Thumbnails.MINI_KIND,
-                                null);
-                    }
+        if (uri != null)
+        {
+            try
+            {
+                if (isVideo(mimeType))
+                {
+                    bm = ThumbnailUtils.createVideoThumbnail(
+                            getPath(context, uri),
+                            MediaStore.Video.Thumbnails.MINI_KIND);
                 }
-            } catch (Exception e) {
-                if (DEBUG)
-                    Log.e(TAG, "getThumbnail", e);
-            } finally {
-                if (cursor != null)
-                    cursor.close();
+                else if (isImage(mimeType))
+                {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                    Bitmap bitmap = BitmapFactory.decodeFile(getPath(context, uri), options);
+                    bm = ThumbnailUtils.extractThumbnail(bitmap, 512, 384); // same as MINI_KIND
+                }
+                if (bm != null && bm.getWidth() < bm.getHeight())
+                {
+                    // rotate if thumb is portrait
+                    Matrix m = new Matrix();
+                    m.postRotate(90);
+                    bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                if (DEBUG) Log.e(TAG, "getThumbnail", e);
             }
         }
         return bm;

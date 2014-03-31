@@ -12,12 +12,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import android.widget.Toast;
+import com.stealth.utils.Utils;
+
 import content.ContentFragment;
 
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
-import spikes.stealthdialer.StealthDialReceiver;
+import spikes.notifications.FileStatusNotificationsManager;
 
 public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -38,6 +39,7 @@ public class HomeActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Utils.setContext(this);
 
         mSharing = new APSharing(this);
 
