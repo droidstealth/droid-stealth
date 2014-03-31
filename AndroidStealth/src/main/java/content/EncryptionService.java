@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
+import com.stealth.utils.IOnResult;
 
 /**
  * Created by Alex on 2/22/14.
@@ -73,8 +74,8 @@ public class EncryptionService extends Service {
 		//		return START_NOT_STICKY;
 	}
 
-	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode) {
-		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode);
+	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode, IOnResult<Boolean> callback) {
+		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode, callback);
 
 		Log.d(this.getClass().toString() + ".addCryptoTask", "Submitting new task..");
 		return cryptoExecutor.submit(task);
@@ -97,14 +98,16 @@ public class EncryptionService extends Service {
 		private final File unencryptedFile;
 		private final String entityName;
 		private final CryptoMode cryptoMode;
+		private IOnResult<Boolean> callback;
 
 		public CryptoTask(ConcealCrypto encrypter, File encryptedFile, File unencryptedFile, String entityName,
-		                  CryptoMode mode) {
+		                  CryptoMode mode, IOnResult<Boolean> callback) {
 			this.encrypter = encrypter;
 			this.encryptedFile = encryptedFile;
 			this.unencryptedFile = unencryptedFile;
 			this.entityName = entityName;
 			this.cryptoMode = mode;
+			this.callback = callback;
 		}
 
 		@Override
@@ -139,6 +142,8 @@ public class EncryptionService extends Service {
 					encryptedFile.delete();
 				}
 			}
+
+			callback.onResult(true);
 		}
 	}
 

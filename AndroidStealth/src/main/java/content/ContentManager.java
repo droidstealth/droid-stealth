@@ -10,10 +10,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -288,26 +284,20 @@ public class ContentManager implements IContentManager {
 			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
 			encryptedFile.createNewFile();
 
-			Future taskFuture = service.addCryptoTask(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
-					CryptoMode.ENCRYPT);
+			IOnResult<Boolean> callback = new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					notifyListeners();
+				}
+			};
 
-			taskFuture.get(1, TimeUnit.MINUTES);
-
-			notifyListeners();
+			service.addCryptoTask(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
+					CryptoMode.ENCRYPT, callback);
 
 			return true;
 		}
 		catch (IOException e) {
 			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		}
-		catch (InterruptedException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Interrupted while encrypting", e);
-		}
-		catch (ExecutionException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Exception while executing encryption", e);
-		}
-		catch (TimeoutException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Timed out while waiting for encryption", e);
 		}
 
 		return false;
@@ -349,12 +339,15 @@ public class ContentManager implements IContentManager {
 			File decryptedFile = new File(filename);
 			decryptedFile.createNewFile();
 
-			Future taskFuture = service.addCryptoTask(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
-					CryptoMode.DECRYPT);
+			IOnResult<Boolean> callback = new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					notifyListeners();
+				}
+			};
 
-			taskFuture.get(1, TimeUnit.MINUTES);
-
-			notifyListeners();
+			service.addCryptoTask(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
+					CryptoMode.DECRYPT, callback);
 
 			return true;
 		}
@@ -366,15 +359,6 @@ public class ContentManager implements IContentManager {
 			else {
 				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
 			}
-		}
-		catch (InterruptedException e) {
-			Log.e(this.getClass().toString() + ".decryptItem", "Interrupted while decrypting", e);
-		}
-		catch (ExecutionException e) {
-			Log.e(this.getClass().toString() + ".decryptItem", "Exception while executing decryption", e);
-		}
-		catch (TimeoutException e) {
-			Log.e(this.getClass().toString() + ".decryptItem", "Timed out while waiting for decryption", e);
 		}
 
 		return false;
