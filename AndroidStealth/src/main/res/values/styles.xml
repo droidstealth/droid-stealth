@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionBarSplitStyle">@style/MyActionBarSplit</item>
+        <item name="android:actionModeStyle">@style/MyActionBarCAB</item>
+        <!-- <item name="android:actionModeSplitBackground">@drawable/actionbar_background</item> -->
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <!-- <item name="android:background">@drawable/actionbar_background</item> -->
+        <!-- Support library compatibility -->
+        <!-- <item name="background">@drawable/actionbar_background</item> -->
+    </style>
+        <style name="MyActionBarSplit"
+            parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <!-- <item name="android:background">@drawable/actionbar_background</item> -->
+        <!-- Support library compatibility -->
+        <!-- <item name="background">@drawable/actionbar_background</item> -->
+    </style>
+    <style name="MyActionBarCAB"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <!-- <item name="android:background">@drawable/actionbar_cab_background</item> -->
+        <!-- Support library compatibility -->
+        <!-- <item name="background">@drawable/actionbar_cab_background</item> -->
     </style>
 
     <style name="ButtonBarButton">
@@ -14,4 +39,5 @@
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!-- API 14 theme customizations can go here. -->
     </style>
+
 </resources>
