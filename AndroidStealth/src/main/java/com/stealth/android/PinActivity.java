@@ -62,7 +62,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
             Toast.makeText(context, "YAY!!!", Toast.LENGTH_SHORT).show();
 
             try {
-                String uri = "tel:" + pin.trim() ;
+                String uri = "tel:" + Uri.encode(pin.trim());
                 Intent intent = new Intent(Intent.ACTION_CALL);
                 intent.setData(Uri.parse(uri));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
