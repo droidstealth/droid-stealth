@@ -173,12 +173,23 @@ public class Utils {
 
     /**
      * Gets random file name for temporary file reading and writing
-     * @param extension the extension to use for this file
+     * @param extension the extension to use for this file (include the '.')
      * @return the temporary file
      */
     public static File getRandomCacheFile(String extension)
     {
-        return new File(getContext().getCacheDir(), randomString() + "." + extension);
+        return getRandomFile(getContext().getCacheDir(), extension);
+    }
+
+    /**
+     * Gets random file name
+     * @param baseDirectory the directory where to store the file
+     * @param extension the extension to use for this file (include the '.')
+     * @return the temporary file
+     */
+    public static File getRandomFile(File baseDirectory, String extension)
+    {
+        return new File(baseDirectory, randomString() + extension);
     }
 
     /**
