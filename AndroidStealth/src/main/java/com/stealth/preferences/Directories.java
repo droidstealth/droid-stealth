@@ -20,11 +20,15 @@ public class Directories
     private static final String FOLDER_MAIN_KEY = "mainFolder";
     public static final String FOLDER_THUMBS = "Thumbs";
     public static final String FOLDER_FILES = "Files";
+    public static final String SUBFOLDER_LOCKED = "Locked";
+    public static final String SUBFOLDER_UNLOCKED = "Unlocked";
     public static final String FOLDER_PREFS= "Preferences";
 
     private File mMainDir;
     private File mPrefsDir;
     private File mFilesDir;
+    private File mLockedDir;
+    private File mUnlockedDir;
     private File mThumbDir;
 
     private static Directories sInstance;
@@ -51,11 +55,15 @@ public class Directories
         mFilesDir = new File(mMainDir, FOLDER_FILES);
         mThumbDir = new File(mMainDir, FOLDER_THUMBS);
         mPrefsDir = new File(mMainDir, FOLDER_PREFS);
+        mLockedDir = new File(mFilesDir, SUBFOLDER_LOCKED);
+        mUnlockedDir = new File(mFilesDir, SUBFOLDER_UNLOCKED);
 
         mThumbDir.mkdir();
         mMainDir.mkdir();
         mFilesDir.mkdir();
         mPrefsDir.mkdir();
+        mLockedDir.mkdir();
+        mUnlockedDir.mkdir();
     }
 
     /**
@@ -81,6 +89,24 @@ public class Directories
      */
     public static File files() {
         return get().mFilesDir;
+    }
+
+    /**
+     * Get the File object of our current locked files folder where we store
+     * all currently hidden files.
+     * @return the file object
+     */
+    public static File locked() {
+        return get().mLockedDir;
+    }
+
+    /**
+     * Get the File object of our current files folder where we store
+     * all unlocked files.
+     * @return the file object
+     */
+    public static File unlocked() {
+        return get().mUnlockedDir;
     }
 
     /**

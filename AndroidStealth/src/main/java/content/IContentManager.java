@@ -5,11 +5,14 @@ import com.stealth.utils.IOnResult;
 import java.io.File;
 import java.util.Collection;
 
+import android.content.Context;
+
 /**
  * Created by Alex on 3/6/14.
  */
 public interface IContentManager {
-    /**
+
+	/**
      * A listener interface that gets notified whenever the content in the storage is changed
      */
     public interface ContentChangedListener {
@@ -41,6 +44,9 @@ public interface IContentManager {
      * @param callback the callback that notifies if the items were removed successfully
      */
     public void removeItems(Collection<ContentItem> itemCollection, IOnResult<Boolean> callback);
+
+	public boolean decryptItems(Collection<ContentItem> itemCollection, EncryptionService service);
+	public boolean encryptItems(Collection<ContentItem> itemCollection, EncryptionService service);
 
     /**
      * Adds a listener to the list
