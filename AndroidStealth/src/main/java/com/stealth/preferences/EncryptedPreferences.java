@@ -1,5 +1,8 @@
 package com.stealth.preferences;
 
+import android.util.Log;
+
+import com.stealth.files.Directories;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
@@ -31,19 +34,19 @@ public class EncryptedPreferences {
      */
     public static void get(final String name, IOnResult<EncryptedPreferences> callback)
     {
-        Runnable handleQueue = new Runnable() {
-            @Override
-            public void run() {
-                sInstances.get(name).handleQueue();
-            }
-        };
-
         if (!sInstances.containsKey(name))
         {
-            sInstances.put(name, new EncryptedPreferences(name, handleQueue));
+            Utils.toast("Creating encryption preferences");
+            new EncryptedPreferences(name, new IOnResult<EncryptedPreferences>() {
+                @Override
+                public void onResult(EncryptedPreferences result) {
+                    Utils.toast("encryption preferences created!! handle queue");
+                    sInstances.get(name).handleQueue();
+                }
+            });
         }
         sInstances.get(name).addToQueue(callback);
-        handleQueue.run();
+        sInstances.get(name).handleQueue();
     }
 
     /**
@@ -71,7 +74,7 @@ public class EncryptedPreferences {
             public void run() {
                 // let's handle the queue because we are ready to handle them
                 while (!mQueue.isEmpty()) {
-                    mQueue.getLast().onResult(EncryptedPreferences.this);
+                    mQueue.pop().onResult(EncryptedPreferences.this);
                 }
             }
         });
@@ -109,8 +112,8 @@ public class EncryptedPreferences {
      * @param name the name of the preferences file
      * @param onReady what to do when ready
      */
-    private EncryptedPreferences(String name, final Runnable onReady) {
-        sInstances.put(mName, this);
+    private EncryptedPreferences(String name, final IOnResult<EncryptedPreferences> onReady) {
+        sInstances.put(name, this);
         mReady = false;
         mName = name;
         mJson = new JSONObject();
@@ -118,22 +121,27 @@ public class EncryptedPreferences {
 
         if (mEncryptedFile.exists()) // one can only read it if it exists
         {
+            Utils.toast("Preferences exist... reading!");
             readPreferences(new IOnResult<Boolean>() {
                 @Override
                 public void onResult(Boolean result) {
                     if (result)
                     {
+                        Utils.toast("We read the preferences :)");
                         mReady = true;
-                        onReady.run();
+                        onReady.onResult(EncryptedPreferences.this);
+                    } else {
+                        Utils.toast("We coulnd't read the preference file :(");
                     }
                 }
             });
         }
         else // it doesn't exist, create it
         {
+            Utils.toast("Preferences don't exist... writing!");
             writePreferences();
             mReady = true;
-            onReady.run();
+            onReady.onResult(EncryptedPreferences.this);
         }
     }
 
@@ -143,6 +151,13 @@ public class EncryptedPreferences {
      */
     public JSONObject getJson() {
         return mJson;
+    }
+
+    /**
+     * Save the preferences
+     */
+    public void commit() {
+        writePreferences();
     }
 
     /**
@@ -183,7 +198,7 @@ public class EncryptedPreferences {
                         callback.onResult(false);
                 }
             }
-        });
+        }).start();
     }
 
     /**
@@ -229,6 +244,6 @@ public class EncryptedPreferences {
                     mWriteAgain = false;
                 }
             }
-        });
+        }).start();
     }
 }

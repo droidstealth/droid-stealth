@@ -13,4 +13,5 @@
     android:longClickable="true"
     android:stretchMode="columnWidth"
     android:listSelector="@drawable/view_selector"
+    android:background="@color/content_list_background"
     />

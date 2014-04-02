@@ -6,9 +6,11 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -32,6 +34,7 @@ import java.util.Random;
 public class Utils {
 
     private static final int MAX_RANDOM_STRING_LENGTH = 15;
+    private static final String TAG = "TUDELFT";
 
     private static WeakReference<Context> sContext;
 
@@ -53,6 +56,23 @@ public class Utils {
     }
 
     /**
+     * Returns the log tag for class
+     * @param object the class
+     * @return logtag
+     */
+    public static String tag(Object object) {
+        return TAG + object.getClass().getName();
+    }
+
+    /**
+     * Returns the log tag
+     * @return log tag
+     */
+    public static String tag() {
+        return TAG;
+    }
+
+    /**
      * Get a string from the resources of this app.
      * @param resource the resource, for instance R.string.hello_world
      * @return the string value of the string resource
@@ -60,6 +80,16 @@ public class Utils {
     public static String str(int resource) {
         if (getContext() == null) return "";
         return getContext().getResources().getString(resource);
+    }
+
+    /**
+     * Get a color from the resources of this app.
+     * @param resource the resource, for instance R.string.hello_world
+     * @return the string value of the string resource
+     */
+    public static int color(int resource) {
+        if (getContext() == null) return Color.WHITE;
+        return getContext().getResources().getColor(resource);
     }
 
     /**
@@ -110,6 +140,7 @@ public class Utils {
         runOnMain(new Runnable() {
             @Override
             public void run() {
+                Log.d(tag(), "[TOAST] " + message);
                 Toast.makeText(getContext(), message,
                         Toast.LENGTH_SHORT).show();
             }
@@ -131,15 +162,25 @@ public class Utils {
      * @return
      */
     public static String randomString() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(MAX_RANDOM_STRING_LENGTH);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
+        // ensure different seed than next randomString call
+        Random random = new Random(System.nanoTime() - 10);
+        return randomString(random.nextInt(MAX_RANDOM_STRING_LENGTH));
+    }
+
+    /**
+     * Generates a random string of a given size
+     * @param length the size to give
+     * @return
+     */
+    public static String randomString(int length) {
+        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW1234567890-_".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
         }
-        return randomStringBuilder.toString();
+        return sb.toString();
     }
 
     /**
@@ -196,9 +237,10 @@ public class Utils {
      * Created this method because the normal file.delete() does not always work properly and this
      * call seems to have more rights. (executes on current thread)
      * @param f the file to be deleted
+     * @return true if file is gone (also if it didn't exist in the first place)
      */
     public static boolean delete(File f) {
-        return deleteImage(f) || deleteVideo(f) || f.delete();
+        return !f.exists() || deleteImage(f) || deleteVideo(f) || f.delete();
     }
 
     /**

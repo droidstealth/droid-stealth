@@ -8,12 +8,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -32,13 +30,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
+import com.stealth.files.FileIndex;
+import com.stealth.files.IndexedFile;
+import com.stealth.files.IndexedFolder;
+import com.stealth.files.IndexedItem;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
 /**
+ * Please only instantiate me if you have created the file index successfully
  * Created by Alex on 3/6/14.
  */
-public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, EncryptionService.UpdateListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 
@@ -46,7 +49,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ActionMode mMode;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
-	private EncryptionService mEncryptionService;
+    private EncryptionManager mEncryptionManager;
 	private boolean mIsBound;
 	/**
 	 * Remembers which item is currently being selected in single selecton mode
@@ -66,16 +69,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
+            EncryptionService service = ((EncryptionService.ServiceBinder) iBinder).getService();
+            mEncryptionManager = EncryptionManager.create(service);
+            service.addUpdateListener(ContentFragment.this);
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
-			mEncryptionService = null;
+			//mEncryptionService = null;
+            mEncryptionManager = null;
+            // TODO destory encryption manager
 		}
 	};
 
-	void doBindService() {
+    void doBindService() {
 		getActivity().getApplicationContext()
 		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
 				             Context.BIND_AUTO_CREATE);
@@ -110,9 +117,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mContentManager = ContentManagerFactory.getInstance(getActivity());
-		SharedPreferences preferences =
-				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		mContentManager = ContentManagerFactory.getInstance(
+                getActivity(),
+                FileIndex.get());
+
+        Utils.toast("Created content fragment");
 
 		mMode = null;
 		mAdapter = new ContentAdapter(mContentManager);
@@ -200,18 +209,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 					// Alternatively, use FileUtils.getFile(Context, Uri)
 					if (path != null && FileUtils.isLocal(path)) {
-						File selected = new File(path);
-						mContentManager.addItem(selected, new IOnResult<Boolean>() {
-							@Override
-							public void onResult(Boolean result) {
-								if (result) {
-									Utils.toast(R.string.content_success_add);
-								}
-								else {
-									Utils.toast(R.string.content_fail_add);
-								}
-							}
-						});
+						File file = new File(path);
+                        IndexedFolder dir = mContentManager.getCurrentFolder();
+						mContentManager.addFile(dir, file, new IOnResult<IndexedFile>() {
+                            @Override
+                            public void onResult(IndexedFile result) {
+                                if (result != null) {
+                                    Utils.toast(R.string.content_success_add);
+                                } else {
+                                    Utils.toast(R.string.content_fail_add);
+                                }
+                            }
+                        });
 					}
 				}
 				break;
@@ -327,7 +336,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	}
 
-	/**
+    @Override
+    public void onEncryptionServiceUpdate() {
+        mNotifyOnResult.onResult(true);
+    }
+
+    private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
+        @Override
+        public void onResult(Boolean result) {
+            Utils.toast("updating list");
+            mContentManager.notifyContentChangedListeners();
+        }
+    };
+
+    /**
 	 * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html Helper
 	 * class which shows the CAB and
 	 */
@@ -353,7 +375,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 
 		/**
-		 * Called when an ActionItem is clicked. Handles removal and sharing of ContentItem
+		 * Called when an ActionItem is clicked. Handles removal and sharing of files
 		 *
 		 * @param actionMode The mode currently active
 		 * @param menuItem   The ActionItem clicked
@@ -363,7 +385,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
 			long[] selected = mListView.getCheckedItemIds();
 			if (selected.length > 0) {
-				ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+				ArrayList<IndexedItem> itemArrayList = new ArrayList<IndexedItem>();
 				for (long id : selected) {
 					itemArrayList.add(mAdapter.getItem((int) id));
 				}
@@ -373,19 +395,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							Log.e(this.getClass().toString() + ".onActionItemClicked",
 									"encryptionService was not bound");
 						}
-						mContentManager.encryptItems(itemArrayList, mEncryptionService);
+                        mEncryptionManager.encryptItems(itemArrayList, mNotifyOnResult);
 						break;
 					case R.id.action_unlock:
 						if (!mIsBound) {
 							Log.e(this.getClass().toString() + ".onActionItemClicked",
 									"encryptionService was not bound");
 						}
-						mContentManager.decryptItems(itemArrayList, mEncryptionService);
+                        mEncryptionManager.decryptItems(itemArrayList, mNotifyOnResult);
 						break;
 					case R.id.action_share:
 						//TODO share goes here
-						// Below is a test to see if the binding with the service was ok
-						mEncryptionService.startTestToast();
 						break;
 					case R.id.action_remove:
 						//TODO unlock files if necessary, remove from list (don't delete file)

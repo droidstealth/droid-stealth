@@ -1,4 +1,4 @@
-package com.stealth.preferences;
+package com.stealth.files;
 
 import android.content.Context;
 import android.content.SharedPreferences;

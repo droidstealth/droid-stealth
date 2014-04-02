@@ -11,11 +11,16 @@ import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;
 
+import content.EncryptionService;
+
 /**
  * This class provides easy control of the notifications for this app.
  * Created by Olivier Hokke on 3/26/14.
  */
 public class FileStatusNotificationsManager {
+
+    public static final String ACTION_LOCK_ALL = "lockAllItems";
+
     private static FileStatusNotificationsManager sInstance = null;
     public static FileStatusNotificationsManager get() {
         if (sInstance == null) {
@@ -33,11 +38,17 @@ public class FileStatusNotificationsManager {
     private static final int NOTIFICATION_ID_UNLOCKING = 2;
     private static final int NOTIFICATION_ID_UNLOCKED = 3;
 
+    private boolean mShowingLocking = false;
+    private boolean mShowingUnlocking = false;
+    private boolean mShowingUnlocked = false;
+
     /**
      * Hides the notification for indicating the user that files are currently being locked.
      */
     public void hideFilesLocking() {
+        if (!mShowingLocking) return;
         cancel(NOTIFICATION_ID_LOCKING);
+        mShowingLocking = false;
     }
 
     /**
@@ -54,6 +65,7 @@ public class FileStatusNotificationsManager {
      * @param progressCurrent the current value for the progress bar
      */
     public void showFilesLocking(int progressMax, int progressCurrent) {
+        if (mShowingLocking) return;
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
         mBuilder.setContentTitle(Utils.str(R.string.notification_locking_title));
@@ -62,13 +74,16 @@ public class FileStatusNotificationsManager {
         if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
         build(mBuilder, NOTIFICATION_ID_LOCKING);
+        mShowingLocking = true;
     }
 
     /**
      * Hides the notification for indicating the user that files are currently being locked.
      */
     public void hideFilesUnlocking() {
+        if (!mShowingUnlocking) return;
         cancel(NOTIFICATION_ID_UNLOCKING);
+        mShowingUnlocking = false;
     }
 
     /**
@@ -85,6 +100,7 @@ public class FileStatusNotificationsManager {
      * @param progressCurrent the current value for the progress bar
      */
     public void showFilesUnlocking(int progressMax, int progressCurrent) {
+        if (mShowingUnlocking) return;
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_unlocking);
         mBuilder.setContentTitle(Utils.str(R.string.notification_unlocking_title));
@@ -94,19 +110,23 @@ public class FileStatusNotificationsManager {
 
         mBuilder.setContentIntent(generatePendingIntent());
         build(mBuilder, NOTIFICATION_ID_UNLOCKING);
+        mShowingUnlocking = true;
     }
 
     /**
      * Hide the notification for indicating the user that files are currently in the unlocked state.
      */
     public void hideFilesUnlocked() {
+        if (!mShowingUnlocked) return;
         cancel(NOTIFICATION_ID_UNLOCKED);
+        mShowingUnlocked = false;
     }
 
     /**
      * Show the notification for indicating the user that files are currently in the unlocked state.
      */
     public void showFilesUnlocked() {
+        if (mShowingUnlocked) return;
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_stat_unlocked);
         mBuilder.setContentTitle(Utils.str(R.string.notification_unlocked_title));
@@ -115,6 +135,7 @@ public class FileStatusNotificationsManager {
 
         mBuilder.setContentIntent(generatePendingIntent());
         build(mBuilder, NOTIFICATION_ID_UNLOCKED);
+        mShowingUnlocked = true;
     }
 
     /**
@@ -142,21 +163,11 @@ public class FileStatusNotificationsManager {
      * Generates the intent.
      * @return
      */
-    private PendingIntent generatePendingIntent() {
-
-        //TODO create the intent for messaging encryption service to lock the files
-
+    private PendingIntent generatePendingIntent()
+    {
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(mContext, HomeActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity. This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(HomeActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent resultIntent = new Intent(mContext, EncryptionService.class);
+        resultIntent.setAction(ACTION_LOCK_ALL);
+        return PendingIntent.getService(Utils.getContext(), 0, resultIntent, 0);
     }
 }

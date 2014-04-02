@@ -4,6 +4,8 @@ import static content.ConcealCrypto.CryptoMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -17,7 +19,11 @@ import android.widget.Toast;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
+import com.stealth.files.FileIndex;
 import com.stealth.utils.IOnResult;
+import com.stealth.utils.Utils;
+
+import spikes.notifications.FileStatusNotificationsManager;
 
 /**
  * Created by Alex on 2/22/14.
@@ -31,6 +37,11 @@ public class EncryptionService extends Service {
 	public static final String ENTITY_KEY = "ENTITY";
 	//whether the service should encrypt or decrypt
 	public static final String MODE_KEY = "MODE";
+
+
+    private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
+    private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
+
 	private IBinder mBinder;
 
 	ConcealCrypto mEncrypter;
@@ -41,11 +52,14 @@ public class EncryptionService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+        Utils.setContext(getApplicationContext());
 
 		//use a scheduled thread pool for the running of our crypto system
 		cryptoExecutor = Executors.newScheduledThreadPool(PoolSize);
 		mEncrypter = new ConcealCrypto(this);
 		mBinder = new ServiceBinder();
+
+        handleUpdate();
 	}
 
 	@Override
@@ -55,8 +69,12 @@ public class EncryptionService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-
-		throw new IllegalStateException("EncryptionService should not be started through Intent anymore");
+        if (intent.getAction() != null && intent.getAction().equals(FileStatusNotificationsManager.ACTION_LOCK_ALL)) {
+            EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
+            return super.onStartCommand(intent,flags,startId);
+        } else {
+		    throw new IllegalStateException("EncryptionService should not be started through Intent anymore");
+        }
 
 		//		Log.d(this.getClass().toString() + ".onStartCommand", "Received service start command!"); File encryptedFile = new File(intent.getStringExtra(ENCRYPTED_PATH_KEY));
 		//		File unencryptedFile = new File(intent.getStringExtra(UNENCRYPTED_PATH_KEY));
@@ -74,8 +92,69 @@ public class EncryptionService extends Service {
 		//		return START_NOT_STICKY;
 	}
 
-	public Future addCryptoTask(File encrypted, File unencrypted, String entityName, CryptoMode mode, IOnResult<Boolean> callback) {
-		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode, callback);
+    public interface UpdateListener {
+        public abstract void onEncryptionServiceUpdate();
+    }
+    private ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
+
+    /**
+     * Add a listener in order to listen to changes in the queues
+     * @param listener the listener.
+     */
+    public void addUpdateListener(UpdateListener listener) {
+        mListeners.add(listener);
+    }
+
+    /**
+     * Handles changes in the queue
+     */
+    private void handleUpdate() {
+        for (UpdateListener listener : mListeners)
+            if (listener != null) listener.onEncryptionServiceUpdate();
+        handleNotifications();
+    }
+
+    /**
+     * Updates all notifications asynchronously
+     */
+    public void handleNotifications() {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (mToDecrypt.size() > 0) FileStatusNotificationsManager.get().showFilesUnlocking();
+                else FileStatusNotificationsManager.get().hideFilesUnlocking();
+                if (mToEncrypt.size() > 0) FileStatusNotificationsManager.get().showFilesLocking();
+                else FileStatusNotificationsManager.get().hideFilesLocking();
+                FileIndex.create(false, new IOnResult<FileIndex>() {
+                    @Override
+                    public void onResult(FileIndex result) {
+                        if (result.hasUnlockedFiles()) {
+                            FileStatusNotificationsManager.get().showFilesUnlocked();
+                        } else {
+                            FileStatusNotificationsManager.get().hideFilesUnlocked();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+	public Future addCryptoTask(File encrypted, File unencrypted, final String entityName, final CryptoMode mode, final IOnResult<Boolean> callback) {
+		CryptoTask task = new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode, new IOnResult<Boolean>() {
+            @Override
+            public void onResult(Boolean result) {
+                if (mode == CryptoMode.DECRYPT) mToDecrypt.remove(entityName);
+                if (mode == CryptoMode.ENCRYPT) mToEncrypt.remove(entityName);
+                if (callback != null) callback.onResult(result);
+                handleUpdate();
+            }
+        });
+
+        if (mode == CryptoMode.DECRYPT) mToDecrypt.put(entityName, task);
+        if (mode == CryptoMode.ENCRYPT) mToEncrypt.put(entityName, task);
+        handleUpdate();
 
 		Log.d(this.getClass().toString() + ".addCryptoTask", "Submitting new task..");
 		return cryptoExecutor.submit(task);
@@ -118,10 +197,12 @@ public class EncryptionService extends Service {
 
 				switch (cryptoMode) {
 					case ENCRYPT:
+                        encryptedFile.createNewFile();
 						encrypter.encrypt(encryptedFile, unencryptedFile, entityName);
 						unencryptedFile.delete();
 						break;
 					case DECRYPT:
+                        unencryptedFile.createNewFile();
 						encrypter.decrypt(encryptedFile, unencryptedFile, entityName);
 						encryptedFile.delete();
 						break;

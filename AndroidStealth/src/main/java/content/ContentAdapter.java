@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.stealth.android.R;
+import com.stealth.files.IndexedFile;
+import com.stealth.files.IndexedFolder;
+import com.stealth.files.IndexedItem;
+import com.stealth.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +25,7 @@ import java.util.List;
  */
 public class ContentAdapter extends BaseAdapter implements IContentManager.ContentChangedListener {
     private IContentManager mContentManager;
-    private List<ContentItem> mContentItems;
+    private List<IndexedItem> mContentItems;
 
     /**
      * Creates a new ContentAdapter
@@ -38,7 +42,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
     }
 
     @Override
-    public ContentItem getItem(int i) {
+    public IndexedItem getItem(int i) {
         return mContentItems.get(i);
     }
 
@@ -67,16 +71,36 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
         if(view == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
         }
-
-        File thumb = ((ContentManager)mContentManager).getThumbnailFile(getItem(i).getFile());
-        if (thumb.exists()) {
-            Bitmap bm = BitmapFactory.decodeFile(thumb.getPath());
-            if (bm != null) {
-            ((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(bm);
-            }
+        IndexedItem item = getItem(i);
+        if (item instanceof IndexedFolder)
+        {
+            IndexedFolder folder = (IndexedFolder) item;
+            ((TextView)view.findViewById(R.id.file_text)).setText(folder.getName());
         }
+        else
+        {
+            IndexedFile file = (IndexedFile) item;
+            File thumb = file.getThumbFile();
+            if (thumb.exists()) {
+                Bitmap bm = BitmapFactory.decodeFile(thumb.getPath());
+                if (bm != null) {
+                    ((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(bm);
+                }
+            }
 
-        ((TextView)view.findViewById(R.id.file_text)).setText(getItem(i).getFileName());
+            if (file.getUnlockedFile().exists()) {
+
+                ((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_unlocked);
+                view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.unlocked));
+                view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
+            } else {
+                ((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_locked);
+                view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.locked));
+                view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.locked));
+            }
+
+            ((TextView)view.findViewById(R.id.file_text)).setText(file.getName());
+        }
 
         return view;
     }
@@ -94,6 +118,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
      * Retrieves the content from the manager
      */
     private void setContent(){
-        mContentItems = new ArrayList<ContentItem>(mContentManager.getStoredContent());
+        IndexedFolder current = mContentManager.getCurrentFolder();
+        mContentItems = new ArrayList<IndexedItem>(mContentManager.getFolders(current));
+        mContentItems.addAll(new ArrayList<IndexedItem>(mContentManager.getFiles(current)));
     }
 }

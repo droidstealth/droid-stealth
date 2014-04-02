@@ -38,6 +38,7 @@ public class PinManager {
      * Private constructor. Use get() to get instance.
      */
     private PinManager() {
+        // TODO use our own encrypted preferences object!!
         mSharedPrefs = Utils.getContext().getSharedPreferences(PIN_PREFS, Activity.MODE_PRIVATE);
         mFakePin = mSharedPrefs.getString(PIN_FAKE, PIN_FAKE_DEFAULT);
         mRealPin = mSharedPrefs.getString(PIN_REAL, PIN_REAL_DEFAULT);
@@ -67,6 +68,7 @@ public class PinManager {
      * @return whether pin is indeed the real pin code
      */
     public boolean isRealPin(String pin) {
+        if (pin == null) return false;
         return pin.startsWith(mFakePin);
     }
 
@@ -76,6 +78,7 @@ public class PinManager {
      * @return whether pin is indeed the fake pin code
      */
     public boolean isFakePin(String pin) {
+        if (pin == null) return false;
         return pin.startsWith(mRealPin);
     }
 

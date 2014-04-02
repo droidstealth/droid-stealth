@@ -10,14 +10,20 @@
          https://developer.android.com/design/patterns/navigation-drawer.html
     -->
     <dimen name="navigation_drawer_width">240dp</dimen>
-    <dimen name="column_width">90dp</dimen>
-    <dimen name="column_spacing">4dp</dimen>
-    <dimen name="row_spacing">4dp</dimen>
-    <dimen name="content_item_padding">4dp</dimen>
-    <dimen name="column_item_height">90dp</dimen>
-    <dimen name="content_item_width">90dp</dimen>
+    <dimen name="column_width">120dp</dimen>
+    <dimen name="column_spacing">0dp</dimen>
+    <dimen name="row_spacing">0dp</dimen>
+    <dimen name="content_item_padding">0dp</dimen>
+    <dimen name="column_item_height">120dp</dimen>
+    <dimen name="content_item_width">120dp</dimen>
+    <dimen name="content_image_width">120dp</dimen>
+    <dimen name="content_image_height">90dp</dimen>
+    <dimen name="content_status_line_height">8dp</dimen>
+    <dimen name="content_text_side_padding">4dp</dimen>
+    <dimen name="content_status_icon_padding">1dp</dimen>
     <dimen name="text_margin">8dp</dimen>
-    <dimen name="image_margin">4dp</dimen>
+
+    <!-- not used..? -->
     <dimen name="divider_width">1dp</dimen>
     <dimen name="title_divider_width">2dp</dimen>
     <dimen name="divider_margin">4dp</dimen>
@@ -25,6 +31,7 @@
     <dimen name="link_name_size">16sp</dimen>
     <dimen name="link_size">18sp</dimen>
     <dimen name="image_padding">8dp</dimen>
+    <dimen name="image_margin">4dp</dimen>
     <dimen name="explanation_size">16sp</dimen>
     <dimen name="ap_settings_size">18sp</dimen>
     <dimen name="title_margin">12dp</dimen>

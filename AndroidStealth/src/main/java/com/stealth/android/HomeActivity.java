@@ -12,6 +12,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.stealth.files.FileIndex;
+import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
 import pin.PinManager;
@@ -30,8 +33,6 @@ public class HomeActivity extends ActionBarActivity
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-	private APSharing mSharing;
-
     private APSharing mSharing;
 
     /**
@@ -59,7 +60,7 @@ public class HomeActivity extends ActionBarActivity
 
             Intent stealthCall = new Intent(context, HomeActivity.class);
             stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-            stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, pin.trim());
+            stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
             stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(stealthCall);
 
@@ -98,27 +99,35 @@ public class HomeActivity extends ActionBarActivity
 		}
 	}
 
+    /**
+     * This method is meant to fill the content fragment based on the navigation drawer's
+     * selected page
+     * @param position the item that is now active
+     */
 	@Override
-	public void onNavigationDrawerItemSelected(int position) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		/*try {
+	public void onNavigationDrawerItemSelected(int position)
+    {
+        Utils.setContext(this); // onCreate is called later... so let's call this now :)
 
-		    String phoneNumber = getIntent().getStringExtra(PinManager.EXTRA_PIN);
-		    if (phoneNumber.startsWith("#555")) {
-                // TODO some actions
-		    }
-		    else if (phoneNumber.startsWith("#666")) {
-			    // TODO wipe data here if activity mode is 'panic'
-                // TODO some other actions
-		    }
-	    }
-	    catch (NullPointerException e) {
-		    e.printStackTrace();
-		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
-	    }*/
-		fragmentManager.beginTransaction()
-		               .replace(R.id.container, new ContentFragment())
-		               .commit();
+        String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
+        if (PinManager.get().isPin(pin)) {
+            // TODO put everything here.
+        }
+
+        FileIndex.create(false, new IOnResult<FileIndex>()
+        {
+            @Override
+            public void onResult(FileIndex result)
+            {
+                Utils.toast("Created file index: " + result);
+                if (result == null) return;
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new ContentFragment())
+                        .commit();
+            }
+        });
 	}
 
 	public void restoreActionBar() {

@@ -7,19 +7,43 @@
     android:orientation="vertical"
     android:padding="@dimen/content_item_padding"
     android:background="@drawable/content_item_background" >
-    <ImageView
-        android:id="@+id/file_preview"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:src="@drawable/file_icon"/>
+        android:id="@+id/content_item_status_line"
+        android:background="@color/locked">
+        <ImageView
+            android:id="@+id/file_preview"
+            android:layout_width="@dimen/content_image_width"
+            android:layout_height="@dimen/content_image_height"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="@dimen/content_status_line_height"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/file_icon"/>
+        <ImageView
+            android:id="@+id/file_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_status_locked"
+            android:padding="@dimen/content_status_icon_padding"
+            android:background="@color/locked"/>
+        </RelativeLayout>
     <TextView
-        android:layout_marginTop="@dimen/text_margin"
         android:id="@+id/file_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:paddingLeft="@dimen/content_text_side_padding"
         android:gravity="center"
         android:maxLines="2"
-        android:ellipsize="middle"/>
+        android:minLines="2"
+        android:ellipsize="middle"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/content_name"/>
 </content.CheckableLinearLayout>
