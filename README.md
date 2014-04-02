@@ -3,8 +3,12 @@ Android Stealth
 
 This application provides a platform for secure hidden storage of user data on an Android phone.
 The application is hidden on the phone, only to be found with the correct PIN access code, and data managed by the application is encrypted and hidden from other applications on the phone.
+However even if you don't want that data readily available for everyone that gets hands on your phone there are many cases where you still want to share that data.
+Which is why it incorporates several sharing features, both for people who have the app and those who don't.
 
 Furthermore, the application can be shared directly between two Android phones via a WiFi hotspot, BlueTooth, and Android Beam (when available).
+The goal is to implement the tools to make offline sharing and distribution an easy thing.
+Both of the app and the data stored inside the app.
 
 Project Vision
 --------------
@@ -14,11 +18,11 @@ The user, and only the user may unlock, view and share the data managed (encrypt
 
 Near-future goals
 -----------------
-Create a user-friendly data management experience. 
+Create a user-friendly data management experience.
 That is, provide an intuitive, smooth flow around locking and hiding data from other applications on the phone, or other users of the phone. In addition to this:
 * A 'safety net' for the user, by providing notifications; for example when files have been left unlocked.
 * Direct phone-to-phone sharing of the application itself.
-* Allowing users to 'morph' the application by renaming it and choosing a custom icon.
+* Allowing users to 'morph' the application by renaming it and choosing a custom icon when sharing it with others.
 
 Far-future goals
 ----------------
