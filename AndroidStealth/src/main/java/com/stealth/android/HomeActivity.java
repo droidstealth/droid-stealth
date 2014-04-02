@@ -31,11 +31,11 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	private CharSequence mTitle;
 	private APSharing mSharing;
 
-    public void setRequestedActivity(boolean mRequestedActivity) {
-        this.mRequestedActivity = mRequestedActivity;
-    }
+	public void setRequestedActivity(boolean mRequestedActivity) {
+		this.mRequestedActivity = mRequestedActivity;
+	}
 
-    private boolean mRequestedActivity;
+	private boolean mRequestedActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +54,35 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-//		PackageManager pm = getPackageManager();
-//		ComponentName homeName = new ComponentName(this, HomeActivity.class);
-//		if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
-//			Log.w("Hiding: Disable", "Disabling app drawer icon.");
-//			pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//					PackageManager.DONT_KILL_APP);
-//		}
+				PackageManager pm = getPackageManager();
+				ComponentName homeName = new ComponentName(this, HomeActivity.class);
+				if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
+					Log.w("Hiding: Disable", "Disabling app drawer icon.");
+					pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+							PackageManager.DONT_KILL_APP);
+				}
 	}
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (!mRequestedActivity)
-            this.finish();
-        else
-            mRequestedActivity = false;
-    }
+	/**
+	 * Uses the value set through setRequestedActivity to determine if the app should close when it goes off screen.
+	 * If a child fragment of the activity wants to open another app and keep running, like with startActivityForResult,
+	 * they need to setRequestedActivity(true) on this activity beforehand.
+	 *
+	 * If no activity has been requested by the app, mRequestedActivity==False, finish up the app.
+	 * If an activity has been requested don't finish up the app and reset the request flag.
+	 */
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (!mRequestedActivity) {
+			this.finish();
+		}
+		else {
+			mRequestedActivity = false;
+		}
+	}
 
-    @Override
+	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		/*try {
@@ -87,11 +97,12 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	    }
 	    catch (NullPointerException e) {
 		    e.printStackTrace();
-		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
+		    Toast.makeText(getApplicationContext(), "App started without dialing phone number",
+		    Toast.LENGTH_SHORT).show();
 	    }*/
 		fragmentManager.beginTransaction()
-		               .replace(R.id.container, new ContentFragment())
-		               .commit();
+				.replace(R.id.container, new ContentFragment())
+				.commit();
 	}
 
 	public void restoreActionBar() {

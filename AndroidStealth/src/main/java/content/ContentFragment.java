@@ -39,7 +39,8 @@ import com.stealth.utils.Utils;
 /**
  * Created by Alex on 3/6/14.
  */
-public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
+		AdapterView.OnItemLongClickListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 
@@ -78,8 +79,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	void doBindService() {
 		getActivity().getApplicationContext()
-		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
-				             Context.BIND_AUTO_CREATE);
+				.bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+						Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -168,13 +169,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			case R.id.content_add:
 				Intent getContentIntent = FileUtils.createGetContentIntent();
 				Intent intent = Intent.createChooser(getContentIntent, "Select a file");
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
+				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
 			case R.id.content_make:
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -252,7 +253,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 			else {
 				mMode.setTitle(Utils.str(R.string.action_select_multi)
-				                    .replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+						.replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
 				setActionModeIcon(R.drawable.ic_select_multi);
 			}
 			mSingleSelected = position;
@@ -294,7 +295,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			mMode.setTitle(Utils.str(R.string.action_select_multi)
-			                    .replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
+					.replace("{COUNT}", "" + mListView.getCheckedItemIds().length));
 			setActionModeIcon(R.drawable.ic_select_multi);
 
 			mListView.setItemChecked(position, !mListView.isItemChecked(position));
