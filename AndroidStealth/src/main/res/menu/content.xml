@@ -14,4 +14,8 @@
         android:title="@string/action_add"
         stealth:showAsAction="always"
         android:showAsAction="always"/>
+    <item
+        android:id="@+id/share_app"
+        android:title="Share App"
+        android:showAsAction="never"/>
 </menu>

@@ -1,6 +1,8 @@
 package content;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -11,6 +13,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -35,6 +38,10 @@ import com.stealth.android.R;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
+import net.lingala.zip4j.exception.ZipException;
+
+import spikes.morphing.AppMorph;
+
 /**
  * Created by Alex on 3/6/14.
  */
@@ -52,6 +59,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Remembers which item is currently being selected in single selecton mode
 	 */
 	private int mSingleSelected;
+
+    AppMorph mMorph;
 
 	public static ContentFragment newInstance(boolean loadEmpty) {
 		ContentFragment contentFragment = new ContentFragment();
@@ -110,6 +119,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+        mMorph = new AppMorph(getActivity());
 		mContentManager = ContentManagerFactory.getInstance(getActivity());
 		SharedPreferences preferences =
 				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -173,6 +183,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
+            case R.id.share_app:
+                new MorphTask().execute();
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -428,4 +440,28 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 		}
 	}
+
+    private class MorphTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                mMorph.morphApp(null, null);
+            } catch (ZipException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            } catch (java.lang.InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
 }

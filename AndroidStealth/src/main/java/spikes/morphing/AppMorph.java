@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import kellinwood.security.zipsigner.ZipSigner;
+import kellinwood.security.zipsigner.optional.CustomKeySigner;
 
 /**
  * Created by Alex on 31-3-14.
@@ -28,13 +29,7 @@ public class AppMorph {
         mAppContext = context.getApplicationContext();
     }
 
-    public File morphApp(String label, Uri icon) throws
-            IOException,
-            IllegalAccessException,
-            InstantiationException,
-            ClassNotFoundException,
-            GeneralSecurityException,
-            ZipException {
+    public File morphApp(String label, Uri icon) throws ZipException, IOException, ClassNotFoundException, GeneralSecurityException, InstantiationException, IllegalAccessException {
 
         File jarDir = extractApk();
 
@@ -78,16 +73,9 @@ public class AppMorph {
         File unSignedApkFile = new File(mAppContext.getExternalCacheDir(), UnSignedApkName);
 
         JarWriter writer = new JarWriter();
+        writer.setIncludeManifest(false);
         writer.setFiles(getPaths(contentDir));
         writer.createJar(unSignedApkFile, CompressionLevel);
-
-        /*JarBuilder builder = new JarBuilder(unSignedApkFile);
-        for(File entry : contentDir.listFiles()){
-            if(entry.isDirectory())
-                builder.addDirectoryRecursive(entry, "");
-            else
-                builder.addFile(entry, "", entry.getName());
-        }*/
 
         return unSignedApkFile;
     }
@@ -100,7 +88,7 @@ public class AppMorph {
             GeneralSecurityException {
         File signedApkFile = new File(mAppContext.getExternalCacheDir(), SignedApkName);
         ZipSigner zipSigner = new ZipSigner();
-        zipSigner.setKeymode("testkey");
+        zipSigner.setKeymode("auto-testkey");
         zipSigner.signZip(unsignedApk.getPath(), signedApkFile.getPath());
 
         return signedApkFile;
