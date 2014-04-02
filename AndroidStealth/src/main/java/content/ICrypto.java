@@ -1,4 +1,4 @@
-package spikes.filepicker;
+package content;
 
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
