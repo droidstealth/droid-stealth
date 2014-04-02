@@ -19,6 +19,7 @@ The user, and only the user may unlock, view and share the data managed (encrypt
 
 Near-future goals
 -----------------
+
 Create a user-friendly data management experience.
 That is, provide an intuitive, smooth flow around locking and hiding data from other applications on the phone, or other users of the phone.
  Several core features for the hiding include:
@@ -33,6 +34,18 @@ To deal with the fact that the app will always be in the installed apps list.
 * A 'safety net' for the user, by providing notifications; for example when files have been left unlocked.
 * Direct phone-to-phone sharing of the application itself.
 * Direct phone-to-phone sharing of data stored within the application by user request.
+
+Caveats
+----------------
+
+Currently the use of this application has several issues that may result in data loss.
+This sections aims to list all of them as a warning both for use and as a reminder of what to work on.
+
+* The applications encryption keys are tied to the installation.
+* Uninstalling the app deletes the data managed by the app.
+* Force-quitting the app may make the the app inaccessible, as well as the encrypted data, as it makes it stop listening for the right phone calls.
+* Any crashes of the app may do the same as the above.
+* This is unclear but very specific situations where the app is running and the phone really needs memory that it may force-quit the app and cause the above.
 
 Far-future goals
 ----------------
