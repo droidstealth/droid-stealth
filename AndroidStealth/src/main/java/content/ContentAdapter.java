@@ -2,12 +2,12 @@ package content;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.stealth.android.R;
 import com.stealth.files.IndexedFile;
@@ -26,12 +26,14 @@ import java.util.List;
 public class ContentAdapter extends BaseAdapter implements IContentManager.ContentChangedListener {
     private IContentManager mContentManager;
     private List<IndexedItem> mContentItems;
+	private SparseArray<View> mViews;
 
     /**
      * Creates a new ContentAdapter
      * @param manager the content manager used to retrieve the actual content
      */
     public ContentAdapter(IContentManager manager){
+	    mViews = new SparseArray<View>();
         mContentManager = manager;
         setContent();
     }
@@ -45,6 +47,10 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
     public IndexedItem getItem(int i) {
         return mContentItems.get(i);
     }
+
+	public View getView(int i) {
+		return mViews.get(i);
+	}
 
     @Override
     public long getItemId(int i) {
@@ -66,16 +72,31 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
         return mContentItems.isEmpty();
     }
 
-    @Override
+	@Override
+	public void notifyDataSetChanged() {
+		//mViews = new SparseArray<View>();
+		super.notifyDataSetChanged();
+	}
+
+	@Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+		IndexedItem item = getItem(i);
+
         if(view == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
         }
-        IndexedItem item = getItem(i);
+
+		// remember the views associated with the items
+		// but check if we didn't already put this 'i' in the list, because
+		// the gridview apparently pre-creates views for the grid with i = 0,
+		// which makes our list inconsistent
+		if (mViews.get(i) == null)
+			mViews.put(i, view);
+
         if (item instanceof IndexedFolder)
         {
             IndexedFolder folder = (IndexedFolder) item;
-            ((TextView)view.findViewById(R.id.file_text)).setText(folder.getName());
+            //((TextView)view.findViewById(R.id.file_text)).setText(folder.getName());
         }
         else
         {
@@ -99,7 +120,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
                 view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.locked));
             }
 
-            ((TextView)view.findViewById(R.id.file_text)).setText(file.getName());
+            //((TextView)view.findViewById(R.id.file_text)).setText(file.getName());
         }
 
         return view;
@@ -123,3 +144,4 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
         mContentItems.addAll(new ArrayList<IndexedItem>(mContentManager.getFiles(current)));
     }
 }
+

@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
-import com.stealth.files.Directories;
+import com.stealth.files.DirectoryManager;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -76,7 +76,7 @@ public class ContentManager implements IContentManager {
      * @return the thumbnail file
      */
     public File getThumbnailFile(File item) {
-        return new File(Directories.thumbs(), item.getName() + ".jpg");
+        return new File(DirectoryManager.thumbs(), item.getName() + ".jpg");
     }
 
     /**
@@ -198,7 +198,7 @@ public class ContentManager implements IContentManager {
 					}
 				}
                 if (failures > 0) {
-                    Utils.toast(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+                    Utils.debugToast(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
                 }
 				if (singleSuccess) {
                     notifyContentChangedListeners();

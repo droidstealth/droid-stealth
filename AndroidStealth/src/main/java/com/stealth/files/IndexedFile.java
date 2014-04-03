@@ -1,10 +1,10 @@
 package com.stealth.files;
 
+import com.stealth.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * This class represents a file in our internal indexing system.
@@ -124,21 +124,21 @@ public class IndexedFile extends IndexedItem {
      * @return the file as it should be in its unlocked state.
      */
     public File getUnlockedFile() {
-        return new File(Directories.unlocked(), getUnlockedFilename());
+        return new File(DirectoryManager.unlocked(), getUnlockedFilename());
     }
 
     /**
      * @return the filename as it should be in its locked state.
      */
     public File getLockedFile() {
-        return new File(Directories.locked(), getLockedFilename());
+        return new File(DirectoryManager.locked(), getLockedFilename());
     }
 
     /**
      * @return the filename as it should be in its locked state.
      */
     public File getThumbFile() {
-        return new File(Directories.thumbs(), getThumbFilename());
+        return new File(DirectoryManager.thumbs(), getThumbFilename());
     }
 
     /**

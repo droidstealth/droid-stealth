@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.stealth.files.FileIndex;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
@@ -33,53 +32,52 @@ public class HomeActivity extends ActionBarActivity
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-    private APSharing mSharing;
+	private APSharing mSharing;
 
-    /**
-     * Launch the HomeActivity by providing a pin
-     * @param context the context to use for the launch
-     * @param pin the actual pin code that is used to launch us
-     * @return whether activity could launch
-     */
-    public static boolean launch(Context context, String pin)
-    {
-        if (!PinManager.get().isPin(pin)) return false;
-        try
-        {
-            PackageManager pm = context.getPackageManager();
-            ComponentName homeName = new ComponentName(context, HomeActivity.class);
+	/**
+	 * Launch the HomeActivity by providing a pin
+	 *
+	 * @param context the context to use for the launch
+	 * @param pin     the actual pin code that is used to launch us
+	 * @return whether activity could launch
+	 */
+	public static boolean launch(Context context, String pin) {
+		if (!PinManager.get().isPin(pin)) {
+			return false;
+		}
+		try {
+			PackageManager pm = context.getPackageManager();
+			ComponentName homeName = new ComponentName(context, HomeActivity.class);
 
-            if (pm != null)
-            {
-                // make sure activity can be called
-                pm.setComponentEnabledSetting(
-                        homeName,
-                        PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
-                        PackageManager.DONT_KILL_APP);
-            }
+			if (pm != null) {
+				// make sure activity can be called
+				pm.setComponentEnabledSetting(
+						homeName,
+						PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+						PackageManager.DONT_KILL_APP);
+			}
 
-            Intent stealthCall = new Intent(context, HomeActivity.class);
-            stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-            stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
-            stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(stealthCall);
+			Intent stealthCall = new Intent(context, HomeActivity.class);
+			stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+			stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
+			stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(stealthCall);
 
-            Utils.toast(R.string.pin_description_unlocked);
+			Utils.toast(R.string.pin_description_unlocked);
 
-            return true;
-        }
-        catch (Exception e)
-        {
-            Log.e("STEALTH", "Could not launch stealth app", e);
-        }
-        return false;
-    }
+			return true;
+		}
+		catch (Exception e) {
+			Log.e("STEALTH", "Could not launch stealth app", e);
+		}
+		return false;
+	}
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        Utils.setContext(this);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_home);
+		Utils.setContext(this);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -99,35 +97,34 @@ public class HomeActivity extends ActionBarActivity
 		}
 	}
 
-    /**
-     * This method is meant to fill the content fragment based on the navigation drawer's
-     * selected page
-     * @param position the item that is now active
-     */
+	/**
+	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
+	 *
+	 * @param position the item that is now active
+	 */
 	@Override
-	public void onNavigationDrawerItemSelected(int position)
-    {
-        Utils.setContext(this); // onCreate is called later... so let's call this now :)
+	public void onNavigationDrawerItemSelected(int position) {
+		Utils.setContext(this); // onCreate is called later... so let's call this now :)
 
-        String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
-        if (PinManager.get().isPin(pin)) {
-            // TODO put everything here.
-        }
+		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
+		if (BuildConfig.DEBUG || PinManager.get().isPin(pin)) {
+			// TODO let real or fake pin have an influence
+			FileIndex.create(false, new IOnResult<FileIndex>() {
+				@Override
+				public void onResult(FileIndex result) {
+					Utils.debugToast("Created file index: " + result);
+					if (result == null) {
+						return;
+					}
 
-        FileIndex.create(false, new IOnResult<FileIndex>()
-        {
-            @Override
-            public void onResult(FileIndex result)
-            {
-                Utils.toast("Created file index: " + result);
-                if (result == null) return;
+					FragmentManager fragmentManager = getSupportFragmentManager();
+					fragmentManager.beginTransaction()
+							.replace(R.id.container, new ContentFragment())
+							.commit();
+				}
+			});
+		}
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, new ContentFragment())
-                        .commit();
-            }
-        });
 	}
 
 	public void restoreActionBar() {

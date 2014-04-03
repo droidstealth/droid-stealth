@@ -114,6 +114,7 @@ public class FileUtils {
      * @author OlivierHokke
      */
     public static boolean isVideo(String mimeType) {
+	    if (mimeType == null) return false;
         return mimeType.startsWith("video/");
     }
 
@@ -122,6 +123,7 @@ public class FileUtils {
      * @author OlivierHokke
      */
     public static boolean isImage(String mimeType) {
+	    if (mimeType == null) return false;
         return mimeType.startsWith("image/");
     }
 

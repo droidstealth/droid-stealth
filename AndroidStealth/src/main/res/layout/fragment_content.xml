@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:columnWidth="@dimen/column_width"
-    android:numColumns="auto_fit"
-    android:horizontalSpacing="@dimen/row_spacing"
-    android:verticalSpacing="@dimen/column_spacing"
-    android:focusable="true"
-    android:clickable="true"
-    android:longClickable="true"
-    android:stretchMode="columnWidth"
-    android:listSelector="@drawable/view_selector"
-    android:background="@color/content_list_background"
-    />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/content_list_background">
+	<GridView
+	    android:id="@+id/content_container"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_above="@+id/textView"
+	    android:columnWidth="@dimen/column_width"
+	    android:numColumns="auto_fit"
+	    android:horizontalSpacing="@dimen/row_spacing"
+	    android:verticalSpacing="@dimen/column_spacing"
+	    android:focusable="true"
+	    android:clickable="true"
+	    android:longClickable="true"
+	    android:stretchMode="columnWidth"
+	    android:listSelector="@drawable/view_selector"/>
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:background="#ffff00"
+			android:gravity="center"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Tip: share with NFC by holding devices back to back"
+			android:id="@+id/textView" android:layout_alignParentBottom="true"
+			android:layout_alignParentEnd="true" />
+</RelativeLayout>

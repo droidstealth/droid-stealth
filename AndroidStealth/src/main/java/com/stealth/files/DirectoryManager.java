@@ -14,7 +14,7 @@ import java.io.File;
  * TODO: keys of folders might differ. Should we save them in the prefs folder.... ? could bring forth serious security issues
  * Created by OlivierHokke on 3/31/14.
  */
-public class Directories
+public class DirectoryManager
 {
     private static final String SHARED_PREFS_KEY = "contentManager";
     private static final String FOLDER_MAIN_KEY = "mainFolder";
@@ -31,21 +31,21 @@ public class Directories
     private File mUnlockedDir;
     private File mThumbDir;
 
-    private static Directories sInstance;
+    private static DirectoryManager sInstance;
 
     /**
      * Get the singleton instance of the directory manager. Make sure that a context has been set
      * in the utils class.
      * @return the directory manager
      */
-    public static Directories get() {
+    public static DirectoryManager get() {
         if (sInstance == null) {
-            sInstance = new Directories();
+            sInstance = new DirectoryManager();
         }
         return sInstance;
     }
 
-    private Directories()
+    private DirectoryManager()
     {
         Context context = Utils.getContext();
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);

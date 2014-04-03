@@ -22,6 +22,48 @@ import org.json.JSONObject;
  */
 public class JSONArrayUnsorted {
 
+	/**
+	 * This class gives a user full feedback on the result of an element remove.
+	 */
+	public class JSONArrayRemoveResult {
+		private Object mRemoved;
+		private Object mMoved;
+		private int mMovedFromIndex;
+
+		/**
+		 * Create the feedback object
+		 * @param mRemoved the removed object at the index given during the remove() call
+		 * @param mMoved the object that moved from the end of the array to the given index
+		 * @param mMovedFromIndex the index that the object moved from to replace the now removed JSON element
+		 */
+		public JSONArrayRemoveResult(Object mRemoved, Object mMoved, int mMovedFromIndex) {
+			this.mRemoved = mRemoved;
+			this.mMoved = mMoved;
+			this.mMovedFromIndex = mMovedFromIndex;
+		}
+
+		/**
+		 * @return the removed object at the index given during the remove() call
+		 */
+		public Object getRemovedElement() {
+			return mRemoved;
+		}
+
+		/**
+		 * @return the object that moved from the end of the array to the given index
+		 */
+		public Object getMovedElement() {
+			return mMoved;
+		}
+
+		/**
+		 * @return the index that the object moved from to replace the now removed JSON element
+		 */
+		public int getMovedFromIndex() {
+			return mMovedFromIndex;
+		}
+	}
+
     private JSONArray mManaged;
 
     /**
@@ -55,9 +97,9 @@ public class JSONArrayUnsorted {
      * that was moved from the back to the new available empty spot due to the
      * deletion
      * @param index the index at which to remove an element
-     * @return the moved object(!!!!!)
+     * @return the result of the remove action
      */
-    public Object remove(int index) {
+    public JSONArrayRemoveResult remove(int index) {
         if (length() <= 0) return null;
         try {
             index++; // object really is 1 further away
@@ -66,7 +108,7 @@ public class JSONArrayUnsorted {
             Object last = mManaged.get(end);
             mManaged.put(index, last); // swap
             mManaged.put(end, JSONObject.NULL); // set last element to null
-            return last; // return the moved object, NOT the deleted
+            return new JSONArrayRemoveResult(removed, last, end); // return the result of the remove
         } catch (JSONException e){
             e.printStackTrace();
             return null;

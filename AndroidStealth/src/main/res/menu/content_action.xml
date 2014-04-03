@@ -25,7 +25,7 @@
         android:title="@string/action_shred"
         />
     <item
-        android:id="@+id/action_remove"
+        android:id="@+id/action_restore"
         android:icon="@drawable/ic_menu_remove"
         android:showAsAction="ifRoom"
         android:title="@string/action_remove"

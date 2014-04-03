@@ -3,7 +3,8 @@
     <color name="locked">#ff82cd14</color>
     <color name="unlocked">#ff1a45</color>
     <color name="content_list_background">#ff232323</color>
-    <color name="content_name">#ffe8e8e8</color>
+	<color name="content_name">#ffe8e8e8</color>
+	<color name="content_text">#33ffffff</color>
 
     <color name="item_pressed">#ff33b5e5</color>
     <color name="item_longpressed">#ff00ddff</color>

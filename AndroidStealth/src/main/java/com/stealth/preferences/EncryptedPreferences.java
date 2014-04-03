@@ -1,8 +1,6 @@
 package com.stealth.preferences;
 
-import android.util.Log;
-
-import com.stealth.files.Directories;
+import com.stealth.files.DirectoryManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
@@ -36,11 +34,11 @@ public class EncryptedPreferences {
     {
         if (!sInstances.containsKey(name))
         {
-            Utils.toast("Creating encryption preferences");
+            Utils.debugToast("Creating encryption preferences");
             new EncryptedPreferences(name, new IOnResult<EncryptedPreferences>() {
                 @Override
                 public void onResult(EncryptedPreferences result) {
-                    Utils.toast("encryption preferences created!! handle queue");
+                    Utils.debugToast("encryption preferences created!! handle queue");
                     sInstances.get(name).handleQueue();
                 }
             });
@@ -117,28 +115,28 @@ public class EncryptedPreferences {
         mReady = false;
         mName = name;
         mJson = new JSONObject();
-        mEncryptedFile = new File(Directories.prefs(), name + ".crypto");
+        mEncryptedFile = new File(DirectoryManager.prefs(), name + ".crypto");
 
         if (mEncryptedFile.exists()) // one can only read it if it exists
         {
-            Utils.toast("Preferences exist... reading!");
+            Utils.debugToast("Preferences exist... reading!");
             readPreferences(new IOnResult<Boolean>() {
                 @Override
                 public void onResult(Boolean result) {
                     if (result)
                     {
-                        Utils.toast("We read the preferences :)");
+                        Utils.debugToast("We read the preferences :)");
                         mReady = true;
                         onReady.onResult(EncryptedPreferences.this);
                     } else {
-                        Utils.toast("We coulnd't read the preference file :(");
+                        Utils.debugToast("We coulnd't read the preference file :(");
                     }
                 }
             });
         }
         else // it doesn't exist, create it
         {
-            Utils.toast("Preferences don't exist... writing!");
+            Utils.debugToast("Preferences don't exist... writing!");
             writePreferences();
             mReady = true;
             onReady.onResult(EncryptedPreferences.this);
@@ -187,13 +185,13 @@ public class EncryptedPreferences {
                 }
                 catch (JSONException e)
                 {
-                    Utils.toast("Can't read preferences file.. " + e.getMessage());
+                    Utils.debugToast("Can't read preferences file.. " + e.getMessage());
                     if (callback != null)
                         callback.onResult(false);
                 }
                 catch (IOException e)
                 {
-                    Utils.toast("Can't read preferences file.. " + e.getMessage());
+                    Utils.debugToast("Can't read preferences file.. " + e.getMessage());
                     if (callback != null)
                         callback.onResult(false);
                 }
@@ -220,21 +218,13 @@ public class EncryptedPreferences {
                     File cache = Utils.getRandomCacheFile(".prefs");
                     Utils.write(cache, mJson.toString());
 
-                    //mEncryptedFile;
                     // TODO encrypt mDecryptedFile to mEncryptedFile
                     // TODO then remove the mDecryptedFile
                     Utils.copyFile(cache, mEncryptedFile);
-
-//                    // delete old
-//                    if (!mEncryptedFile.delete())
-//                        throw new IOException("Could not delete encrypted preference file");
-//                    // put new one
-//                    if (!cache.renameTo(mEncryptedFile))
-//                        throw new IOException("Could not place new encrypted preference file");
                 }
                 catch (IOException e)
                 {
-                    Utils.toast("Can't write preferences file.. " + e.getMessage());
+                    Utils.debugToast("Can't write preferences file.. " + e.getMessage());
                 }
 
                 mWriting = false;
