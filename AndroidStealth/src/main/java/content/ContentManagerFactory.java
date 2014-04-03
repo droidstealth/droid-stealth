@@ -3,6 +3,7 @@ package content;
 import android.content.Context;
 
 import com.stealth.files.FileIndex;
+import encryption.IContentManager;
 
 /**
  * A Factory class to retrieve the IContentManager instance. Created by Alex on 3/8/14.

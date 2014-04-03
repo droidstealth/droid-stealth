@@ -70,7 +70,7 @@ public class FileIndex {
 					}
 				}
 				catch (JSONException e) {
-					Log.e(Utils.tag(), "Oh hey, not workin something", e);
+					Log.e(Utils.tag(this), "Oh hey, not workin something", e);
 				}
 
 				callback.onResult(FileIndex.this);
@@ -168,7 +168,7 @@ public class FileIndex {
 			return getFolder(jsonArray.getString(IndexedItem.FOLDER_UID));
 		}
 		catch (JSONException e) {
-			Log.e(getClass().getName(), "hm?", e);
+			Log.e(Utils.tag(this), "hm?", e);
 			return null;
 		}
 	}
@@ -194,7 +194,7 @@ public class FileIndex {
 			return getFile(jsonArray.getString(IndexedItem.FOLDER_UID));
 		}
 		catch (JSONException e) {
-			Log.e(getClass().getName(), "hm?", e);
+			Log.e(Utils.tag(this), "hm?", e);
 			return null;
 		}
 	}
@@ -213,10 +213,8 @@ public class FileIndex {
 	 * @param file the file to add
 	 */
 	public void addFile(IndexedFile file) {
-		Utils.debugToast("old length " + mFilesArray.length());
 		file.setJsonID(mFilesArray.length());
 		mFilesArray.put(file.getRaw());
-		Utils.debugToast("new length " + mFilesArray.length());
 		mFiles.put(file.getUID(), file);
 		saveChanges();
 	}

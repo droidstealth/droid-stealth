@@ -36,6 +36,9 @@ import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
+import encryption.EncryptionManager;
+import encryption.EncryptionService;
+import encryption.IContentManager;
 
 /**
  * Please only instantiate me if you have created the file index successfully
@@ -240,7 +243,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			if (view != null) {
 				int id = view.getItemID();
 				// keep this debug line commented, just in case we need to do these checks again
-				Utils.debugToast("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " + view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + "; InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown());
+				// Utils.debugToast("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " + view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + "; InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown());
 				if (mGridView.isItemChecked(id)) {
 					view.findViewById(R.id.file_select).setBackgroundResource(R.drawable.frame_selected);
 				} else {

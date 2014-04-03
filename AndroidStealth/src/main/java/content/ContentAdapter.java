@@ -2,7 +2,6 @@ package content;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.Utils;
+import encryption.IContentManager;
 
 import java.io.File;
 import java.util.ArrayList;

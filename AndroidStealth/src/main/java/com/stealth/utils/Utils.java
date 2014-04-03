@@ -1,7 +1,5 @@
 package com.stealth.utils;
 
-import android.app.Activity;
-import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -129,14 +127,14 @@ public class Utils {
      * @param message_resource the string resource to show in a toast
      */
     public static void toast(int message_resource) {
-        toast_(str(message_resource));
+        toast(str(message_resource));
     }
 
 	/**
 	 * Show a toast message (automatically runs this on main thread)
 	 * @param message the message to show in a toast
 	 */
-	public static void toast_(final String message) {
+	public static void toast(final String message) {
 		runOnMain(new Runnable() {
 			@Override
 			public void run() {
@@ -153,7 +151,7 @@ public class Utils {
      */
     public static void debugToast(final String message) {
 	    // let's disable for now but do log to logcat
-	    // toast_(message);
+	    // toast(message);
 	    Log.d(tag(), "[TOAST] " + message);
     }
 

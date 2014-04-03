@@ -1,6 +1,4 @@
-package content;
-
-import static content.ConcealCrypto.CryptoMode;
+package encryption;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +56,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	}
 
 	private void createExecutor() {
-		Utils.debugToast("Creating thread pool :D WE WANT " + POOL_SIZE + " YAAY");
+		Utils.debugToast("Creating thread pool of size " + POOL_SIZE);
 		mCryptoExecutor = Executors.newScheduledThreadPool(POOL_SIZE);
 	}
 
@@ -76,6 +74,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (intent.getAction() != null && intent.getAction().equals(FileStatusNotificationsManager.ACTION_LOCK_ALL)) {
+			Utils.debugToast("You tapped to lock. Will do!");
 			EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
 			return super.onStartCommand(intent, flags, startId);
 		}
@@ -160,16 +159,16 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		}).start();
 	}
 
-	public Future addCryptoTask(File encrypted, File unencrypted, final String entityName, final CryptoMode mode,
+	public Future addCryptoTask(File encrypted, File unencrypted, final String entityName, final ConcealCrypto.CryptoMode mode,
 			final IOnResult<Boolean> callback) {
 		CryptoTask task =
 				new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode, new IOnResult<Boolean>() {
 					@Override
 					public void onResult(Boolean result) {
-						if (mode == CryptoMode.DECRYPT) {
+						if (mode == ConcealCrypto.CryptoMode.DECRYPT) {
 							mToDecrypt.remove(entityName);
 						}
-						if (mode == CryptoMode.ENCRYPT) {
+						if (mode == ConcealCrypto.CryptoMode.ENCRYPT) {
 							mToEncrypt.remove(entityName);
 						}
 						if (callback != null) {
@@ -179,10 +178,10 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 					}
 				});
 
-		if (mode == CryptoMode.DECRYPT) {
+		if (mode == ConcealCrypto.CryptoMode.DECRYPT) {
 			mToDecrypt.put(entityName, task);
 		}
-		if (mode == CryptoMode.ENCRYPT) {
+		if (mode == ConcealCrypto.CryptoMode.ENCRYPT) {
 			mToEncrypt.put(entityName, task);
 		}
 		handleUpdate(true);
@@ -200,11 +199,11 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		private final File encryptedFile;
 		private final File unencryptedFile;
 		private final String entityName;
-		private final CryptoMode cryptoMode;
+		private final ConcealCrypto.CryptoMode cryptoMode;
 		private IOnResult<Boolean> callback;
 
 		public CryptoTask(ConcealCrypto encrypter, File encryptedFile, File unencryptedFile, String entityName,
-				CryptoMode mode, IOnResult<Boolean> callback) {
+				ConcealCrypto.CryptoMode mode, IOnResult<Boolean> callback) {
 			this.encrypter = encrypter;
 			this.encryptedFile = encryptedFile;
 			this.unencryptedFile = unencryptedFile;
@@ -244,9 +243,9 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				// the app to behave as expected; delete the source file.
 				// TODO find reason error and fix
 				if (e instanceof NativeGCMCipherException) {
-					if (cryptoMode == CryptoMode.ENCRYPT) {
+					if (cryptoMode == ConcealCrypto.CryptoMode.ENCRYPT) {
 						unencryptedFile.delete();
-					} else if (cryptoMode == CryptoMode.DECRYPT) {
+					} else if (cryptoMode == ConcealCrypto.CryptoMode.DECRYPT) {
 						encryptedFile.delete();
 					}
 				}

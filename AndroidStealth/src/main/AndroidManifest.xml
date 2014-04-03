@@ -50,7 +50,7 @@
             </intent-filter>
         </receiver>
 
-		<service android:name="content.EncryptionService" />
+		<service android:name="encryption.EncryptionService" />
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:enabled="@bool/use_activity"

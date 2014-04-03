@@ -12,6 +12,7 @@ import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.Utils;
 import com.stealth.utils.IOnResult;
+import encryption.IContentManager;
 
 import java.io.File;
 import java.io.FileOutputStream;

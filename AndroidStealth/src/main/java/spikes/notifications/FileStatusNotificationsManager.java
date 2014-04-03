@@ -5,13 +5,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 
-import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;
 
-import content.EncryptionService;
+import encryption.EncryptionService;
 
 /**
  * This class provides easy control of the notifications for this app.
