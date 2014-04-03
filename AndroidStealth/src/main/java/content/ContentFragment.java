@@ -236,11 +236,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	public void handleSelection() {
-		for (int i = 0; i < mAdapter.getCount(); i++) {
-			if (mGridView.isItemChecked(i)) {
-				mAdapter.getView(i).findViewById(R.id.file_select).setBackgroundResource(R.drawable.frame_selected);
-			} else {
-				mAdapter.getView(i).findViewById(R.id.file_select).setBackgroundResource(0);
+		for (CheckableLinearLayout view : mAdapter.getViews()) {
+			if (view != null) {
+				int id = view.getItemID();
+				// keep this debug line commented, just in case we need to do these checks again
+				Utils.debugToast("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " + view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + "; InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown());
+				if (mGridView.isItemChecked(id)) {
+					view.findViewById(R.id.file_select).setBackgroundResource(R.drawable.frame_selected);
+				} else {
+					view.findViewById(R.id.file_select).setBackgroundResource(0);
+				}
 			}
 		}
 	}
@@ -355,9 +360,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
     private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
         @Override
         public void onResult(Boolean result) {
-            Utils.debugToast("updating list");
-            mContentManager.notifyContentChangedListeners();
-	        handleSelection(); // just in case we are still selecting and we got an update. Not sure if possible though
+	        Utils.runOnMain(new Runnable() {
+		        @Override
+		        public void run() {
+			        Utils.debugToast("updating list");
+			        mContentManager.notifyContentChangedListeners();
+		        }
+	        });
         }
     };
 
@@ -396,6 +405,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		@Override
 		public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
 			long[] selected = mGridView.getCheckedItemIds();
+			actionMode.finish();
 
 			if (selected.length == 0) {
 				actionMode.finish();
@@ -425,7 +435,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					break;
 			}
 
-			actionMode.finish();
 			return true;
 		}
 
@@ -486,6 +495,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			for (int i = 0; i < mGridView.getAdapter().getCount(); i++) {
 				mGridView.setItemChecked(i, false);
 			}
+			handleSelection();
 
 			if (actionMode == mMode) {
 				mMode = null;

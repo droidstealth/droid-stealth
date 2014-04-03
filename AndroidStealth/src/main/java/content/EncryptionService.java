@@ -50,11 +50,16 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		});
 
 		//use a scheduled thread pool for the running of our crypto system
-		mCryptoExecutor = Executors.newScheduledThreadPool(POOL_SIZE);
+		createExecutor();
 		mEncrypter = new ConcealCrypto(this);
 		mBinder = new ServiceBinder();
 
 		handleUpdate(false);
+	}
+
+	private void createExecutor() {
+		Utils.debugToast("Creating thread pool :D WE WANT " + POOL_SIZE + " YAAY");
+		mCryptoExecutor = Executors.newScheduledThreadPool(POOL_SIZE);
 	}
 
 	@Override
@@ -183,6 +188,10 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		handleUpdate(true);
 
 		Log.d(Utils.tag(this), "Submitting new task..");
+		if (mCryptoExecutor.isTerminated() || mCryptoExecutor.isShutdown()) {
+			Log.d(Utils.tag(this), "BUT WAIT.... THE EXECUTOR IS DEAD: terminated? " + mCryptoExecutor.isTerminated() + "; shutdown?? " + mCryptoExecutor.isShutdown() );
+			createExecutor();
+		}
 		return mCryptoExecutor.submit(task);
 	}
 

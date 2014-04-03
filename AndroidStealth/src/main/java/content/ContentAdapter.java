@@ -26,14 +26,14 @@ import java.util.List;
 public class ContentAdapter extends BaseAdapter implements IContentManager.ContentChangedListener {
     private IContentManager mContentManager;
     private List<IndexedItem> mContentItems;
-	private SparseArray<View> mViews;
+	private ArrayList<CheckableLinearLayout> mViews;
 
     /**
      * Creates a new ContentAdapter
      * @param manager the content manager used to retrieve the actual content
      */
     public ContentAdapter(IContentManager manager){
-	    mViews = new SparseArray<View>();
+	    mViews = new ArrayList<CheckableLinearLayout>();
         mContentManager = manager;
         setContent();
     }
@@ -48,8 +48,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
         return mContentItems.get(i);
     }
 
-	public View getView(int i) {
-		return mViews.get(i);
+	public ArrayList<CheckableLinearLayout> getViews() {
+		return mViews;
 	}
 
     @Override
@@ -86,12 +86,13 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
         }
 
-		// remember the views associated with the items
-		// but check if we didn't already put this 'i' in the list, because
-		// the gridview apparently pre-creates views for the grid with i = 0,
-		// which makes our list inconsistent
-		if (mViews.get(i) == null)
-			mViews.put(i, view);
+		if (view instanceof CheckableLinearLayout) {
+			((CheckableLinearLayout) view).setItemID(i);
+			// remember the views so we can check for whether they are checked
+			if (!mViews.contains(view)) {
+				mViews.add((CheckableLinearLayout) view);
+			}
+		}
 
         if (item instanceof IndexedFolder)
         {

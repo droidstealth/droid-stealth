@@ -268,9 +268,9 @@ public class FileIndex {
 	 */
 	public void removeFile(IndexedFile file) {
 		int i = file.getJsonID();
-		JSONArray movedItem = (JSONArray) mFilesArray.remove(i).getMovedElement();
-		if (movedItem != null) {
-			getFile(movedItem).setJsonID(i); // remember its new position
+		Object movedItem = mFilesArray.remove(i).getMovedElement();
+		if (movedItem != null && movedItem instanceof JSONArray) {
+			getFile((JSONArray)movedItem).setJsonID(i); // remember its new position
 		}
 
 		mFiles.remove(file.getUID());

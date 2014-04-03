@@ -17,9 +17,18 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
     private static final int[] CheckedStateSet = {android.R.attr.state_checked};
 
-    private boolean mChecked = false;
+	private boolean mChecked = false;
+	private int mItemID = 0;
 
-    public boolean isChecked() {
+	public int getItemID() {
+		return mItemID;
+	}
+
+	public void setItemID(int mItemID) {
+		this.mItemID = mItemID;
+	}
+
+	public boolean isChecked() {
         return mChecked;
     }
 

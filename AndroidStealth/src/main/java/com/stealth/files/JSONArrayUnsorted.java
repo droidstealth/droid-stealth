@@ -108,6 +108,7 @@ public class JSONArrayUnsorted {
             Object last = mManaged.get(end);
             mManaged.put(index, last); // swap
             mManaged.put(end, JSONObject.NULL); // set last element to null
+	        decrease(); // we now removed an element so shrink the array
             return new JSONArrayRemoveResult(removed, last, end); // return the result of the remove
         } catch (JSONException e){
             e.printStackTrace();
