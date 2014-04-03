@@ -38,7 +38,8 @@ public class StealthDialReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Utils.setContext(context);
         String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        boolean success = HomeActivity.launch(context, pin);
-        setResultData(null);
+        if (HomeActivity.launch(context, pin)) {
+	        setResultData(null);
+        }
     }
 }
