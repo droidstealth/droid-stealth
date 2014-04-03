@@ -199,7 +199,7 @@ public class ContentManager implements IContentManager {
 					}
 				}
                 if (failures > 0) {
-                    Utils.debugToast(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+                    Utils.d(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
                 }
 				if (singleSuccess) {
                     notifyContentChangedListeners();

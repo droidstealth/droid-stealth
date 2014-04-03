@@ -34,11 +34,11 @@ public class EncryptedPreferences {
     {
         if (!sInstances.containsKey(name))
         {
-            Utils.debugToast("Creating encryption preferences");
+            Utils.d("Creating encryption preferences");
             new EncryptedPreferences(name, new IOnResult<EncryptedPreferences>() {
                 @Override
                 public void onResult(EncryptedPreferences result) {
-                    Utils.debugToast("encryption preferences created!! handle queue");
+                    Utils.d("encryption preferences created!! handle queue");
                     sInstances.get(name).handleQueue();
                 }
             });
@@ -119,24 +119,24 @@ public class EncryptedPreferences {
 
         if (mEncryptedFile.exists()) // one can only read it if it exists
         {
-            Utils.debugToast("Preferences exist... reading!");
+            Utils.d("Preferences exist... reading!");
             readPreferences(new IOnResult<Boolean>() {
                 @Override
                 public void onResult(Boolean result) {
                     if (result)
                     {
-                        Utils.debugToast("We read the preferences :)");
+                        Utils.d("We read the preferences :)");
                         mReady = true;
                         onReady.onResult(EncryptedPreferences.this);
                     } else {
-                        Utils.debugToast("We coulnd't read the preference file :(");
+                        Utils.d("We coulnd't read the preference file :(");
                     }
                 }
             });
         }
         else // it doesn't exist, create it
         {
-            Utils.debugToast("Preferences don't exist... writing!");
+            Utils.d("Preferences don't exist... writing!");
             writePreferences();
             mReady = true;
             onReady.onResult(EncryptedPreferences.this);
@@ -185,13 +185,13 @@ public class EncryptedPreferences {
                 }
                 catch (JSONException e)
                 {
-                    Utils.debugToast("Can't read preferences file.. " + e.getMessage());
+                    Utils.d("Can't read preferences file.. " + e.getMessage());
                     if (callback != null)
                         callback.onResult(false);
                 }
                 catch (IOException e)
                 {
-                    Utils.debugToast("Can't read preferences file.. " + e.getMessage());
+                    Utils.d("Can't read preferences file.. " + e.getMessage());
                     if (callback != null)
                         callback.onResult(false);
                 }
@@ -224,7 +224,7 @@ public class EncryptedPreferences {
                 }
                 catch (IOException e)
                 {
-                    Utils.debugToast("Can't write preferences file.. " + e.getMessage());
+                    Utils.d("Can't write preferences file.. " + e.getMessage());
                 }
 
                 mWriting = false;

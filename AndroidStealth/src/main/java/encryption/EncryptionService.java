@@ -56,7 +56,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	}
 
 	private void createExecutor() {
-		Utils.debugToast("Creating thread pool of size " + POOL_SIZE);
+		Utils.d("Creating thread pool of size " + POOL_SIZE);
 		mCryptoExecutor = Executors.newScheduledThreadPool(POOL_SIZE);
 	}
 
@@ -74,7 +74,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (intent.getAction() != null && intent.getAction().equals(FileStatusNotificationsManager.ACTION_LOCK_ALL)) {
-			Utils.debugToast("You tapped to lock. Will do!");
+			Utils.d("You tapped to lock. Will do!");
 			EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
 			return super.onStartCommand(intent, flags, startId);
 		}

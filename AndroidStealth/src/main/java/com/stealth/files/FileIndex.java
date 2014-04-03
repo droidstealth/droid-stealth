@@ -46,20 +46,20 @@ public class FileIndex {
 		IOnResult<EncryptedPreferences> onResult = new IOnResult<EncryptedPreferences>() {
 			@Override
 			public void onResult(EncryptedPreferences result) {
-				Utils.debugToast("Created the EncryptedPreferences");
+				Utils.d("Created the EncryptedPreferences");
 				mPreferences = result;
 				mIndex = result.getJson();
 
 				try {
 					if (mIndex.has(JSON_FILES) && mIndex.has(JSON_FOLDERS)) {
-						Utils.debugToast("Index exists.. let's read and parse");
+						Utils.d("Index exists.. let's read and parse");
 						mFilesArray = new JSONArrayUnsorted(mIndex.getJSONArray(JSON_FILES));
 						mFoldersArray = new JSONArrayUnsorted(mIndex.getJSONArray(JSON_FOLDERS));
 						parseJSON();
 					}
 					else // we are starting from scratch apparently
 					{
-						Utils.debugToast("Index does not exist.. let's create, parse and make the root");
+						Utils.d("Index does not exist.. let's create, parse and make the root");
 						mFilesArray = new JSONArrayUnsorted(new JSONArray());
 						mFoldersArray = new JSONArrayUnsorted(new JSONArray());
 						mIndex.put(JSON_FILES, mFilesArray.getManagedArray());

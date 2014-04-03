@@ -112,7 +112,7 @@ public class HomeActivity extends ActionBarActivity
 			FileIndex.create(false, new IOnResult<FileIndex>() {
 				@Override
 				public void onResult(FileIndex result) {
-					Utils.debugToast("Created file index: " + result);
+					Utils.d("Created file index: " + result);
 					if (result == null) {
 						return;
 					}

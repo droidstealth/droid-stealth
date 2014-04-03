@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.android.BuildConfig;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -127,32 +128,34 @@ public class Utils {
      * @param message_resource the string resource to show in a toast
      */
     public static void toast(int message_resource) {
-        toast(str(message_resource));
+        final String message = str(message_resource);
+	    d("[TOAST] " + message, 1);
+	    runOnMain(new Runnable() {
+		    @Override
+		    public void run() {
+			    Toast.makeText(getContext(), message,
+					    Toast.LENGTH_SHORT).show();
+		    }
+	    });
     }
 
 	/**
-	 * Show a toast message (automatically runs this on main thread)
-	 * @param message the message to show in a toast
+	 * Print a debug message to logcat (and shows the source as well)
+	 * @param message the message to log
 	 */
-	public static void toast(final String message) {
-		runOnMain(new Runnable() {
-			@Override
-			public void run() {
-				Log.d(tag(), "[TOAST] " + message);
-				Toast.makeText(getContext(), message,
-						Toast.LENGTH_SHORT).show();
-			}
-		});
+	public static void d(final String message) {
+		d(message, 1);
 	}
 
     /**
-     * Show a debug toast message (automatically runs this on main thread)
-     * @param message the message to show in a toast
+     * Print a debug message to logcat (and shows the source as well)
+     * @param message the message to log
+     * @param padStack the amount of StackTraceElements earlier you want to show the stacktrace info
      */
-    public static void debugToast(final String message) {
-	    // let's disable for now but do log to logcat
-	    // toast(message);
-	    Log.d(tag(), "[TOAST] " + message);
+    public static void d(final String message, int padStack) {
+	    if (!BuildConfig.DEBUG) return;
+	    StackTraceElement calledFrom = Thread.currentThread().getStackTrace()[3 + padStack];
+	    Log.d(tag(), String.format("%1$-"+75+ "s", message) + " ~ [" + calledFrom.getClassName() + "." + calledFrom.getMethodName() + "@" + calledFrom.getLineNumber() + "]");
     }
 
     /**
