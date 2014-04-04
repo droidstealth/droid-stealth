@@ -143,7 +143,7 @@ public class JSONArrayUnsorted {
     public JSONArrayUnsorted put(boolean value) {
         increment();
         try {
-            // the last few elements are possibly null, we should use ouw own last element
+            // the last few elements are possibly null, we should use our own last element
             mManaged.put(length(), value);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -153,7 +153,7 @@ public class JSONArrayUnsorted {
 
     public JSONArrayUnsorted put(double value) throws JSONException {
         increment();
-        // the last few elements are possibly null, we should use ouw own last element
+        // the last few elements are possibly null, we should use our own last element
         mManaged.put(length(), value);
         return this;
     }
@@ -161,7 +161,7 @@ public class JSONArrayUnsorted {
     public JSONArrayUnsorted put(int value) {
         increment();
         try {
-            // the last few elements are possibly null, we should use ouw own last element
+            // the last few elements are possibly null, we should use our own last element
             mManaged.put(length(), value);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -172,7 +172,7 @@ public class JSONArrayUnsorted {
     public JSONArrayUnsorted put(long value) {
         increment();
         try {
-            // the last few elements are possibly null, we should use ouw own last element
+            // the last few elements are possibly null, we should use our own last element
             mManaged.put(length(), value);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -183,7 +183,7 @@ public class JSONArrayUnsorted {
     public JSONArrayUnsorted put(Object value) {
         increment();
         try {
-            // the last few elements are possibly null, we should use ouw own last element
+            // the last few elements are possibly null, we should use our own last element
             mManaged.put(length(), value);
         } catch (JSONException e) {
             e.printStackTrace();

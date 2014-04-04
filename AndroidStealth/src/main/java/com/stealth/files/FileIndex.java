@@ -110,6 +110,7 @@ public class FileIndex {
 		for (int i = 0; i < mFoldersArray.length(); i++) {
 			try {
 				IndexedFolder f = new IndexedFolder(mFoldersArray.getJSONArray(i));
+				f.setJsonID(i);
 				mFolders.put(f.getUID(), f);
 				if (!f.hasParent()) {
 					mRoot = f;
@@ -123,6 +124,7 @@ public class FileIndex {
 		for (int i = 0; i < mFilesArray.length(); i++) {
 			try {
 				IndexedFile f = new IndexedFile(mFilesArray.getJSONArray(i));
+				f.setJsonID(i);
 				mFiles.put(f.getUID(), f);
 			}
 			catch (JSONException e) {
@@ -213,8 +215,8 @@ public class FileIndex {
 	 * @param file the file to add
 	 */
 	public void addFile(IndexedFile file) {
-		file.setJsonID(mFilesArray.length());
 		mFilesArray.put(file.getRaw());
+		file.setJsonID(mFilesArray.length());
 		mFiles.put(file.getUID(), file);
 		saveChanges();
 	}
@@ -225,8 +227,8 @@ public class FileIndex {
 	 * @param folder the virtual folder to add
 	 */
 	public void addFolder(IndexedFolder folder) {
-		folder.setJsonID(mFoldersArray.length());
 		mFoldersArray.put(folder.getRaw());
+		folder.setJsonID(mFoldersArray.length());
 		mFolders.put(folder.getUID(), folder);
 		saveChanges();
 	}

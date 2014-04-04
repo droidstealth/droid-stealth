@@ -269,8 +269,21 @@ public class Utils {
      * @return true if file is gone (also if it didn't exist in the first place)
      */
     public static boolean delete(File f) {
-        return !f.exists() || deleteImage(f) || deleteVideo(f) || deleteAudio(f) || deleteNonMedia(f) || f.delete();
+        return !f.exists() || deleteImage(f) || deleteVideo(f) || deleteAudio(f) || deleteNonMedia(f) || deleteFile(f);
     }
+
+	/**
+	 * Deletes the given file casually without the use of a media store.
+	 * @param f the file to be deleted
+	 * @return returns true if it succeeded
+	 */
+	public static boolean deleteFile(File f) {
+		boolean success = f.delete();
+		if (success) {
+			d("Deleted file from device using the casual method successfully");
+		}
+		return success;
+	}
 
 	/**
 	 * Deletes a file if it is an image. Using this method also removes the image from the mediastore database
@@ -304,6 +317,15 @@ public class Utils {
 			}
 			c.close();
 		}
+
+		if (success) {
+			d("Deleted file from MediaStore and device as image");
+			if (f.exists()) {
+				success = false;
+				d("But wait, file is not gone... to");
+			}
+		}
+
 		return success;
 	}
 
@@ -339,6 +361,15 @@ public class Utils {
 			}
 			c.close();
 		}
+
+		if (success) {
+			d("Deleted file from MediaStore and device as non-media");
+			if (f.exists()) {
+				success = false;
+				d("But, file is not gone...");
+			}
+		}
+
 		return success;
 	}
 
@@ -374,6 +405,15 @@ public class Utils {
 			}
 			c.close();
 		}
+
+		if (success) {
+			d("Deleted file from MediaStore and device as audio");
+			if (f.exists()) {
+				success = false;
+				d("But, file is not gone...");
+			}
+		}
+
 		return success;
 	}
 
@@ -409,6 +449,15 @@ public class Utils {
             }
             c.close();
         }
+
+	    if (success) {
+		    d("Deleted file from MediaStore and device as video");
+		    if (f.exists()) {
+			    success = false;
+			    d("But, file is not gone...");
+		    }
+	    }
+
         return success;
     }
 }
