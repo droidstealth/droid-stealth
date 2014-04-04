@@ -147,19 +147,34 @@ public class Utils {
 		d(message, 1);
 	}
 
-    /**
-     * Print a debug message to logcat (and shows the source as well)
-     * @param message the message to log
-     * @param padStack the amount of StackTraceElements earlier you want to show the stacktrace info
-     */
-    public static void d(final String message, int padStack) {
-	    if (!BuildConfig.DEBUG) return;
-	    StackTraceElement calledFrom = Thread.currentThread().getStackTrace()[3 + padStack];
-	    Log.d(tag(), String.format("%1$-"+75+ "s", message) + " ~ [" + calledFrom.getClassName() + "." + calledFrom.getMethodName() + "@" + calledFrom.getLineNumber() + "]");
-    }
+	/**
+	 * Print a debug message to logcat (and shows the source as well)
+	 * @param message the message to log
+	 * @param padStack the amount of StackTraceElements earlier you want to show the stacktrace info
+	 */
+	public static void d(final String message, int padStack) {
+		if (!BuildConfig.DEBUG) return;
+		StackTraceElement calledFrom = Thread.currentThread().getStackTrace()[3 + padStack];
+		String stack =
+				" ~ [" + calledFrom.getClassName()
+						+ "." + calledFrom.getMethodName()
+						+ "@" + calledFrom.getLineNumber()
+						+ "]";
+
+		Log.d(tag(), String.format("%1$-"+75+ "s", message) + stack);
+	}
+
+	/**
+	 * Print a casual debug message to logcat (no stacktrace)
+	 * @param message the message to log
+	 */
+	public static void m(final String message) {
+		if (!BuildConfig.DEBUG) return;
+		Log.v(tag(), message);
+	}
 
     /**
-     * Give a runnable to run on the main thread, for instance to modify the UI code
+     * Give a runnable to run on the main thread, for instance to modify the UI
      * from a different thread
      * @param run The runnable to run on the main thread
      */
@@ -234,10 +249,10 @@ public class Utils {
     }
 
     /**
-     * Gets random file name
+     * Gets random file with a random file name
      * @param baseDirectory the directory where to store the file
      * @param extension the extension to use for this file (include the '.')
-     * @return the temporary file
+     * @return the random file
      */
     public static File getRandomFile(File baseDirectory, String extension)
     {
@@ -245,52 +260,127 @@ public class Utils {
     }
 
     /**
-     * Created this method because the normal file.delete() does not always work properly and this
-     * call seems to have more rights. (executes on current thread)
+     * Created this method because the normal file.delete() does not always work properly because it
+     * doesn't have all permission. Plus files should be deleted from the media store databases as well, otherwise
+     * there might still be references. This method tries all types of deletions we know of,
+     * to ensure we did our best to delete the file.
+     * (method executes on your current thread)
      * @param f the file to be deleted
      * @return true if file is gone (also if it didn't exist in the first place)
      */
     public static boolean delete(File f) {
-        return !f.exists() || deleteImage(f) || deleteVideo(f) || f.delete();
+        return !f.exists() || deleteImage(f) || deleteVideo(f) || deleteAudio(f) || deleteNonMedia(f) || f.delete();
     }
 
+	/**
+	 * Deletes a file if it is an image. Using this method also removes the image from the mediastore database
+	 * and doesn't just delete the file itself.
+	 * (method executes on your current thread)
+	 * @param f the image to remove
+	 * @return returns true if it succeeded
+	 */
+	public static boolean deleteImage(File f)
+	{
+		if (!FileUtils.isImage(FileUtils.getMimeType(f)) || getContext() == null) {
+			return false;
+		}
+
+		ContentResolver contentResolver = getContext().getContentResolver();
+		Cursor c = contentResolver.query(
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				new String[] { MediaStore.Images.Media._ID },
+				MediaStore.Images.Media.DATA + " = ?",
+				new String[] { f.getAbsolutePath() },
+				null);
+
+		boolean success = false;
+
+		if(c != null) {
+			if (c.moveToFirst()) {
+				// We found the ID. Deleting the item via the content provider will also remove the file
+				long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+				Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+				success = 0 < contentResolver.delete(deleteUri, null, null);
+			}
+			c.close();
+		}
+		return success;
+	}
+
+	/**
+	 * Deletes a non-media file if it is a file included in the mediastore. Using this method also removes the
+	 * file from the mediastore database and doesn't just delete the file itself.
+	 * (method executes on your current thread)
+	 * @param f the file to remove
+	 * @return returns true if it succeeded
+	 */
+	public static boolean deleteNonMedia(File f)
+	{
+		if (getContext() == null) {
+			return false;
+		}
+
+		ContentResolver contentResolver = getContext().getContentResolver();
+		Cursor c = contentResolver.query(
+				MediaStore.Files.getContentUri("external"),
+				new String[] { MediaStore.Files.FileColumns._ID },
+				MediaStore.Files.FileColumns.DATA + " = ?",
+				new String[] { f.getAbsolutePath() },
+				null);
+
+		boolean success = false;
+
+		if(c != null) {
+			if (c.moveToFirst()) {
+				// We found the ID. Deleting the item via the content provider will also remove the file
+				long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID));
+				Uri deleteUri = ContentUris.withAppendedId(MediaStore.Files.getContentUri("external"), id);
+				success = 0 < contentResolver.delete(deleteUri, null, null);
+			}
+			c.close();
+		}
+		return success;
+	}
+
+	/**
+	 * Deletes a file if it is an video. Using this method also removes the video from the mediastore database
+	 * and doesn't just delete the file itself.
+	 * (method executes on your current thread)
+	 * @param f the video to remove
+	 * @return returns true if it succeeded
+	 */
+	public static boolean deleteAudio(File f)
+	{
+		if (!FileUtils.isAudio(FileUtils.getMimeType(f)) || getContext() == null) {
+			return false;
+		}
+
+		ContentResolver contentResolver = getContext().getContentResolver();
+		Cursor c = contentResolver.query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				new String[] { MediaStore.Audio.Media._ID },
+				MediaStore.Audio.Media.DATA + " = ?",
+				new String[] { f.getAbsolutePath() },
+				null);
+
+		boolean success = false;
+
+		if(c != null) {
+			if (c.moveToFirst()) {
+				// We found the ID. Deleting the item via the content provider will also remove the file
+				long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+				Uri deleteUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+				success = 0 < contentResolver.delete(deleteUri, null, null);
+			}
+			c.close();
+		}
+		return success;
+	}
+
     /**
-     * Deletes a file if it is an image. Using this method also removes the image from the database
-     * and doesn't just delete the file itself. (executes on current thread)
-     * @param f the image to remove
-     * @return returns true if it succeeded
-     */
-    public static boolean deleteImage(File f)
-    {
-        if (!FileUtils.isImage(FileUtils.getMimeType(f)) || getContext() == null) {
-            return false;
-        }
-
-        ContentResolver contentResolver = getContext().getContentResolver();
-        Cursor c = contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Images.Media._ID },
-                MediaStore.Images.Media.DATA + " = ?",
-                new String[] { f.getAbsolutePath() },
-                null);
-
-        boolean success = false;
-
-        if(c != null) {
-            if (c.moveToFirst()) {
-                // We found the ID. Deleting the item via the content provider will also remove the file
-                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                success = 0 < contentResolver.delete(deleteUri, null, null);
-            }
-            c.close();
-        }
-        return success;
-    }
-
-    /**
-     * Deletes a file if it is an video. Using this method also removes the video from the database
-     * and doesn't just delete the file itself. (executes on current thread)
+     * Deletes a file if it is an video. Using this method also removes the video from the mediastore database
+     * and doesn't just delete the file itself.
+     * (method executes on your current thread)
      * @param f the video to remove
      * @return returns true if it succeeded
      */

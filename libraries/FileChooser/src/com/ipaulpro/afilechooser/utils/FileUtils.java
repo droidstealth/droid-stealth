@@ -118,14 +118,23 @@ public class FileUtils {
         return mimeType.startsWith("video/");
     }
 
-    /**
-     * @return True if mime type is image
-     * @author OlivierHokke
-     */
-    public static boolean isImage(String mimeType) {
-	    if (mimeType == null) return false;
-        return mimeType.startsWith("image/");
-    }
+	/**
+	 * @return True if mime type is image
+	 * @author OlivierHokke
+	 */
+	public static boolean isImage(String mimeType) {
+		if (mimeType == null) return false;
+		return mimeType.startsWith("image/");
+	}
+
+	/**
+	 * @return True if mime type is audio
+	 * @author OlivierHokke
+	 */
+	public static boolean isAudio(String mimeType) {
+		if (mimeType == null) return false;
+		return mimeType.startsWith("audio/");
+	}
 
     /**
      * Convert File into Uri.
