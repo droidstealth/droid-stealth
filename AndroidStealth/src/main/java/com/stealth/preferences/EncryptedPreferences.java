@@ -115,7 +115,7 @@ public class EncryptedPreferences {
 		mReady = false;
 		mName = name;
 		mJson = new JSONObject();
-		mEncryptedFile = new File(DirectoryManager.prefs(), name + ".crypto");
+		mEncryptedFile = new File(DirectoryManager.prefs(), mName + ".crypto");
 
 		if (mEncryptedFile.exists()) // one can only read it if it exists
 		{

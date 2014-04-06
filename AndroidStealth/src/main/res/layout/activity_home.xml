@@ -5,6 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/content_list_background"
     tools:context="com.stealth.android.HomeActivity">
 
     <!-- As the main content view, the view below consumes the entire

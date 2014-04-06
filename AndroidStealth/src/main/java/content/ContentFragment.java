@@ -75,16 +75,19 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			EncryptionService service = ((EncryptionService.ServiceBinder) iBinder).getService();
 			mEncryptionManager = EncryptionManager.create(service);
 			service.addUpdateListener(ContentFragment.this);
+			Utils.d("Encryption manager is connected!");
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
 			mEncryptionManager = null;
+			Utils.d("Encryption manager is disconnected..?");
 			// TODO destory encryption manager
 		}
 	};
 
 	void doBindService() {
+		Utils.d("Trying to bind service");
 		getActivity().getApplicationContext()
 				.bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
 						Context.BIND_AUTO_CREATE);
@@ -93,6 +96,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	void doUnbindService() {
 		if (mIsBound) {
+			Utils.d("Trying to unbind service");
 			getActivity().getApplicationContext().unbindService(mConnection);
 			mIsBound = false;
 		}

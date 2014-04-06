@@ -17,6 +17,7 @@ import android.util.Log;
 import com.facebook.crypto.cipher.NativeGCMCipherException;
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
+import com.stealth.android.BootManager;
 import com.stealth.files.FileIndex;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
@@ -39,20 +40,18 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Utils.setContext(getApplicationContext());
-		FileIndex.create(false, new IOnResult<FileIndex>() {
+		mBinder = new ServiceBinder();
+		BootManager.Boot(this, new IOnResult<Boolean>() {
 			@Override
-			public void onResult(FileIndex result) {
-				result.registerListener(EncryptionService.this);
+			public void onResult(Boolean result) {
+				FileIndex.get().registerListener(EncryptionService.this);
+
+				//use a scheduled thread pool for the running of our crypto system
+				createExecutor();
+				mEncrypter = new ConcealCrypto(EncryptionService.this);
+				handleUpdate(false);
 			}
 		});
-
-		//use a scheduled thread pool for the running of our crypto system
-		createExecutor();
-		mEncrypter = new ConcealCrypto(this);
-		mBinder = new ServiceBinder();
-
-		handleUpdate(false);
 	}
 
 	private void createExecutor() {
@@ -63,7 +62,8 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mCryptoExecutor.shutdown();
+		if (mCryptoExecutor != null)
+			mCryptoExecutor.shutdown();
 	}
 
 	@Override

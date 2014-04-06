@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -35,20 +36,51 @@ public class Utils {
 	private static final int MAX_RANDOM_STRING_LENGTH = 15;
 	private static final String TAG = "TUDELFT";
 
+	private static boolean sFakePin;
 	private static WeakReference<Context> sContext;
 
 	/**
+	 * @return was the entered pin fake?
+	 */
+	public static boolean isFakePin() {
+		return sFakePin;
+	}
+
+	/**
+	 * Remember whether the entered pin was the fake or true pin
+	 * @param fakePin was the pin fake?
+	 */
+	public static void setFakePin(boolean fakePin) {
+		Utils.sFakePin = sFakePin;
+	}
+
+	/**
+	 * @param api_nr the api version you want to check
+	 * @return true if given number is the current API number
+	 */
+	public static boolean isAPI(int api_nr) {
+		return Build.VERSION.SDK_INT == api_nr;
+	}
+
+	/**
+	 * @param api_nr the api version you want to check for
+	 * @return true the API of current android system is at least the given version number
+	 */
+	public static boolean isAtLeastAPI(int api_nr) {
+		return Build.VERSION.SDK_INT >= api_nr;
+	}
+
+	/**
 	 * Set the context value of the main activity, so others can easily access it.
-	 * @param context
+	 * @param context the context to remember
 	 */
 	public static void setContext(Context context) {
 		sContext = new WeakReference<Context>(context.getApplicationContext());
 	}
 
 	/**
-	 * Get the context so you can easily access for instance the resources of this app,
+	 * @return the context so you can easily access for instance the resources of this app,
 	 * show notifications or access the device's sensors.
-	 * @return
 	 */
 	public static Context getContext() {
 		return sContext.get();
