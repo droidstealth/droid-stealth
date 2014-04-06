@@ -1,5 +1,6 @@
 package com.stealth.files;
 
+import android.graphics.Bitmap;
 import com.stealth.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,7 @@ public class IndexedFile extends IndexedItem {
 	public static final int FILE_ORIGINAL = 4;
 
 	private String mTempLinkUID;
+	private Bitmap mThumb;
 
 	private IndexedFolder mFolder;
 	private String mName;
@@ -149,6 +151,27 @@ public class IndexedFile extends IndexedItem {
 	}
 
 	/**
+	 * @return true if file is currently locked
+	 */
+	public boolean isLocked() {
+		return !getUnlockedFile().exists() && getLockedFile().exists();
+	}
+
+	/**
+	 * @return true if file is currently unlocked
+	 */
+	public boolean isUnlocked() {
+		return getUnlockedFile().exists() && !getLockedFile().exists();
+	}
+
+	/**
+	 * @return true if file is currently being processed
+	 */
+	public boolean isProcessing() {
+		return getUnlockedFile().exists() && getLockedFile().exists();
+	}
+
+	/**
 	 * Set the parent virtual folder of this file
 	 * Only the FileIndex can do this.
 	 * @param mFolder the new folder
@@ -176,5 +199,26 @@ public class IndexedFile extends IndexedItem {
 	 */
 	void setExtension(String mExtension) {
 		this.mExtension = mExtension;
+	}
+
+	/**
+	 * @return get the remembered thumbnail
+	 */
+	public Bitmap getThumbnail() {
+		return mThumb;
+	}
+
+	/**
+	 * @param mThumb the thumbnail to remember for this file
+	 */
+	public void seThumbnail(Bitmap mThumb) {
+		this.mThumb = mThumb;
+	}
+
+	/**
+	 * Clears the thumbnail and sets it to be garbage collected
+	 */
+	public void clearThumbnail() {
+		mThumb = null;
 	}
 }

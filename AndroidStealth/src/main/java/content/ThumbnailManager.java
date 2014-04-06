@@ -57,27 +57,44 @@ public class ThumbnailManager {
 	}
 
 	/**
-	 * Gets the encrypted thumbnail for an item, decrypts it and returns the bitmap to the callback
+	 * Gets the encrypted thumbnail of an item, decrypts it and sets it in the item, but
+	 * only if thumbnail was not already set.
 	 * @param item the file to generate the thumbnail of
-	 * @param callback the callback to get the result (a bitmap)
+	 * @param callback the callback to notify whether it succeeded
 	 */
-	public static void getThumbnail(final IndexedFile item, final IOnResult<Bitmap> callback) {
+	public static void retrieveThumbnail(final IndexedFile item, final IOnResult<Boolean> callback) {
+
+		if (item.getThumbnail() != null) {
+			// bitmap is remembered, so nothing to retrieve
+			callback.onResult(true);
+			return;
+		}
+
+		final File thumbFile = item.getThumbFile();
+		if (!thumbFile.exists()) {
+			// there is no thumbnail to retrieve
+			callback.onResult(false);
+			return;
+		}
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 
 					// decrypt
-					File cache = Utils.getRandomCacheFile();
 					File thumbFile = item.getThumbFile();
+					File cache = Utils.getRandomCacheFile();
 					Utils.getMainCrypto().decrypt(thumbFile, cache, item.getName());
 
 					// read the bitmap
 					Bitmap bm = BitmapFactory.decodeFile(cache.getPath());
 					Utils.delete(cache);
 
+					item.seThumbnail(bm);
+
 					if (callback != null) {
-						callback.onResult(bm);
+						callback.onResult(true);
 					}
 
 				} catch (Exception e) {
@@ -85,7 +102,7 @@ public class ThumbnailManager {
 					e.printStackTrace();
 
 					if (callback != null) {
-						callback.onResult(null);
+						callback.onResult(false);
 					}
 				}
 			}

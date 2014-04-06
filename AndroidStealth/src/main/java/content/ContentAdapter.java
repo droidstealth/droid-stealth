@@ -1,10 +1,9 @@
 package content;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
@@ -16,7 +15,6 @@ import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private IContentManager mContentManager;
 	private List<IndexedItem> mContentItems;
 	private ArrayList<CheckableLinearLayout> mViews;
+	private IndexedFolder mLastFolder;
 
 	/**
 	 * Creates a new ContentAdapter
@@ -110,34 +109,53 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		//((TextView)finalView.findViewById(R.id.file_text)).setText(folder.getName());
 	}
 
-	private void styleFileView(IndexedFile file, final View view) {
+	private void styleFileView(final IndexedFile file, final View view) {
+
+		// sets the retrieved thumbnail
+		final Runnable setThumbnail = new Runnable() {
+			@Override
+			public void run() {
+				((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(file.getThumbnail());
+			}
+		};
 
 		((ImageView) view.findViewById(R.id.file_preview)).setImageResource(0);
 
-		ThumbnailManager.getThumbnail(file, new IOnResult<Bitmap>() {
-			@Override
-			public void onResult(final Bitmap result) {
-				Utils.runOnMain(new Runnable() {
-					@Override
-					public void run() {
-						// set the retrieved thumbnail
-						if (result != null) {
-							((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(result);
-						}
+		if (file.getThumbnail() == null) {
+			// TODO check if there even is a thumbnail?
+			ThumbnailManager.retrieveThumbnail(file, new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					if (result) {
+						Utils.runOnMain(setThumbnail);
 					}
-				});
-			}
-		});
-
-		if (file.getUnlockedFile().exists()) {
-
-			((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_unlocked);
-			view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.unlocked));
-			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
+				}
+			});
 		} else {
-			((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_locked);
-			view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.locked));
-			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.locked));
+			setThumbnail.run();
+		}
+
+		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
+		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
+		View statusBar = view.findViewById(R.id.content_item_status_line);
+
+		if (file.isUnlocked()) {
+			statusImage.clearAnimation();
+			statusImage.setImageResource(R.drawable.ic_status_unlocked);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));
+			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
+		} else if (file.isLocked()) {
+			statusImage.clearAnimation();
+			statusImage.setImageResource(R.drawable.ic_status_locked);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.locked));
+			statusBar.setBackgroundColor(Utils.color(R.color.locked));
+		} else {
+			statusImage.setImageResource(R.drawable.ic_status_processing);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.processing));
+			statusBar.setBackgroundColor(Utils.color(R.color.processing));
+			if (view.getContext() != null) {
+				statusImage.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.rotate));
+			}
 		}
 	}
 
@@ -155,6 +173,18 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	 */
 	private void setContent(){
 		IndexedFolder current = mContentManager.getCurrentFolder();
+
+		if (mLastFolder != current && mContentItems != null) {
+			for (IndexedItem item : mContentItems) {
+				if (item instanceof IndexedFile) {
+					// save some memory by clearing the thumbnails
+					((IndexedFile) item).clearThumbnail();
+				}
+			}
+		}
+
+		mLastFolder = current;
+
 		mContentItems = new ArrayList<IndexedItem>(mContentManager.getFolders(current));
 		mContentItems.addAll(new ArrayList<IndexedItem>(mContentManager.getFiles(current)));
 	}
