@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="title_activity_pin">PinActivity</string>
+
+	<string name="pin_description_unlock">Please enter your pin</string>
+	<string name="pin_description_unlocked">Welcome, mister Bond.</string>
+
+	<string name="pin_1">1</string>
+	<string name="pin_2">2</string>
+	<string name="pin_3">3</string>
+	<string name="pin_4">4</string>
+	<string name="pin_5">5</string>
+	<string name="pin_6">6</string>
+	<string name="pin_7">7</string>
+	<string name="pin_8">8</string>
+	<string name="pin_9">9</string>
+	<string name="pin_0">0</string>
+	<string name="pin_asterisk">*</string>
+	<string name="pin_hashtag">#</string>
+
+	<string name="pin_1_sub"> </string>
+	<string name="pin_2_sub">abc</string>
+	<string name="pin_3_sub">def</string>
+	<string name="pin_4_sub">ghi</string>
+	<string name="pin_5_sub">jkl</string>
+	<string name="pin_6_sub">mno</string>
+	<string name="pin_7_sub">pqrs</string>
+	<string name="pin_8_sub">tuv</string>
+	<string name="pin_9_sub">wxyz</string>
+	<string name="pin_0_sub">_</string>
+	<string name="pin_asterisk_sub"> </string>
+	<string name="pin_hashtag_sub"> </string>
+
+</resources>

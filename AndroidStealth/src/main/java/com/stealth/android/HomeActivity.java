@@ -1,6 +1,7 @@
 package com.stealth.android;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,8 +12,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.stealth.files.FileIndex;
+import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
+import pin.PinManager;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
@@ -30,13 +34,50 @@ public class HomeActivity extends ActionBarActivity
 	private CharSequence mTitle;
 	private APSharing mSharing;
 
+	/**
+	 * Launch the HomeActivity by providing a pin
+	 *
+	 * @param context the context to use for the launch
+	 * @param pin     the actual pin code that is used to launch us
+	 * @return whether activity could launch
+	 */
+	public static boolean launch(Context context, String pin) {
+		if (!PinManager.get().isPin(pin)) {
+			return false;
+		}
+		try {
+			PackageManager pm = context.getPackageManager();
+			ComponentName homeName = new ComponentName(context, HomeActivity.class);
+
+			if (pm != null) {
+				// make sure activity can be called
+				pm.setComponentEnabledSetting(
+						homeName,
+						PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+						PackageManager.DONT_KILL_APP);
+			}
+
+			Intent stealthCall = new Intent(context, HomeActivity.class);
+			stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+			stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
+			stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(stealthCall);
+
+			Utils.toast(R.string.pin_description_unlocked);
+
+			return true;
+		}
+		catch (Exception e) {
+			Log.e("STEALTH", "Could not launch stealth app", e);
+		}
+		return false;
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		Utils.setContext(this);
-
-		mSharing = new APSharing(this);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -56,27 +97,34 @@ public class HomeActivity extends ActionBarActivity
 		}
 	}
 
+	/**
+	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
+	 *
+	 * @param position the item that is now active
+	 */
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		/*try {
+		Utils.setContext(this); // onCreate is called later... so let's call this now :)
 
-		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-		    if (phoneNumber.startsWith("#555")) {
-                // TODO some actions
-		    }
-		    else if (phoneNumber.startsWith("#666")) {
-			    // TODO wipe data here if activity mode is 'panic'
-                // TODO some other actions
-		    }
-	    }
-	    catch (NullPointerException e) {
-		    e.printStackTrace();
-		    Toast.makeText(getApplicationContext(), "App started without dialing phone number", Toast.LENGTH_SHORT).show();
-	    }*/
-		fragmentManager.beginTransaction()
-		               .replace(R.id.container, new ContentFragment())
-		               .commit();
+		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
+		if (BuildConfig.DEBUG || PinManager.get().isPin(pin)) {
+			// TODO let real or fake pin have an influence
+			FileIndex.create(false, new IOnResult<FileIndex>() {
+				@Override
+				public void onResult(FileIndex result) {
+					Utils.d("Created file index: " + result);
+					if (result == null) {
+						return;
+					}
+
+					FragmentManager fragmentManager = getSupportFragmentManager();
+					fragmentManager.beginTransaction()
+							.replace(R.id.container, new ContentFragment())
+							.commit();
+				}
+			});
+		}
+
 	}
 
 	public void restoreActionBar() {
