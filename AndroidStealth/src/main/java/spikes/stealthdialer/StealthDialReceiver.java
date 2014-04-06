@@ -23,23 +23,23 @@ import pin.PinManager;
  * Created on 2/26/14.
  */
 public class StealthDialReceiver extends BroadcastReceiver {
-    public StealthDialReceiver() {
-    }
+	public StealthDialReceiver() {
+	}
 
 
-    /**
-     * On receiving an Intent to make a call. Check that number to see if it is a number that
-     * activates the receiver. (Starts with #555) If it does then sends a startup intent to the
-     * app launch activity.
-     * @param context
-     * @param intent
-     */
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Utils.setContext(context);
-        String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        if (HomeActivity.launch(context, pin)) {
-	        setResultData(null);
-        }
-    }
+	/**
+	 * On receiving an Intent to make a call. Check that number to see if it is a number that
+	 * activates the receiver. (Starts with #555) If it does then sends a startup intent to the
+	 * app launch activity.
+	 * @param context
+	 * @param intent
+	 */
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Utils.setContext(context);
+		String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+		if (HomeActivity.launch(context, pin)) {
+			setResultData(null);
+		}
+	}
 }

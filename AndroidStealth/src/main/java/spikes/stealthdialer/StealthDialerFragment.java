@@ -44,7 +44,7 @@ public class StealthDialerFragment extends Fragment {
      * In addition to what Fragment.onStart() does.
      */
     @Override
-    public void onResume() {
+	public void onResume() {
         if(phone_number_dialed == null || phone_number_dialed.equals(""))
             callData.setText("No call was made");
         else

@@ -52,7 +52,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ActionMode mMode;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
-    private EncryptionManager mEncryptionManager;
+	private EncryptionManager mEncryptionManager;
 	private boolean mIsBound;
 	/**
 	 * Remembers which item is currently being selected in single selecton mode
@@ -72,23 +72,22 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            EncryptionService service = ((EncryptionService.ServiceBinder) iBinder).getService();
-            mEncryptionManager = EncryptionManager.create(service);
-            service.addUpdateListener(ContentFragment.this);
+			EncryptionService service = ((EncryptionService.ServiceBinder) iBinder).getService();
+			mEncryptionManager = EncryptionManager.create(service);
+			service.addUpdateListener(ContentFragment.this);
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
-			//mEncryptionService = null;
-            mEncryptionManager = null;
-            // TODO destory encryption manager
+			mEncryptionManager = null;
+			// TODO destory encryption manager
 		}
 	};
 
-    void doBindService() {
+	void doBindService() {
 		getActivity().getApplicationContext()
-		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
-				             Context.BIND_AUTO_CREATE);
+				.bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+						Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -121,10 +120,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		super.onCreate(savedInstanceState);
 
 		mContentManager = ContentManagerFactory.getInstance(
-                getActivity(),
-                FileIndex.get());
+				getActivity(),
+				FileIndex.get());
 
-        Utils.d("Created content fragment");
+		Utils.d("Created content fragment");
 
 		mMode = null;
 		mAdapter = new ContentAdapter(mContentManager);
@@ -212,7 +211,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					// Alternatively, use FileUtils.getFile(Context, Uri)
 					if (path != null && FileUtils.isLocal(path)) {
 						File file = new File(path);
-                        IndexedFolder dir = mContentManager.getCurrentFolder();
+						IndexedFolder dir = mContentManager.getCurrentFolder();
 						mContentManager.addFile(dir, file, new IOnResult<IndexedFile>() {
 							@Override
 							public void onResult(IndexedFile result) {
@@ -276,7 +275,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 			else {
 				mMode.setTitle(Utils.str(R.string.action_select_multi)
-				                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+						.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 				setActionModeIcon(R.drawable.ic_select_multi);
 			}
 			mSingleSelected = position;
@@ -319,7 +318,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			mMode.setTitle(Utils.str(R.string.action_select_multi)
-			                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+					.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 			setActionModeIcon(R.drawable.ic_select_multi);
 
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
@@ -356,25 +355,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	}
 
-    @Override
-    public void onEncryptionServiceUpdate() {
+	@Override
+	public void onEncryptionServiceUpdate() {
         mNotifyOnResult.onResult(true);
     }
 
-    private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
-        @Override
-        public void onResult(Boolean result) {
-	        Utils.runOnMain(new Runnable() {
-		        @Override
-		        public void run() {
-			        Utils.d("updating list");
-			        mContentManager.notifyContentChangedListeners();
-		        }
-	        });
-        }
-    };
+	private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
+		@Override
+		public void onResult(Boolean result) {
+			Utils.runOnMain(new Runnable() {
+					@Override
+					public void run() {
+						Utils.d("updating list");
+						mContentManager.notifyContentChangedListeners();
+					}
+			});
+		}
+	};
 
-    /**
+	/**
 	 * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html Helper
 	 * class which shows the CAB and
 	 */
@@ -442,51 +441,51 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			return true;
 		}
 
-	    /**
-	     * Locks all items
-	     * @param with the items to perform this action on
-	     */
-	    public void actionLock(ArrayList<IndexedItem> with) {
-		    if (!mIsBound) {
-			    Log.e(this.getClass().toString() + ".onActionItemClicked",
-					    "encryptionService was not bound");
-		    }
-		    // don't use an IOnResult, because we will be notified anyway,
-		    // because we are listening to the changes in the encryption service
-		    mEncryptionManager.encryptItems(with, null);
-	    }
+		/**
+		 * Locks all items
+		 * @param with the items to perform this action on
+		 */
+		public void actionLock(ArrayList<IndexedItem> with) {
+			if (!mIsBound) {
+				Log.e(this.getClass().toString() + ".onActionItemClicked",
+					"encryptionService was not bound");
+			}
+			// don't use an IOnResult, because we will be notified anyway,
+			// because we are listening to the changes in the encryption service
+			mEncryptionManager.encryptItems(with, null);
+		}
 
-	    /**
-	     * Unlocks all items
-	     * @param with the items to perform this action on
-	     */
-	    public void actionUnlock(ArrayList<IndexedItem> with) {
-		    if (!mIsBound) {
-			    Log.e(this.getClass().toString() + ".onActionItemClicked",
-					    "encryptionService was not bound");
-		    }
-		    // don't use an IOnResult, because we will be notified anyway,
-		    // because we are listening to the changes in the encryption service
-		    mEncryptionManager.decryptItems(with, null);
-	    }
+		/**
+		 * Unlocks all items
+		 * @param with the items to perform this action on
+		 */
+		public void actionUnlock(ArrayList<IndexedItem> with) {
+			if (!mIsBound) {
+				Log.e(this.getClass().toString() + ".onActionItemClicked",
+					"encryptionService was not bound");
+			}
+			// don't use an IOnResult, because we will be notified anyway,
+			// because we are listening to the changes in the encryption service
+			mEncryptionManager.decryptItems(with, null);
+		}
 
-	    /**
-	     * Shreds all items
-	     * @param with the items to perform this action on
-	     */
-	    public void actionShred(ArrayList<IndexedItem> with) {
-		    mContentManager.removeItems(with, new IOnResult<Boolean>() {
-			    @Override
-			    public void onResult(Boolean result) {
-				    if (result) {
-					    Utils.toast(R.string.content_success_shred);
-				    }
-				    else {
-					    Utils.toast(R.string.content_fail_shred);
-				    }
-			    }
-		    });
-	    }
+		/**
+		 * Shreds all items
+		 * @param with the items to perform this action on
+		 */
+		public void actionShred(ArrayList<IndexedItem> with) {
+			mContentManager.removeItems(with, new IOnResult<Boolean>() {
+					@Override
+					public void onResult(Boolean result) {
+					if (result) {
+						Utils.toast(R.string.content_success_shred);
+					}
+					else {
+						Utils.toast(R.string.content_fail_shred);
+					}
+				}
+			});
+		}
 
 		/**
 		 * Called when the ActionMode is finalized. Unchecks all items in view.

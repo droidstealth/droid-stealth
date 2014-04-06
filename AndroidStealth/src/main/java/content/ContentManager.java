@@ -25,38 +25,38 @@ import java.util.List;
  * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
-    private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
-    private FileIndex mIndex;
-    private IndexedFolder mCurrentFolder;
+	private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
+	private FileIndex mIndex;
+	private IndexedFolder mCurrentFolder;
 
-    /**
-     * Create the content manager. Make sure that the file index is created!!
-     * @param context the context of this application
-     * @param index the file index that we will use to manage our content
-     */
-    public ContentManager(Context context, FileIndex index) {
-        mIndex = index;
-        mCurrentFolder = index.getRoot();
-    }
+	/**
+	 * Create the content manager. Make sure that the file index is created!!
+	 * @param context the context of this application
+	 * @param index the file index that we will use to manage our content
+	 */
+	public ContentManager(Context context, FileIndex index) {
+		mIndex = index;
+		mCurrentFolder = index.getRoot();
+	}
 
-    @Override
-    public void setCurrentFolder(IndexedFolder currentFolder) {
-        mCurrentFolder = currentFolder;
-    }
+	@Override
+	public void setCurrentFolder(IndexedFolder currentFolder) {
+		mCurrentFolder = currentFolder;
+	}
 
-    @Override
-    public IndexedFolder getCurrentFolder() {
-        return mCurrentFolder;
-    }
+	@Override
+	public IndexedFolder getCurrentFolder() {
+		return mCurrentFolder;
+	}
 
-    @Override
-    public Collection<IndexedFile> getFiles(IndexedFolder fromFolder) {
-        return fromFolder.getFiles();
-    }
-    @Override
-    public Collection<IndexedFolder> getFolders(IndexedFolder fromFolder) {
-        return fromFolder.getFolders();
-    }
+	@Override
+	public Collection<IndexedFile> getFiles(IndexedFolder fromFolder) {
+		return fromFolder.getFiles();
+	}
+	@Override
+	public Collection<IndexedFolder> getFolders(IndexedFolder fromFolder) {
+		return fromFolder.getFolders();
+	}
 
 	@Override
 	public void addContentChangedListener(ContentChangedListener listener) {
@@ -70,175 +70,175 @@ public class ContentManager implements IContentManager {
 		return mListeners.remove(listener);
 	}
 
-    /**
-     * Gets the thumbnail of a file
+	/**
+	 * Gets the thumbnail of a file
 	 *
-     * @param item the file to find the thumbnail file of
-     * @return the thumbnail file
-     */
-    public File getThumbnailFile(File item) {
-        return new File(DirectoryManager.thumbs(), item.getName() + ".jpg");
-    }
+	 * @param item the file to find the thumbnail file of
+	 * @return the thumbnail file
+	 */
+	public File getThumbnailFile(File item) {
+		return new File(DirectoryManager.thumbs(), item.getName() + ".jpg");
+	}
 
-    /**
-     * Creates the thumbnail for an item and saves it in the thumbnail folder
+	/**
+	 * Creates the thumbnail for an item and saves it in the thumbnail folder
 	 *
-     * @param item the file to generate the thumbnail of
-     * @return the created thumbnail
-     */
-    public void createThumbnail(IndexedFile item) {
-        try {
-            Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
+	 * @param item the file to generate the thumbnail of
+	 * @return the created thumbnail
+	 */
+	public void createThumbnail(IndexedFile item) {
+		try {
+			Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
 			if (thumb == null) return;
-            File thumbFile = item.getThumbFile();
-            FileOutputStream out = new FileOutputStream(thumbFile);
-            thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.close();
-            return;
+			File thumbFile = item.getThumbFile();
+			FileOutputStream out = new FileOutputStream(thumbFile);
+			thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.close();
+			return;
 		}
 		catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
+			e.printStackTrace();
+			return;
+		}
+	}
 
-    @Override
-    public void addFile(final IndexedFolder toFolder, final File originalFile, final IOnResult<IndexedFile> callback)
-    {
-        if (!originalFile.isFile()) return;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                // init
-                IndexedFile indexedFile = new IndexedFile(toFolder, originalFile);
-                File unlockedFile = indexedFile.getUnlockedFile();
-                File thumbFile = indexedFile.getThumbFile();
-                String mimeType = FileUtils.getMimeType(originalFile);
-                boolean isMedia = FileUtils.isImageOrVideo(mimeType);
+	@Override
+	public void addFile(final IndexedFolder toFolder, final File originalFile, final IOnResult<IndexedFile> callback)
+	{
+		if (!originalFile.isFile()) return;
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				// init
+				IndexedFile indexedFile = new IndexedFile(toFolder, originalFile);
+				File unlockedFile = indexedFile.getUnlockedFile();
+				File thumbFile = indexedFile.getThumbFile();
+				String mimeType = FileUtils.getMimeType(originalFile);
+				boolean isMedia = FileUtils.isImageOrVideo(mimeType);
 
 				try
-                {
-                    // copy to our folder
-                    Utils.copyFile(originalFile, unlockedFile);
+				{
+					// copy to our folder
+					Utils.copyFile(originalFile, unlockedFile);
 
-                    // create thumbnail
-                    createThumbnail(indexedFile);
-                    if (isMedia && !thumbFile.exists()) Utils.toast(R.string.content_fail_thumb);
+					// create thumbnail
+					createThumbnail(indexedFile);
+					if (isMedia && !thumbFile.exists()) Utils.toast(R.string.content_fail_thumb);
 
-                    // delete original
-                    boolean removed = Utils.delete(originalFile);
-                    if (!removed) Utils.toast(R.string.content_fail_original_delete);
+					// delete original
+					boolean removed = Utils.delete(originalFile);
+					if (!removed) Utils.toast(R.string.content_fail_original_delete);
 
-                    // add to the index
-                    mIndex.addFile(indexedFile);
+					// add to the index
+					mIndex.addFile(indexedFile);
 
-                    // notify that we are done
-                    notifyContentChangedListeners();
+					// notify that we are done
+					notifyContentChangedListeners();
 					if (callback != null) callback.onResult(indexedFile);
 				}
 				catch (Exception e)
-                {
-                    // cleanup
+				{
+					// cleanup
 					if (unlockedFile.exists() && !Utils.delete(unlockedFile))
 						Utils.toast(R.string.content_fail_clean);
 					if (thumbFile != null && thumbFile.exists() && !Utils.delete(thumbFile))
 						Utils.toast(R.string.content_fail_clean);
 
-                    // notify that we are done but failed
+					// notify that we are done but failed
 					if (callback != null) callback.onResult(null);
-                    e.printStackTrace();
-                }
+					e.printStackTrace();
+				}
 			}
-        }).start();
-    }
+		}).start();
+	}
 
-    @Override
-    public IndexedFolder getRoot() {
-        return mIndex.getRoot();
-    }
+	@Override
+	public IndexedFolder getRoot() {
+		return mIndex.getRoot();
+	}
 
-    @Override
+	@Override
 	public void removeAllContent(final IOnResult<Boolean> callback) {
-        removeItem(mIndex.getRoot(), callback);
-    }
+		removeItem(mIndex.getRoot(), callback);
+	}
 
-    @Override
-    public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean removed = removeItemNow(item);
+	@Override
+	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				boolean removed = removeItemNow(item);
 				if (removed) {
-                    notifyContentChangedListeners();
-                }
+					notifyContentChangedListeners();
+				}
 				if (callback != null) {
-                    callback.onResult(removed);
-                }
+					callback.onResult(removed);
+				}
 			}
-        }).start();
-    }
+		}).start();
+	}
 
-    @Override
-    public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback) {
-        // make copy in case it changes while we are executing in another thread
+	@Override
+	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback) {
+		// make copy in case it changes while we are executing in another thread
 		final IndexedItem[] items = itemCollection.toArray(
 				(IndexedItem[]) java.lang.reflect.Array.newInstance(IndexedItem.class, itemCollection.size()));
 		new Thread(new Runnable() {
-            @Override
+			@Override
 			public void run() {
-                int failures = 0;
-                boolean singleSuccess = false;
+				int failures = 0;
+				boolean singleSuccess = false;
 				for (IndexedItem item : items) {
 					if (removeItemNow(item)) {
-                        singleSuccess |= true;
-                    }
+						singleSuccess |= true;
+					}
 					else {
 						failures++;
 					}
 				}
-                if (failures > 0) {
-                    Utils.d(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
-                }
+				if (failures > 0) {
+					Utils.d(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+				}
 				if (singleSuccess) {
-                    notifyContentChangedListeners();
-                }
+					notifyContentChangedListeners();
+				}
 
 				if (callback != null) {
-                    callback.onResult(failures == 0);
-            }
+					callback.onResult(failures == 0);
 			}
-        }).start();
-    }
+			}
+		}).start();
+	}
 
-    /**
+	/**
 	 * Removes a file/folder completely in current thread,
-     * including its thumbnail and encrypted version
+	 * including its thumbnail and encrypted version
 	 *
 	 * @param item the item to remove
 	 * @return whether it completely succeeded
-     */
+	 */
 	public boolean removeItemNow(IndexedItem item)
-    {
-        boolean success = true;
-        if (item instanceof IndexedFolder)
-        {
-            IndexedFolder folder = (IndexedFolder) item;
-            for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f);
-            for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f);
-            mIndex.removeFolder(folder);
-        }
-        else
-        {
-            IndexedFile file = (IndexedFile) item;
-            success &= Utils.delete(file.getLockedFile());
-            success &= Utils.delete(file.getUnlockedFile());
-            success &= Utils.delete(file.getThumbFile());
-            mIndex.removeFile(file);
-        }
-        return success;
-    }
+	{
+		boolean success = true;
+		if (item instanceof IndexedFolder)
+		{
+			IndexedFolder folder = (IndexedFolder) item;
+			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f);
+			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f);
+			mIndex.removeFolder(folder);
+		}
+		else
+		{
+			IndexedFile file = (IndexedFile) item;
+			success &= Utils.delete(file.getLockedFile());
+			success &= Utils.delete(file.getUnlockedFile());
+			success &= Utils.delete(file.getThumbFile());
+			mIndex.removeFile(file);
+		}
+		return success;
+	}
 
 	/**
 	 * Notifies all listeners of a change in content. Tries to do it on the UI thread!

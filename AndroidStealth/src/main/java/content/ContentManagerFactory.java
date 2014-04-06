@@ -25,7 +25,7 @@ public class ContentManagerFactory {
 	 * @return Returns an instance of the ContentManager
 	 */
 	public static IContentManager getInstance(Context context, FileIndex index) {
-        if(Instance == null){
+		if(Instance == null){
             Instance = new ContentManager(context, index);
         }
 		return Instance;

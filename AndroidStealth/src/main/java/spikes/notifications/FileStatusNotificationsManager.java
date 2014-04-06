@@ -17,155 +17,155 @@ import encryption.EncryptionService;
  */
 public class FileStatusNotificationsManager {
 
-    public static final String ACTION_LOCK_ALL = "lockAllItems";
+	public static final String ACTION_LOCK_ALL = "lockAllItems";
 
-    private static FileStatusNotificationsManager sInstance = null;
-    public static FileStatusNotificationsManager get() {
-        if (sInstance == null) {
-            sInstance = new FileStatusNotificationsManager(Utils.getContext());
-        }
-        return sInstance;
-    }
+	private static FileStatusNotificationsManager sInstance = null;
+	public static FileStatusNotificationsManager get() {
+		if (sInstance == null) {
+			sInstance = new FileStatusNotificationsManager(Utils.getContext());
+		}
+		return sInstance;
+	}
 
-    private Context mContext;
-    private FileStatusNotificationsManager(Context context) {
-        mContext = context;
-    }
+	private Context mContext;
+	private FileStatusNotificationsManager(Context context) {
+		mContext = context;
+	}
 
-    private static final int NOTIFICATION_ID_LOCKING = 1;
-    private static final int NOTIFICATION_ID_UNLOCKING = 2;
-    private static final int NOTIFICATION_ID_UNLOCKED = 3;
+	private static final int NOTIFICATION_ID_LOCKING = 1;
+	private static final int NOTIFICATION_ID_UNLOCKING = 2;
+	private static final int NOTIFICATION_ID_UNLOCKED = 3;
 
-    private boolean mShowingLocking = false;
-    private boolean mShowingUnlocking = false;
-    private boolean mShowingUnlocked = false;
+	private boolean mShowingLocking = false;
+	private boolean mShowingUnlocking = false;
+	private boolean mShowingUnlocked = false;
 
-    /**
-     * Hides the notification for indicating the user that files are currently being locked.
-     */
-    public void hideFilesLocking() {
-        if (!mShowingLocking) return;
-        cancel(NOTIFICATION_ID_LOCKING);
-        mShowingLocking = false;
-    }
+	/**
+	 * Hides the notification for indicating the user that files are currently being locked.
+	 */
+	public void hideFilesLocking() {
+		if (!mShowingLocking) return;
+		cancel(NOTIFICATION_ID_LOCKING);
+		mShowingLocking = false;
+	}
 
-    /**
-     * Show the notification for indicating the user that files are currently being locked.
-     */
-    public void showFilesLocking() {
-        showFilesLocking(0, 0);
-    }
+	/**
+	 * Show the notification for indicating the user that files are currently being locked.
+	 */
+	public void showFilesLocking() {
+		showFilesLocking(0, 0);
+	}
 
-    /**
-     * Show the notification for indicating the user that files are currently being locked.
-     * Also, can show the progress of this using the parameters.
-     * @param progressMax the max value for the progress bar
-     * @param progressCurrent the current value for the progress bar
-     */
-    public void showFilesLocking(int progressMax, int progressCurrent) {
-        if (mShowingLocking) return;
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
-        mBuilder.setContentTitle(Utils.str(R.string.notification_locking_title));
-        mBuilder.setContentText(Utils.str(R.string.notification_locking_sub));
+	/**
+	 * Show the notification for indicating the user that files are currently being locked.
+	 * Also, can show the progress of this using the parameters.
+	 * @param progressMax the max value for the progress bar
+	 * @param progressCurrent the current value for the progress bar
+	 */
+	public void showFilesLocking(int progressMax, int progressCurrent) {
+		if (mShowingLocking) return;
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+		mBuilder.setSmallIcon(R.drawable.ic_stat_locking);
+		mBuilder.setContentTitle(Utils.str(R.string.notification_locking_title));
+		mBuilder.setContentText(Utils.str(R.string.notification_locking_sub));
 
-        if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
+		if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
-        build(mBuilder, NOTIFICATION_ID_LOCKING);
-        mShowingLocking = true;
-    }
+		build(mBuilder, NOTIFICATION_ID_LOCKING);
+		mShowingLocking = true;
+	}
 
-    /**
-     * Hides the notification for indicating the user that files are currently being locked.
-     */
-    public void hideFilesUnlocking() {
-        if (!mShowingUnlocking) return;
-        cancel(NOTIFICATION_ID_UNLOCKING);
-        mShowingUnlocking = false;
-    }
+	/**
+	 * Hides the notification for indicating the user that files are currently being locked.
+	 */
+	public void hideFilesUnlocking() {
+		if (!mShowingUnlocking) return;
+		cancel(NOTIFICATION_ID_UNLOCKING);
+		mShowingUnlocking = false;
+	}
 
-    /**
-     * Show the notification for indicating the user that files are currently being locked.
-     */
-    public void showFilesUnlocking() {
-        showFilesUnlocking(0, 0);
-    }
+	/**
+	 * Show the notification for indicating the user that files are currently being locked.
+	 */
+	public void showFilesUnlocking() {
+		showFilesUnlocking(0, 0);
+	}
 
-    /**
-     * Show the notification for indicating the user that files are currently being UNlocked.
-     * Also, can show the progress of this using the parameters.
-     * @param progressMax the max value for the progress bar
-     * @param progressCurrent the current value for the progress bar
-     */
-    public void showFilesUnlocking(int progressMax, int progressCurrent) {
-        if (mShowingUnlocking) return;
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_unlocking);
-        mBuilder.setContentTitle(Utils.str(R.string.notification_unlocking_title));
-        mBuilder.setContentText(Utils.str(R.string.notification_unlocking_sub));
+	/**
+	 * Show the notification for indicating the user that files are currently being UNlocked.
+	 * Also, can show the progress of this using the parameters.
+	 * @param progressMax the max value for the progress bar
+	 * @param progressCurrent the current value for the progress bar
+	 */
+	public void showFilesUnlocking(int progressMax, int progressCurrent) {
+		if (mShowingUnlocking) return;
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+		mBuilder.setSmallIcon(R.drawable.ic_stat_unlocking);
+		mBuilder.setContentTitle(Utils.str(R.string.notification_unlocking_title));
+		mBuilder.setContentText(Utils.str(R.string.notification_unlocking_sub));
 
-        if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
+		if (progressMax > 0) mBuilder.setProgress(progressMax, progressCurrent, false);
 
-        mBuilder.setContentIntent(generatePendingIntent());
-        build(mBuilder, NOTIFICATION_ID_UNLOCKING);
-        mShowingUnlocking = true;
-    }
+		mBuilder.setContentIntent(generatePendingIntent());
+		build(mBuilder, NOTIFICATION_ID_UNLOCKING);
+		mShowingUnlocking = true;
+	}
 
-    /**
-     * Hide the notification for indicating the user that files are currently in the unlocked state.
-     */
-    public void hideFilesUnlocked() {
-        if (!mShowingUnlocked) return;
-        cancel(NOTIFICATION_ID_UNLOCKED);
-        mShowingUnlocked = false;
-    }
+	/**
+	 * Hide the notification for indicating the user that files are currently in the unlocked state.
+	 */
+	public void hideFilesUnlocked() {
+		if (!mShowingUnlocked) return;
+		cancel(NOTIFICATION_ID_UNLOCKED);
+		mShowingUnlocked = false;
+	}
 
-    /**
-     * Show the notification for indicating the user that files are currently in the unlocked state.
-     */
-    public void showFilesUnlocked() {
-        if (mShowingUnlocked) return;
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_unlocked);
-        mBuilder.setContentTitle(Utils.str(R.string.notification_unlocked_title));
-        mBuilder.setContentText(Utils.str(R.string.notification_unlocked_sub));
-        mBuilder.setOngoing(true);
+	/**
+	 * Show the notification for indicating the user that files are currently in the unlocked state.
+	 */
+	public void showFilesUnlocked() {
+		if (mShowingUnlocked) return;
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+		mBuilder.setSmallIcon(R.drawable.ic_stat_unlocked);
+		mBuilder.setContentTitle(Utils.str(R.string.notification_unlocked_title));
+		mBuilder.setContentText(Utils.str(R.string.notification_unlocked_sub));
+		mBuilder.setOngoing(true);
 
-        mBuilder.setContentIntent(generatePendingIntent());
-        build(mBuilder, NOTIFICATION_ID_UNLOCKED);
-        mShowingUnlocked = true;
-    }
+		mBuilder.setContentIntent(generatePendingIntent());
+		build(mBuilder, NOTIFICATION_ID_UNLOCKED);
+		mShowingUnlocked = true;
+	}
 
-    /**
-     * Builds the notification and shows it to the user
-     * @param notification the notification to build
-     * @param id the id of the notification, allows changing this notification
-     */
-    private void build(NotificationCompat.Builder notification, int id) {
-        NotificationManager mNotificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(id, notification.build());
-    }
+	/**
+	 * Builds the notification and shows it to the user
+	 * @param notification the notification to build
+	 * @param id the id of the notification, allows changing this notification
+	 */
+	private void build(NotificationCompat.Builder notification, int id) {
+		NotificationManager mNotificationManager =
+				(NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(id, notification.build());
+	}
 
-    /**
-     * Cancels the notification
-     * @param id the id of the notification, allows changing this notification
-     */
-    private void cancel(int id) {
-        NotificationManager mNotificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(id);
-    }
+	/**
+	 * Cancels the notification
+	 * @param id the id of the notification, allows changing this notification
+	 */
+	private void cancel(int id) {
+		NotificationManager mNotificationManager =
+				(NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(id);
+	}
 
-    /**
-     * Generates the intent.
-     * @return
-     */
-    private PendingIntent generatePendingIntent()
-    {
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(mContext, EncryptionService.class);
-        resultIntent.setAction(ACTION_LOCK_ALL);
-        return PendingIntent.getService(Utils.getContext(), 0, resultIntent, 0);
-    }
+	/**
+	 * Generates the intent.
+	 * @return
+	 */
+	private PendingIntent generatePendingIntent()
+	{
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(mContext, EncryptionService.class);
+		resultIntent.setAction(ACTION_LOCK_ALL);
+		return PendingIntent.getService(Utils.getContext(), 0, resultIntent, 0);
+	}
 }
