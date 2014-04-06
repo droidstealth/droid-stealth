@@ -445,23 +445,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                mMorph.morphApp(null, null);
-            } catch (ZipException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (GeneralSecurityException e) {
-                e.printStackTrace();
-            } catch (java.lang.InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
 
-            return null;
+	        mMorph.morphApp("MorphApp", null);
+
+	        return null;
         }
     }
 }

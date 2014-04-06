@@ -12,7 +12,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.StringReader;
 
@@ -33,10 +35,9 @@ public class ManifestTransformer {
 			IOException,
 			ParserConfigurationException,
 			SAXException {
-		RandomAccessFile input = new RandomAccessFile(manifest, "r");
-		byte[] xml = new byte[(int)input.length()];
-		if(input.read(xml) != -1)
-			throw new IOException("Failed reading the file correctly!");
+		InputStream input = new FileInputStream(manifest);
+		byte[] xml = new byte[input.available()];
+		input.read(xml);
 
 		StringBuilder finalXML = new StringBuilder();
 
