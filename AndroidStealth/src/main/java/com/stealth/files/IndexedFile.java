@@ -12,7 +12,7 @@ import java.io.File;
  */
 public class IndexedFile extends IndexedItem {
 	public static final String LOCKED_EXTENSION = ".crypto";
-	public static final String THUMB_EXTENSION = ".jpg";
+	public static final String THUMB_EXTENSION = ".crypto";
 
 	public static final int FILE_FOLDER = 1;
 	public static final int FILE_NAME = 2;

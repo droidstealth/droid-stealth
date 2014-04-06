@@ -12,6 +12,7 @@ import com.stealth.android.R;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
 
@@ -86,6 +87,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
 		}
 
+		// if it is a checkable layout, remember it.
 		if (view instanceof CheckableLinearLayout) {
 			((CheckableLinearLayout) view).setItemID(i);
 			// remember the views so we can check for whether they are checked
@@ -94,37 +96,49 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			}
 		}
 
-		if (item instanceof IndexedFolder)
-		{
-			IndexedFolder folder = (IndexedFolder) item;
-			//((TextView)view.findViewById(R.id.file_text)).setText(folder.getName());
-		}
-		else
-		{
-			IndexedFile file = (IndexedFile) item;
-			File thumb = file.getThumbFile();
-			if (thumb.exists()) {
-				Bitmap bm = BitmapFactory.decodeFile(thumb.getPath());
-				if (bm != null) {
-					((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(bm);
-				}
-			}
-
-			if (file.getUnlockedFile().exists()) {
-
-				((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_unlocked);
-				view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.unlocked));
-				view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
-			} else {
-				((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_locked);
-				view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.locked));
-				view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.locked));
-			}
-
-			//((TextView)view.findViewById(R.id.file_text)).setText(file.getName());
+		// style the view accordingly
+		if (item instanceof IndexedFolder) {
+			styleFolderView((IndexedFolder) item, view);
+		} else {
+			styleFileView((IndexedFile) item, view);
 		}
 
 		return view;
+	}
+
+	private void styleFolderView(IndexedFolder folder, View view) {
+		//((TextView)finalView.findViewById(R.id.file_text)).setText(folder.getName());
+	}
+
+	private void styleFileView(IndexedFile file, final View view) {
+
+		((ImageView) view.findViewById(R.id.file_preview)).setImageResource(0);
+
+		ThumbnailManager.getThumbnail(file, new IOnResult<Bitmap>() {
+			@Override
+			public void onResult(final Bitmap result) {
+				Utils.runOnMain(new Runnable() {
+					@Override
+					public void run() {
+						// set the retrieved thumbnail
+						if (result != null) {
+							((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(result);
+						}
+					}
+				});
+			}
+		});
+
+		if (file.getUnlockedFile().exists()) {
+
+			((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_unlocked);
+			view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.unlocked));
+			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
+		} else {
+			((ImageView) view.findViewById(R.id.file_status)).setImageResource(R.drawable.ic_status_locked);
+			view.findViewById(R.id.file_status).setBackgroundColor(Utils.color(R.color.locked));
+			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.locked));
+		}
 	}
 
 	/**

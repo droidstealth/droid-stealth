@@ -70,38 +70,6 @@ public class ContentManager implements IContentManager {
 		return mListeners.remove(listener);
 	}
 
-	/**
-	 * Gets the thumbnail of a file
-	 *
-	 * @param item the file to find the thumbnail file of
-	 * @return the thumbnail file
-	 */
-	public File getThumbnailFile(File item) {
-		return new File(DirectoryManager.thumbs(), item.getName() + ".jpg");
-	}
-
-	/**
-	 * Creates the thumbnail for an item and saves it in the thumbnail folder
-	 *
-	 * @param item the file to generate the thumbnail of
-	 * @return the created thumbnail
-	 */
-	public void createThumbnail(IndexedFile item) {
-		try {
-			Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
-			if (thumb == null) return;
-			File thumbFile = item.getThumbFile();
-			FileOutputStream out = new FileOutputStream(thumbFile);
-			thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
-			out.close();
-			return;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-	}
-
 	@Override
 	public void addFile(final IndexedFolder toFolder, final File originalFile, final IOnResult<IndexedFile> callback)
 	{
@@ -112,11 +80,11 @@ public class ContentManager implements IContentManager {
 			public void run()
 			{
 				// init
-				IndexedFile indexedFile = new IndexedFile(toFolder, originalFile);
-				File unlockedFile = indexedFile.getUnlockedFile();
-				File thumbFile = indexedFile.getThumbFile();
-				String mimeType = FileUtils.getMimeType(originalFile);
-				boolean isMedia = FileUtils.isImageOrVideo(mimeType);
+				final IndexedFile indexedFile = new IndexedFile(toFolder, originalFile);
+				final File unlockedFile = indexedFile.getUnlockedFile();
+				final File thumbFile = indexedFile.getThumbFile();
+				final String mimeType = FileUtils.getMimeType(originalFile);
+				final boolean isMedia = FileUtils.isImageOrVideo(mimeType);
 
 				try
 				{
@@ -124,19 +92,23 @@ public class ContentManager implements IContentManager {
 					Utils.copyFile(originalFile, unlockedFile);
 
 					// create thumbnail
-					createThumbnail(indexedFile);
-					if (isMedia && !thumbFile.exists()) Utils.toast(R.string.content_fail_thumb);
+					ThumbnailManager.createThumbnail(indexedFile, new IOnResult<Boolean>() {
+						@Override
+						public void onResult(Boolean result) {
+							if (isMedia && !thumbFile.exists()) Utils.toast(R.string.content_fail_thumb);
 
-					// delete original
-					boolean removed = Utils.delete(originalFile);
-					if (!removed) Utils.toast(R.string.content_fail_original_delete);
+							// delete original
+							boolean removed = Utils.delete(originalFile);
+							if (!removed) Utils.toast(R.string.content_fail_original_delete);
 
-					// add to the index
-					mIndex.addFile(indexedFile);
+							// add to the index
+							mIndex.addFile(indexedFile);
 
-					// notify that we are done
-					notifyContentChangedListeners();
-					if (callback != null) callback.onResult(indexedFile);
+							// notify that we are done
+							notifyContentChangedListeners();
+							if (callback != null) callback.onResult(indexedFile);
+						}
+					});
 				}
 				catch (Exception e)
 				{
