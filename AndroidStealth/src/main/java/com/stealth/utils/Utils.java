@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
+import encryption.ConcealCrypto;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +37,7 @@ public class Utils {
 	private static final String TAG = "TUDELFT";
 
 	private static WeakReference<Context> sContext;
+	private static ConcealCrypto sCrypto;
 
 	/**
 	 * Set the context value of the main activity, so others can easily access it.
@@ -52,6 +54,18 @@ public class Utils {
 	 */
 	public static Context getContext() {
 		return sContext.get();
+	}
+
+	/**
+	 * Get the ConcealCrypto that uses the keys from the main folder,
+	 * in order to encrypt/decrypt items. Creates it if it doesn't yet exist.
+	 * @return the ConcealCrypto that uses the keys from the main folder
+	 */
+	public static ConcealCrypto getMainCrypto() {
+		if (sCrypto == null) {
+			sCrypto = new ConcealCrypto(getContext());
+		}
+		return sCrypto;
 	}
 
 	/**
@@ -236,6 +250,15 @@ public class Utils {
 				destination.close();
 			}
 		}
+	}
+
+	/**
+	 * Gets random file name for temporary file reading and writing, without extension
+	 * @return the temporary file
+	 */
+	public static File getRandomCacheFile()
+	{
+		return getRandomFile(getContext().getCacheDir(), "");
 	}
 
 	/**

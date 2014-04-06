@@ -33,7 +33,6 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
 	private ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
 	private IBinder mBinder;
-	private ConcealCrypto mEncrypter;
 	private ExecutorService mCryptoExecutor;
 
 	@Override
@@ -49,7 +48,6 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 
 		//use a scheduled thread pool for the running of our crypto system
 		createExecutor();
-		mEncrypter = new ConcealCrypto(this);
 		mBinder = new ServiceBinder();
 
 		handleUpdate(false);
@@ -162,7 +160,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	public Future addCryptoTask(File encrypted, File unencrypted, final String entityName, final ConcealCrypto.CryptoMode mode,
 			final IOnResult<Boolean> callback) {
 		CryptoTask task =
-				new CryptoTask(mEncrypter, encrypted, unencrypted, entityName, mode, new IOnResult<Boolean>() {
+				new CryptoTask(Utils.getMainCrypto(), encrypted, unencrypted, entityName, mode, new IOnResult<Boolean>() {
 					@Override
 					public void onResult(Boolean result) {
 						if (mode == ConcealCrypto.CryptoMode.DECRYPT) {
