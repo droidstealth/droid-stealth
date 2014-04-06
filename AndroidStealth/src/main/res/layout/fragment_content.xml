@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@color/content_list_background">
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent"
+	  android:background="@color/content_list_background">
 	<GridView
-	    android:id="@+id/content_container"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_above="@+id/textView"
-	    android:columnWidth="@dimen/column_width"
-	    android:numColumns="auto_fit"
-	    android:horizontalSpacing="@dimen/row_spacing"
-	    android:verticalSpacing="@dimen/column_spacing"
-	    android:focusable="true"
-	    android:clickable="true"
-	    android:longClickable="true"
-	    android:stretchMode="columnWidth"
-	    android:listSelector="@drawable/view_selector"/>
+		android:id="@+id/content_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/textView"
+		android:columnWidth="@dimen/column_width"
+		android:numColumns="auto_fit"
+		android:horizontalSpacing="@dimen/row_spacing"
+		android:verticalSpacing="@dimen/column_spacing"
+		android:focusable="true"
+		android:clickable="true"
+		android:longClickable="true"
+		android:stretchMode="columnWidth"
+		android:listSelector="@drawable/view_selector"/>
 	<TextView
 			android:layout_width="match_parent"
 			android:layout_height="40dp"

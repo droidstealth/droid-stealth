@@ -1,234 +1,234 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="pin.PinFragment"
-    android:background="#eee"
-    android:orientation="vertical">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	tools:context="pin.PinFragment"
+	android:background="#eee"
+	android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#33aacc"
-            android:text="Hello, please enter your pin, because I am sad and I want your pin"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/pin_description"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="7dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/frame_pin"
-            android:text="*****"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/pin_entry" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="#33aacc"
+			android:text="Hello, please enter your pin, because I am sad and I want your pin"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="10dp"
+			android:layout_marginTop="20dp"
+			android:gravity="center"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/pin_description"/>
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="7dp"
+			android:layout_margin="10dp"
+			android:background="@drawable/frame_pin"
+			android:text="*****"
+			android:gravity="center"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:id="@+id/pin_entry" />
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/pin_keyboard"
-        android:background="#f3f3f3">
+	<TableLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/pin_keyboard"
+		android:background="#f3f3f3">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+		<TableRow
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 
-            <LinearLayout
-                android:id="@+id/pin_1_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_1"
-                    android:id="@+id/pin_1" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_1_sub"
-                    android:id="@+id/pin_1_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_1_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_1"
+					android:id="@+id/pin_1" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_1_sub"
+					android:id="@+id/pin_1_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_2_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_2"
-                    android:id="@+id/pin_2" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_2_sub"
-                    android:id="@+id/pin_2_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_2_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_2"
+					android:id="@+id/pin_2" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_2_sub"
+					android:id="@+id/pin_2_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_3_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_3"
-                    android:id="@+id/pin_3" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_3_sub"
-                    android:id="@+id/pin_3_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_3_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_3"
+					android:id="@+id/pin_3" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_3_sub"
+					android:id="@+id/pin_3_sub" />
+			</LinearLayout>
 
-        </TableRow>
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+		</TableRow>
+		<TableRow
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 
-            <LinearLayout
-                android:id="@+id/pin_4_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_4"
-                    android:id="@+id/pin_4" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_4_sub"
-                    android:id="@+id/pin_4_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_4_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_4"
+					android:id="@+id/pin_4" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_4_sub"
+					android:id="@+id/pin_4_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_5_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_5"
-                    android:id="@+id/pin_5" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_5_sub"
-                    android:id="@+id/pin_5_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_5_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_5"
+					android:id="@+id/pin_5" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_5_sub"
+					android:id="@+id/pin_5_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_6_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_6"
-                    android:id="@+id/pin_6" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_6_sub"
-                    android:id="@+id/pin_6_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_6_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_6"
+					android:id="@+id/pin_6" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_6_sub"
+					android:id="@+id/pin_6_sub" />
+			</LinearLayout>
 
-        </TableRow>
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+		</TableRow>
+		<TableRow
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 
-            <LinearLayout
-                android:id="@+id/pin_7_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_7"
-                    android:id="@+id/pin_7" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_7_sub"
-                    android:id="@+id/pin_7_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_7_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_7"
+					android:id="@+id/pin_7" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_7_sub"
+					android:id="@+id/pin_7_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_8_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_8"
-                    android:id="@+id/pin_8" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_8_sub"
-                    android:id="@+id/pin_8_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_8_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_8"
+					android:id="@+id/pin_8" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_8_sub"
+					android:id="@+id/pin_8_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_9_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_9"
-                    android:id="@+id/pin_9" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_9_sub"
-                    android:id="@+id/pin_9_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_9_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_9"
+					android:id="@+id/pin_9" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_9_sub"
+					android:id="@+id/pin_9_sub" />
+			</LinearLayout>
 
-        </TableRow>
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+		</TableRow>
+		<TableRow
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 
-            <LinearLayout
-                android:id="@+id/pin_asterisk_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_asterisk"
-                    android:id="@+id/pin_asterisk" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_asterisk_sub"
-                    android:id="@+id/pin_asterisk_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_asterisk_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_asterisk"
+					android:id="@+id/pin_asterisk" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_asterisk_sub"
+					android:id="@+id/pin_asterisk_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_0_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_0"
-                    android:id="@+id/pin_0" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_0_sub"
-                    android:id="@+id/pin_0_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_0_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_0"
+					android:id="@+id/pin_0" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_0_sub"
+					android:id="@+id/pin_0_sub" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/pin_hashtag_container"
-                style="@style/PinButtonContainer">
-                <TextView
-                    style="@style/PinButtonTitleText"
-                    android:text="@string/pin_hashtag"
-                    android:id="@+id/pin_hashtag" />
-                <TextView
-                    style="@style/PinButtonSubText"
-                    android:text="@string/pin_hashtag_sub"
-                    android:id="@+id/pin_hashtag_sub" />
-            </LinearLayout>
+			<LinearLayout
+				android:id="@+id/pin_hashtag_container"
+				style="@style/PinButtonContainer">
+				<TextView
+					style="@style/PinButtonTitleText"
+					android:text="@string/pin_hashtag"
+					android:id="@+id/pin_hashtag" />
+				<TextView
+					style="@style/PinButtonSubText"
+					android:text="@string/pin_hashtag_sub"
+					android:id="@+id/pin_hashtag_sub" />
+			</LinearLayout>
 
-        </TableRow>
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+		</TableRow>
+		<TableRow
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
 
 
-            <ImageButton
-                style="@style/PinButtonAction"
-                android:id="@+id/pin_cancel"
-                android:src="@drawable/ic_pin_cancel"/>
-            <ImageButton
-                style="@style/PinButtonAction"
-                android:id="@+id/pin_accept"
-                android:src="@drawable/ic_pin_accept" />
-            <ImageButton
-                style="@style/PinButtonAction"
-                android:id="@+id/pin_delete"
-                android:src="@drawable/ic_pin_delete" />
-        </TableRow>
-    </TableLayout>
+			<ImageButton
+				style="@style/PinButtonAction"
+				android:id="@+id/pin_cancel"
+				android:src="@drawable/ic_pin_cancel"/>
+			<ImageButton
+				style="@style/PinButtonAction"
+				android:id="@+id/pin_accept"
+				android:src="@drawable/ic_pin_accept" />
+			<ImageButton
+				style="@style/PinButtonAction"
+				android:id="@+id/pin_delete"
+				android:src="@drawable/ic_pin_delete" />
+		</TableRow>
+	</TableLayout>
 
 </LinearLayout>

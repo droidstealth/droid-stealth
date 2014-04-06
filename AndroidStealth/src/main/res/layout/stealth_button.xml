@@ -1,16 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin" >
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="@dimen/widget_margin" >
 
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_menu_lock"
-        android:id="@+id/toggleButton"
-        android:background="@color/transparent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:cropToPadding="false"
-        android:clickable="false" />
+	<ImageButton
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:src="@drawable/ic_menu_lock"
+		android:id="@+id/toggleButton"
+		android:background="@color/transparent"
+		android:layout_centerVertical="true"
+		android:layout_centerHorizontal="true"
+		android:cropToPadding="false"
+		android:clickable="false" />
 </RelativeLayout>
