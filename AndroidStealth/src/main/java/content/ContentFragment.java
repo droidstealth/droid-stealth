@@ -357,8 +357,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	@Override
 	public void onEncryptionServiceUpdate() {
-        mNotifyOnResult.onResult(true);
-    }
+		mNotifyOnResult.onResult(true);
+	}
 
 	private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
 		@Override
