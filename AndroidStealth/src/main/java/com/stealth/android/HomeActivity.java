@@ -8,12 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.widget.ProgressBar;
-import com.stealth.files.FileIndex;
 import com.stealth.visibility.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
@@ -74,7 +70,7 @@ public class HomeActivity extends ActionBarActivity
 		setContentView(R.layout.activity_home_loading);
 
 		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
-		BootManager.Boot(this, pin, new IOnResult<Boolean>() {
+		BootManager.boot(this, pin, new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean succeeded) {
 
@@ -82,8 +78,9 @@ public class HomeActivity extends ActionBarActivity
 				VisibilityManager.hideApplication(HomeActivity.this);
 				if (succeeded) {
 					Utils.toast(R.string.pin_description_unlocked); // welcome, Mr. Bond
-					ConstructInterface(); // yay, we booted
-				} else {
+					constructInterface(); // yay, we booted
+				}
+				else {
 					finish(); // something went wrong. Incorrect pin maybe.
 				}
 			}
@@ -93,7 +90,7 @@ public class HomeActivity extends ActionBarActivity
 	/**
 	 * Initializes the interface. Happens when booting is done.
 	 */
-	private void ConstructInterface() {
+	private void constructInterface() {
 		setContentView(R.layout.activity_home);
 		mNavDrawer = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mNavDrawer.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -114,26 +111,6 @@ public class HomeActivity extends ActionBarActivity
 	public void onNavigationDrawerItemSelected(int position) {
 		Utils.setContext(this); // onCreate is called later... so let's call this now :)
 		mActiveNavigationOption = position;
-
-		// The old pure sequence
-//		if (BuildConfig.DEBUG || PinManager.get().isPin(pin) || pin == null) { // STEP 1
-//			if (PinManager.get().isPin(pin)) Utils.d("Pin was correct"); // it was indeed the pin
-//			FileIndex.create(false, new IOnResult<FileIndex>() { // STEP 2
-//				@Override
-//				public void onResult(FileIndex result) {
-//					if (result != null) { // STEP 3
-//						Utils.d("Created file index");
-//						BootSucceeded(callback);
-//					} else { // STEP 2
-//						Utils.d("Failed to create file index");
-//						callback.onResult(false);
-//					}
-//				}
-//			});
-//		} else { // STEP 1
-//			Utils.d("Incorrect pin");
-//			callback.onResult(false);
-//		}
 	}
 
 	public void restoreActionBar() {

@@ -41,7 +41,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	public void onCreate() {
 		super.onCreate();
 		mBinder = new ServiceBinder();
-		BootManager.Boot(this, new IOnResult<Boolean>() {
+		BootManager.boot(this, new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
 				FileIndex.get().registerListener(EncryptionService.this);

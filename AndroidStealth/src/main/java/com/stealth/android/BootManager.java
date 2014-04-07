@@ -1,8 +1,5 @@
 package com.stealth.android;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import android.content.Context;
 import com.stealth.files.FileIndex;
 import com.stealth.sequencing.IJob;
@@ -23,7 +20,7 @@ public class BootManager {
 	private static Context sContext = null;
 
 	/**
-	 * Method used to fail the boot: remember that we have failed, and run
+	 * Method used to fail the boot: remember that the app has failed, and run
 	 * the callback on the main thread so the called of the boot can sadly continue with
 	 * failing.
 	 */
@@ -31,7 +28,7 @@ public class BootManager {
 		@Override
 		public void run() {
 			sBooted = false;
-			Utils.d("We failed to boot.");
+			Utils.d("App failed to boot.");
 			Utils.runOnMain(new Runnable() {
 				@Override
 				public void run() {
@@ -42,15 +39,15 @@ public class BootManager {
 	};
 
 	/**
-	 * Method used to finalize the boot: remember that we have booted, and run
+	 * Method used to finalize the boot: remember that app has booted, and run
 	 * the callback on the main thread so the called of the boot can happily continue with
 	 * its tasks.
 	 */
-	private static final Runnable sProfit = new Runnable() {
+	private static final Runnable sSuccess = new Runnable() {
 		@Override
 		public void run() {
 			sBooted = true;
-			Utils.d("We booted!");
+			Utils.d("App booted!");
 			Utils.runOnMain(new Runnable() {
 				@Override
 				public void run() {
@@ -66,7 +63,7 @@ public class BootManager {
 	 * @param pin the pin that should be checked
 	 * @param callback the method that will be called when booting is ready.
 	 */
-	public static void Boot(Context context, String pin, IOnResult<Boolean> callback){
+	public static void boot(Context context, String pin, IOnResult<Boolean> callback){
 		sCallback = callback;
 		sPin = pin;
 		sContext = context;
@@ -77,7 +74,7 @@ public class BootManager {
 		// step 3: ...
 		// step 4: profit
 		Utils.d("BOOTING");
-		JobSequencer jobs = new JobSequencer(sFail, sProfit);
+		JobSequencer jobs = new JobSequencer(sFail, sSuccess);
 		jobs.addJob(sInitializeSystem);
 		jobs.addJob(sCheckPin);
 		if (!sBooted) {
@@ -92,8 +89,8 @@ public class BootManager {
 	 * @param context the application context that will be used for booting
 	 * @param callback the method that will be called when booting is ready.
 	 */
-	public static void Boot(Context context, IOnResult<Boolean> callback){
-		Boot(context, null, callback);
+	public static void boot(Context context, IOnResult<Boolean> callback){
+		boot(context, null, callback);
 	}
 
 	/**
