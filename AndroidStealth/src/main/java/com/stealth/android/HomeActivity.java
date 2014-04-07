@@ -18,8 +18,7 @@ import pin.PinManager;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
-public class HomeActivity extends ActionBarActivity
-		implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -33,6 +32,8 @@ public class HomeActivity extends ActionBarActivity
 	private APSharing mSharing;
 	private int mActiveNavigationOption = 0;
 	private ProgressDialog mProgress = null;
+
+	private boolean mRequestedActivity;
 
 	/**
 	 * Launch the HomeActivity by providing a pin
@@ -64,6 +65,10 @@ public class HomeActivity extends ActionBarActivity
 		return false;
 	}
 
+	public void setRequestedActivity(boolean mRequestedActivity) {
+		this.mRequestedActivity = mRequestedActivity;
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,7 +93,27 @@ public class HomeActivity extends ActionBarActivity
 	}
 
 	/**
-	 * Initializes the interface. Happens when booting is done.
+	 * Uses the value set through setRequestedActivity to determine if the app should close when it goes off screen. If
+	 * a child fragment of the activity wants to open another app and keep running, like with startActivityForResult,
+	 * they need to setRequestedActivity(true) on this activity beforehand. If no activity has been requested by the
+	 * app, mRequestedActivity==False, finish up the app. If an activity has been requested don't finish up the app and
+	 * reset the request flag.
+	 */
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (!mRequestedActivity) {
+			this.finish();
+		}
+		else {
+			mRequestedActivity = false;
+		}
+	}
+
+	/**
+	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
+	 *
+	 * @param position the item that is now active
 	 */
 	private void constructInterface() {
 		setContentView(R.layout.activity_home);
@@ -101,7 +126,6 @@ public class HomeActivity extends ActionBarActivity
 				.replace(R.id.container, new ContentFragment())
 				.commit();
 	}
-
 	/**
 	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
 	 *
