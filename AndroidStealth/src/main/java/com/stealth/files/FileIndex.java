@@ -215,8 +215,8 @@ public class FileIndex {
 	 * @param file the file to add
 	 */
 	public void addFile(IndexedFile file) {
-		mFilesArray.put(file.getRaw());
 		file.setJsonID(mFilesArray.length());
+		mFilesArray.put(file.getRaw());
 		mFiles.put(file.getUID(), file);
 		saveChanges();
 	}
@@ -227,8 +227,8 @@ public class FileIndex {
 	 * @param folder the virtual folder to add
 	 */
 	public void addFolder(IndexedFolder folder) {
-		mFoldersArray.put(folder.getRaw());
 		folder.setJsonID(mFoldersArray.length());
+		mFoldersArray.put(folder.getRaw());
 		mFolders.put(folder.getUID(), folder);
 		saveChanges();
 	}
