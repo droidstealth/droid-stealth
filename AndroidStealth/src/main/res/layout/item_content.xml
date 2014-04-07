@@ -1,23 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <content.CheckableLinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/content_item_width"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/content_item_padding"
-    android:background="@drawable/content_item_background" >
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:src="@drawable/file_icon"/>
-    <TextView
-        android:layout_marginTop="@dimen/text_margin"
-        android:id="@+id/file_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:maxLines="1"
-        android:ellipsize="middle"/>
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="@dimen/content_item_width"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:padding="@dimen/content_item_padding"
+	android:background="@color/locked"
+	android:id="@+id/content_item_status_line" >
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+			<ImageView
+				android:id="@+id/file_preview"
+				android:layout_width="@dimen/content_image_width"
+				android:layout_height="@dimen/content_image_height"
+				android:scaleType="centerCrop"
+				android:layout_marginTop="@dimen/content_status_line_height"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentBottom="true"
+				android:src="@drawable/file_icon"/>
+			<ImageView
+				android:id="@+id/file_select"
+				android:layout_width="@dimen/content_image_width"
+				android:layout_height="@dimen/content_image_height"
+				android:layout_marginTop="@dimen/content_status_line_height"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentBottom="true" />
+				<!--android:background="@drawable/frame_selected"-->
+			<ImageView
+				android:id="@+id/file_status"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:adjustViewBounds="true"
+				android:layout_centerHorizontal="true"
+				android:layout_alignParentTop="true"
+				android:src="@drawable/ic_status_locked"
+				android:padding="@dimen/content_status_icon_padding"
+				android:background="@color/locked"/>
+		</RelativeLayout>
+	<!-- removing the textview because normally filenames of pictures arent that necessary. We can also show it
+	at the bottom of the app in an info bar when the user pressed on the file -->
+	<!-- <TextView
+		android:id="@+id/file_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="@dimen/content_text_side_padding"
+		android:layout_marginBottom="4dp"
+		android:gravity="center"
+		android:maxLines="2"
+		android:minLines="2"
+		android:ellipsize="middle"
+		android:textAppearance="?android:textAppearanceSmall"
+		android:textColor="@color/content_name"
+		android:background="@color/content_text"/>-->
 </content.CheckableLinearLayout>

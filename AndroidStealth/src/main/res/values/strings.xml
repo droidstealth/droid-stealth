@@ -1,47 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="http_service">HTTP Service</string>
-
-    <string name="wifi_AP_progress_title">Wifi Hotspot</string>
-    <string name="wifi_AP_progress_message">Creating a Wifi hotspot to allow other to connect to. Please wait...</string>
-
-    <string name="hotspot_enable_title">Create Hotspot</string>
-    <string name="hotspot_disable_title">Disable Hotspot</string>
-
-    <string name="app_name">AndroidStealth</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
-    <string name="share">Share</string>
-    <string name="action_add">Add Item</string>
-    <string name="cancel_ap_app_sharing">Cancel</string>
-    <string name="start_ap_app_sharing">Create</string>
-    <string name="share_app">Share Application</string>
-    <string name="share_hotspot_title">via Hotspot</string>
-    <string name="share_bluetooth_title">via Bluetooth</string>
-    <string name="share_sd_card_title">via SD Card</string>
-    <string name="password_text">Password</string>
-    <string name="SSID_text">Wifi name</string>
-    <string name="show_password_text">Show password</string>
-    <string name="ap_dialog_title">Creating Wifi Hotspot</string>
-    <string name="hotspot_app_sharing">Hotspot App Sharing</string>
-    <string name="file_not_found_message">File not found!</string>
-    <string name="page_not_found_message">404 Page not found!</string>
-    <string name="share_app_dialog_title">Share Application link</string>
-    <string name="link_name">link:</string>
-    <string name="dummy_link">http://192.168.1.1/stealth.apk</string>
-    <string name="unknown">unknown</string>
-    <string name="sharing_notification_title">Sharing active</string>
-    <string name="on_network_title">Sharing on</string>
-    <string name="cancel_notification_text">Tap to cancel</string>
-    <string name="sharing_notification_text">Sending content</string>
-    <string name="close_dialog">Close</string>
-    <string name="share_uri">sharing</string>
-    <string name="select_file">Select file to encrypt</string>
+	<string name="http_service">HTTP Service</string>
+	<string name="wifi_AP_progress_title">Wifi Hotspot</string>
+	<string name="wifi_AP_progress_message">Creating a Wifi hotspot to allow other to connect to. Please wait...</string>
+	<string name="hotspot_enable_title">Create Hotspot</string>
+	<string name="hotspot_disable_title">Disable Hotspot</string>
+	<string name="app_name">AndroidStealth</string>
+	<string name="title_section1">Section 1</string>
+	<string name="title_section2">Section 2</string>
+	<string name="title_section3">Section 3</string>
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
+	<string name="action_example">Example action</string>
+	<string name="action_settings">Settings</string>
+	<string name="share">Share</string>
+	<string name="cancel_ap_app_sharing">Cancel</string>
+	<string name="start_ap_app_sharing">Create</string>
+	<string name="share_app">Share Application</string>
+	<string name="share_hotspot_title">via Hotspot</string>
+	<string name="share_bluetooth_title">via Bluetooth</string>
+	<string name="share_sd_card_title">via SD Card</string>
+	<string name="password_text">Password</string>
+	<string name="SSID_text">Wifi name</string>
+	<string name="show_password_text">Show password</string>
+	<string name="ap_dialog_title">Creating Wifi Hotspot</string>
+	<string name="hotspot_app_sharing">Hotspot App Sharing</string>
+	<string name="file_not_found_message">File not found!</string>
+	<string name="page_not_found_message">404 Page not found!</string>
+	<string name="share_app_dialog_title">Share Application link</string>
+	<string name="link_name">link:</string>
+	<string name="dummy_link">http://192.168.1.1/stealth.apk</string>
+	<string name="unknown">unknown</string>
+	<string name="sharing_notification_title">Sharing active</string>
+	<string name="on_network_title">Sharing on</string>
+	<string name="cancel_notification_text">Tap to cancel</string>
+	<string name="sharing_notification_text">Sending content</string>
+	<string name="close_dialog">Close</string>
+	<string name="share_uri">sharing</string>
+	<string name="select_file">Select file to encrypt</string>
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="title_activity_removeme">REMOVEME</string>
+	<string name="hello_world">Hello world!</string>
+	<string name="appwidget_text">EXAMPLE</string>
+	<string name="add_widget">Add widget</string>
 
 </resources>

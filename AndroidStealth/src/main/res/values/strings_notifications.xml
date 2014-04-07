@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_unlocking_title">Unlocking&#8230;</string>
+    <string name="notification_unlocking_sub">Tap to cancel.</string>
+    <string name="notification_locking_title">Locking&#8230;</string>
+    <string name="notification_locking_sub">Swipe to hide.</string>
+    <string name="notification_unlocked_title">Some files are unlocked</string>
+    <string name="notification_unlocked_sub">Tap to lock.</string>
+</resources>
