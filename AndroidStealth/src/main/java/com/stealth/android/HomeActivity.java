@@ -88,6 +88,9 @@ public class HomeActivity extends ActionBarActivity
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
+		if(BuildConfig.DEBUG)
+			return;
+		
 		PackageManager pm = getPackageManager();
 		ComponentName homeName = new ComponentName(this, HomeActivity.class);
 		if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
