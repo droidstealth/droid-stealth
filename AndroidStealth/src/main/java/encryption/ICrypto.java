@@ -1,4 +1,4 @@
-package content;
+package encryption;
 
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;

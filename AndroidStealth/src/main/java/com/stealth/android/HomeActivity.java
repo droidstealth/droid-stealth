@@ -1,11 +1,10 @@
 package com.stealth.android;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -13,8 +12,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.stealth.files.FileIndex;
+import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
+import pin.PinManager;
 import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
@@ -31,19 +33,56 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	private CharSequence mTitle;
 	private APSharing mSharing;
 
+	private boolean mRequestedActivity;
+
+	/**
+	 * Launch the HomeActivity by providing a pin
+	 *
+	 * @param context the context to use for the launch
+	 * @param pin     the actual pin code that is used to launch us
+	 * @return whether activity could launch
+	 */
+	public static boolean launch(Context context, String pin) {
+		if (!PinManager.get().isPin(pin)) {
+			return false;
+		}
+		try {
+			PackageManager pm = context.getPackageManager();
+			ComponentName homeName = new ComponentName(context, HomeActivity.class);
+
+			if (pm != null) {
+				// make sure activity can be called
+				pm.setComponentEnabledSetting(
+						homeName,
+						PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+						PackageManager.DONT_KILL_APP);
+			}
+
+			Intent stealthCall = new Intent(context, HomeActivity.class);
+			stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+			stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
+			stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(stealthCall);
+
+			Utils.toast(R.string.pin_description_unlocked);
+
+			return true;
+		}
+		catch (Exception e) {
+			Log.e("STEALTH", "Could not launch stealth app", e);
+		}
+		return false;
+	}
+
 	public void setRequestedActivity(boolean mRequestedActivity) {
 		this.mRequestedActivity = mRequestedActivity;
 	}
-
-	private boolean mRequestedActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		Utils.setContext(this);
-
-		mSharing = new APSharing(this);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -54,22 +93,21 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-				PackageManager pm = getPackageManager();
-				ComponentName homeName = new ComponentName(this, HomeActivity.class);
-				if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
-					Log.w("Hiding: Disable", "Disabling app drawer icon.");
-					pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-							PackageManager.DONT_KILL_APP);
-				}
+		PackageManager pm = getPackageManager();
+		ComponentName homeName = new ComponentName(this, HomeActivity.class);
+		if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
+			Log.w("Hiding: Disable", "Disabling app drawer icon.");
+			pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+					PackageManager.DONT_KILL_APP);
+		}
 	}
 
 	/**
-	 * Uses the value set through setRequestedActivity to determine if the app should close when it goes off screen.
-	 * If a child fragment of the activity wants to open another app and keep running, like with startActivityForResult,
+	 * Uses the value set through setRequestedActivity to determine if the app should close when it goes off screen. If
+	 * a child fragment of the activity wants to open another app and keep running, like with startActivityForResult,
 	 * they need to setRequestedActivity(true) on this activity beforehand.
-	 *
-	 * If no activity has been requested by the app, mRequestedActivity==False, finish up the app.
-	 * If an activity has been requested don't finish up the app and reset the request flag.
+	 * If no activity has been requested by the app, mRequestedActivity==False, finish up the app. If an activity has
+	 * been requested don't finish up the app and reset the request flag.
 	 */
 	@Override
 	protected void onStop() {
@@ -82,27 +120,33 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 
+	/**
+	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
+	 *
+	 * @param position the item that is now active
+	 */
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		/*try {
-		    String phoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-		    if (phoneNumber.startsWith("#555")) {
-                // TODO some actions
-		    }
-		    else if (phoneNumber.startsWith("#666")) {
-			    // TODO wipe data here if activity mode is 'panic'
-                // TODO some other actions
-		    }
-	    }
-	    catch (NullPointerException e) {
-		    e.printStackTrace();
-		    Toast.makeText(getApplicationContext(), "App started without dialing phone number",
-		    Toast.LENGTH_SHORT).show();
-	    }*/
-		fragmentManager.beginTransaction()
-				.replace(R.id.container, new ContentFragment())
-				.commit();
+		Utils.setContext(this); // onCreate is called later... so let's call this now :)
+
+		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
+		if (BuildConfig.DEBUG || PinManager.get().isPin(pin)) {
+			// TODO let real or fake pin have an influence
+			FileIndex.create(false, new IOnResult<FileIndex>() {
+				@Override
+				public void onResult(FileIndex result) {
+					Utils.d("Created file index: " + result);
+					if (result == null) {
+						return;
+					}
+
+					FragmentManager fragmentManager = getSupportFragmentManager();
+					fragmentManager.beginTransaction()
+					               .replace(R.id.container, new ContentFragment())
+					               .commit();
+				}
+			});
+		}
 	}
 
 	public void restoreActionBar() {

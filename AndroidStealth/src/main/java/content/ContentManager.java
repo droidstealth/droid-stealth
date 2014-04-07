@@ -1,51 +1,61 @@
 package content;
 
-import static content.ConcealCrypto.CryptoMode;
+import android.content.Context;
+import android.graphics.Bitmap;
+
+import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.android.R;
+import com.stealth.files.DirectoryManager;
+import com.stealth.files.FileIndex;
+import com.stealth.files.IndexedFile;
+import com.stealth.files.IndexedFolder;
+import com.stealth.files.IndexedItem;
+import com.stealth.utils.Utils;
+import com.stealth.utils.IOnResult;
+import encryption.IContentManager;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
-import com.facebook.crypto.cipher.NativeGCMCipherException;
-import com.ipaulpro.afilechooser.utils.FileUtils;
-import com.stealth.android.R;
-import com.stealth.utils.IOnResult;
-import com.stealth.utils.Utils;
 
 /**
  * ContentManager which copies the files to the local data directory Created by Alex on 13-3-14.
  */
 public class ContentManager implements IContentManager {
-	private ConcealCrypto crypto;
-	private File mDataDir;
-	private File mThumbDir;
 	private List<ContentChangedListener> mListeners = new ArrayList<ContentChangedListener>();
+	private FileIndex mIndex;
+	private IndexedFolder mCurrentFolder;
 
-	public ContentManager(Context context) {
-		mDataDir = context.getExternalFilesDir(null);
-		crypto = new ConcealCrypto(context);
-		mThumbDir = new File(mDataDir, "_thumbs");
-		mThumbDir.mkdir();
+	/**
+	 * Create the content manager. Make sure that the file index is created!!
+	 * @param context the context of this application
+	 * @param index the file index that we will use to manage our content
+	 */
+	public ContentManager(Context context, FileIndex index) {
+		mIndex = index;
+		mCurrentFolder = index.getRoot();
 	}
 
 	@Override
-	public Collection<ContentItem> getStoredContent() {
-		File[] files = mDataDir.listFiles();
-		ArrayList<ContentItem> itemArrayList = new ArrayList<ContentItem>();
+	public void setCurrentFolder(IndexedFolder currentFolder) {
+		mCurrentFolder = currentFolder;
+	}
 
-		for (File file : files) {
-			itemArrayList.add(new ContentItem(file, file.getName()));
-		}
+	@Override
+	public IndexedFolder getCurrentFolder() {
+		return mCurrentFolder;
+	}
 
-		return itemArrayList;
+	@Override
+	public Collection<IndexedFile> getFiles(IndexedFolder fromFolder) {
+		return fromFolder.getFiles();
+	}
+	@Override
+	public Collection<IndexedFolder> getFolders(IndexedFolder fromFolder) {
+		return fromFolder.getFolders();
 	}
 
 	@Override
@@ -67,7 +77,7 @@ public class ContentManager implements IContentManager {
 	 * @return the thumbnail file
 	 */
 	public File getThumbnailFile(File item) {
-		return new File(mThumbDir, item.getName() + ".jpg");
+		return new File(DirectoryManager.thumbs(), item.getName() + ".jpg");
 	}
 
 	/**
@@ -76,91 +86,92 @@ public class ContentManager implements IContentManager {
 	 * @param item the file to generate the thumbnail of
 	 * @return the created thumbnail
 	 */
-	public File createThumbnail(File item) {
+	public void createThumbnail(IndexedFile item) {
 		try {
-			Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item);
-			if (thumb == null) {
-				return null;
-			}
-			File thumbFile = getThumbnailFile(item);
+			Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
+			if (thumb == null) return;
+			File thumbFile = item.getThumbFile();
 			FileOutputStream out = new FileOutputStream(thumbFile);
 			thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
 			out.close();
-			return thumbFile;
+			return;
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
 	}
 
 	@Override
-	public void addItem(final File item, final IOnResult<Boolean> callback) {
-		new Thread(new Runnable() {
+	public void addFile(final IndexedFolder toFolder, final File originalFile, final IOnResult<IndexedFile> callback)
+	{
+		if (!originalFile.isFile()) return;
+		new Thread(new Runnable()
+		{
 			@Override
-			public void run() {
+			public void run()
+			{
 				// init
-				File target = new File(mDataDir, item.getName());
-				File thumb = null;
-				String mimeType = FileUtils.getMimeType(item);
+				IndexedFile indexedFile = new IndexedFile(toFolder, originalFile);
+				File unlockedFile = indexedFile.getUnlockedFile();
+				File thumbFile = indexedFile.getThumbFile();
+				String mimeType = FileUtils.getMimeType(originalFile);
 				boolean isMedia = FileUtils.isImageOrVideo(mimeType);
 
-				try {
+				try
+				{
 					// copy to our folder
-					copyFile(item, target);
+					Utils.copyFile(originalFile, unlockedFile);
 
 					// create thumbnail
-					thumb = createThumbnail(target);
-					if (isMedia && thumb == null) {
-						Utils.toast(R.string.content_fail_thumb);
-					}
+					createThumbnail(indexedFile);
+					if (isMedia && !thumbFile.exists()) Utils.toast(R.string.content_fail_thumb);
 
 					// delete original
-					boolean removed = Utils.delete(item);
-					if (!removed) {
-						Utils.toast(R.string.content_fail_original_delete);
-					}
+					boolean removed = Utils.delete(originalFile);
+					if (!removed) Utils.toast(R.string.content_fail_original_delete);
+
+					// add to the index
+					mIndex.addFile(indexedFile);
 
 					// notify that we are done
-					notifyListeners();
-					if (callback != null) {
-						callback.onResult(true);
-					}
+					notifyContentChangedListeners();
+					if (callback != null) callback.onResult(indexedFile);
 				}
-				catch (IOException e) {
-					e.printStackTrace();
-
+				catch (Exception e)
+				{
 					// cleanup
-					if (target.exists() && !Utils.delete(target)) {
+					if (unlockedFile.exists() && !Utils.delete(unlockedFile))
 						Utils.toast(R.string.content_fail_clean);
-					}
-					if (thumb != null && thumb.exists() && !Utils.delete(thumb)) {
+					if (thumbFile != null && thumbFile.exists() && !Utils.delete(thumbFile))
 						Utils.toast(R.string.content_fail_clean);
-					}
 
-					// notify that we are done
-					if (callback != null) {
-						callback.onResult(false);
-					}
+					// notify that we are done but failed
+					if (callback != null) callback.onResult(null);
+					e.printStackTrace();
 				}
 			}
 		}).start();
 	}
 
-
 	@Override
-	public void removeAllContent(final IOnResult<Boolean> callback) {
-		removeItems(getStoredContent(), callback);
+	public IndexedFolder getRoot() {
+		return mIndex.getRoot();
 	}
 
 	@Override
-	public void removeItem(final ContentItem item, final IOnResult<Boolean> callback) {
+	public void removeAllContent(final IOnResult<Boolean> callback) {
+		removeItem(mIndex.getRoot(), callback);
+	}
+
+	@Override
+	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				boolean removed = removeItemNow(item);
 				if (removed) {
-					notifyListeners();
+					notifyContentChangedListeners();
 				}
 				if (callback != null) {
 					callback.onResult(removed);
@@ -170,16 +181,16 @@ public class ContentManager implements IContentManager {
 	}
 
 	@Override
-	public void removeItems(Collection<ContentItem> itemCollection, final IOnResult<Boolean> callback) {
+	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback) {
 		// make copy in case it changes while we are executing in another thread
-		final ContentItem[] items = itemCollection.toArray(
-				(ContentItem[]) java.lang.reflect.Array.newInstance(ContentItem.class, itemCollection.size()));
+		final IndexedItem[] items = itemCollection.toArray(
+				(IndexedItem[]) java.lang.reflect.Array.newInstance(IndexedItem.class, itemCollection.size()));
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				int failures = 0;
 				boolean singleSuccess = false;
-				for (ContentItem item : items) {
+				for (IndexedItem item : items) {
 					if (removeItemNow(item)) {
 						singleSuccess |= true;
 					}
@@ -188,186 +199,51 @@ public class ContentManager implements IContentManager {
 					}
 				}
 				if (failures > 0) {
-					Utils.toast(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
+					Utils.d(Utils.str(R.string.content_fail_delete).replace("{COUNT}", "" + failures));
 				}
 				if (singleSuccess) {
-					notifyListeners();
+					notifyContentChangedListeners();
 				}
 
 				if (callback != null) {
 					callback.onResult(failures == 0);
-				}
+			}
 			}
 		}).start();
 	}
 
 	/**
-	 * Removes a file completely right now in current thread, including its thumbnail and encrypted version
+	 * Removes a file/folder completely in current thread,
+	 * including its thumbnail and encrypted version
 	 *
-	 * @param contentItem the file to remove
+	 * @param item the item to remove
 	 * @return whether it completely succeeded
 	 */
-	public boolean removeItemNow(ContentItem contentItem) {
-		File file = contentItem.getFile();
-		File thumb = getThumbnailFile(file);
+	public boolean removeItemNow(IndexedItem item)
+	{
 		boolean success = true;
-		// TODO remove encrypted files
-		// TODO make sure file is removed from any queue etc
-		if (thumb.exists()) {
-			success &= Utils.delete(thumb);
+		if (item instanceof IndexedFolder)
+		{
+			IndexedFolder folder = (IndexedFolder) item;
+			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f);
+			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f);
+			mIndex.removeFolder(folder);
 		}
-		success &= Utils.delete(file);
+		else
+		{
+			IndexedFile file = (IndexedFile) item;
+			success &= Utils.delete(file.getLockedFile());
+			success &= Utils.delete(file.getUnlockedFile());
+			success &= Utils.delete(file.getThumbFile());
+			mIndex.removeFile(file);
+		}
 		return success;
-	}
-
-	/**
-	 * Helper function to copy a file internally
-	 *
-	 * @param sourceFile
-	 * @param destFile
-	 * @throws IOException
-	 */
-	private static void copyFile(File sourceFile, File destFile) throws IOException {
-		if (!destFile.exists()) {
-			destFile.createNewFile();
-		}
-
-		FileChannel source = null;
-		FileChannel destination = null;
-
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			destination.transferFrom(source, 0, source.size());
-		}
-		finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
-		}
-	}
-
-	/**
-	 * Encrypts all files in the {@param contentItemCollection}. Deletes the original file after encrypting them.
-	 *
-	 * @return true if ALL files are encrypted successfully, false otherwise.
-	 */
-	@Override
-	public boolean encryptItems(Collection<ContentItem> contentItemCollection, EncryptionService service) {
-		boolean success = true;
-
-		for (ContentItem contentItem : contentItemCollection) {
-			success = encryptItem(contentItem, service) && success;
-		}
-
-		if (success) {
-			Log.i(this.getClass().toString(), "Encrypted items:");
-		}
-		else {
-			Log.e(this.getClass().toString(), "Encrypted with errors:");
-		}
-		for (ContentItem contentItem : contentItemCollection) {
-			Log.e(this.getClass().toString(), contentItem.getFile().getAbsolutePath());
-		}
-
-		return success;
-	}
-
-	private boolean encryptItem(ContentItem contentItem, EncryptionService service) {
-
-		try {
-			Log.d(this.getClass().toString() + ".encryptItem",
-					"Encrypting file " + contentItem.getFile().getAbsolutePath());
-			File encryptedFile = new File(mDataDir + "/" + contentItem.getFileName() + ".CRYPT");
-			encryptedFile.createNewFile();
-
-			IOnResult<Boolean> callback = new IOnResult<Boolean>() {
-				@Override
-				public void onResult(Boolean result) {
-					notifyListeners();
-				}
-			};
-
-			service.addCryptoTask(encryptedFile, contentItem.getFile(), encryptedFile.getName(),
-					CryptoMode.ENCRYPT, callback);
-
-			return true;
-		}
-		catch (IOException e) {
-			Log.e(this.getClass().toString() + ".encryptItem", "Error in encrypting data", e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Decrypts all files in the {@param contentItemCollection}. Deletes the encrypted files after decrypting them.
-	 *
-	 * @return true if ALL files are decrypted successfully, false otherwise.
-	 */
-	@Override
-	public boolean decryptItems(Collection<ContentItem> contentItemCollection, EncryptionService service) {
-		boolean success = true;
-
-		for (ContentItem contentItem : contentItemCollection) {
-			success = decryptItem(contentItem, service) && success;
-		}
-
-		if (success) {
-			Log.i(this.getClass().toString() + ".decryptItems", "Decrypted items:");
-		}
-		else {
-			Log.w(this.getClass().toString() + ".decryptItems", "Decrypted with errors:");
-		}
-		for (ContentItem contentItem : contentItemCollection) {
-			System.out.println("\t" + contentItem.getFileName());
-		}
-
-		return success;
-	}
-
-	public boolean decryptItem(ContentItem contentItem, EncryptionService service) {
-		try {
-			// Remove .CRYPT from filename
-			String filename = mDataDir + "/" + contentItem.getFileName();
-			filename = filename.substring(0, filename.length() - 6);
-
-			// Create target file
-			File decryptedFile = new File(filename);
-			decryptedFile.createNewFile();
-
-			IOnResult<Boolean> callback = new IOnResult<Boolean>() {
-				@Override
-				public void onResult(Boolean result) {
-					notifyListeners();
-				}
-			};
-
-			service.addCryptoTask(contentItem.getFile(), decryptedFile, decryptedFile.getName(),
-					CryptoMode.DECRYPT, callback);
-
-			return true;
-		}
-		catch (IOException e) {
-			if (e instanceof NativeGCMCipherException) {
-				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
-				contentItem.getFile().delete();
-			}
-			else {
-				Log.e(this.getClass().toString() + ".decryptItem", "Error in decrypting data", e);
-			}
-		}
-
-		return false;
 	}
 
 	/**
 	 * Notifies all listeners of a change in content. Tries to do it on the UI thread!
 	 */
-	private void notifyListeners() {
+	public void notifyContentChangedListeners() {
 		Utils.runOnMain(new Runnable() {
 			@Override
 			public void run() {
