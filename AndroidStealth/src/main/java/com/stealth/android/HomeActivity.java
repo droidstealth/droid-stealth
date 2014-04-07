@@ -105,9 +105,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	/**
 	 * Uses the value set through setRequestedActivity to determine if the app should close when it goes off screen. If
 	 * a child fragment of the activity wants to open another app and keep running, like with startActivityForResult,
-	 * they need to setRequestedActivity(true) on this activity beforehand.
-	 * If no activity has been requested by the app, mRequestedActivity==False, finish up the app. If an activity has
-	 * been requested don't finish up the app and reset the request flag.
+	 * they need to setRequestedActivity(true) on this activity beforehand. If no activity has been requested by the
+	 * app, mRequestedActivity==False, finish up the app. If an activity has been requested don't finish up the app and
+	 * reset the request flag.
 	 */
 	@Override
 	protected void onStop() {
