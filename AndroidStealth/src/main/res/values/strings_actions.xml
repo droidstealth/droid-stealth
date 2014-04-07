@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><resources>
+
+    <string name="action_lock_hide">Lock &amp; hide</string>
+    <string name="action_unlock_show">Unlock &amp; show</string>
+    <string name="action_share">Share using&#8230;</string>
+    <string name="action_shred">Remove from phone&#8230;</string>
+    <string name="action_remove">Remove from list&#8230;</string>
+
+    <string name="action_select_single">Single file selection</string>
+    <string name="action_select_multi">Multi-selection: {COUNT} selected</string>
+    <string name="action_add">Add file(s)</string>
+    <string name="action_add_media">Add image/video</string>
+    <string name="action_add_file">Add file</string>
+    <string name="action_lock_hide_all">Lock &amp; hide all</string>
+    <string name="action_unlock_show_all">Unlock &amp; show all</string>
+    <string name="action_share_all">Share all using&#8230;</string>
+    <string name="action_shred_all">Remove all from phone&#8230;</string>
+    <string name="action_remove_all">Remove all from list&#8230;</string>
+</resources>

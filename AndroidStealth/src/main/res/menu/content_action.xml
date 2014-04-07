@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/action_remove"
-        android:icon="@android:drawable/ic_menu_delete"
-        android:showAsAction="always"
-        />
-    <item
-        android:id="@+id/action_share"
-        android:icon="@android:drawable/ic_menu_share"
-        android:showAsAction="always"/>
+	<item
+		android:id="@+id/action_share"
+		android:icon="@drawable/ic_menu_share"
+		android:showAsAction="always"
+		android:title="@string/action_share"/>
+	<item
+		android:id="@+id/action_lock"
+		android:icon="@drawable/ic_menu_lock"
+		android:showAsAction="always"
+		android:title="@string/action_lock_hide"
+		/>
+	<item
+		android:id="@+id/action_unlock"
+		android:icon="@drawable/ic_menu_unlock"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_unlock_show"
+		/>
+	<item
+		android:id="@+id/action_shred"
+		android:icon="@drawable/ic_menu_shred"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_shred"
+		/>
+	<item
+		android:id="@+id/action_restore"
+		android:icon="@drawable/ic_menu_remove"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_remove"
+		/>
 </menu>

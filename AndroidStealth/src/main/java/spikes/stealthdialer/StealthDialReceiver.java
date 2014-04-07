@@ -1,11 +1,16 @@
 package spikes.stealthdialer;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
-import android.util.Log;
+import android.content.pm.PackageManager;
+
 import com.stealth.android.HomeActivity;
+import com.stealth.utils.Utils;
+
+import pin.PinManager;
 
 /**
  * Creates BroadcastReceiver that listens for Intent.ACTION_NEW_OUTGOING_CALL
@@ -18,28 +23,23 @@ import com.stealth.android.HomeActivity;
  * Created on 2/26/14.
  */
 public class StealthDialReceiver extends BroadcastReceiver {
-    public StealthDialReceiver() {
-    }
+	public StealthDialReceiver() {
+	}
 
 
-    /**
-     * On receiving an Intent to make a call. Check that number to see if it is a number that
-     * activates the receiver. (Starts with #555) If it does then sends a startup intent to the
-     * app launch activity.
-     * @param context
-     * @param intent
-     */
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        if(phoneNumber.startsWith("#555") || phoneNumber.startsWith("#666")){
-            Intent stealthCall = new Intent(context, HomeActivity.class);
-            stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-            stealthCall.putExtra(Intent.EXTRA_PHONE_NUMBER, phoneNumber);
-            stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(stealthCall);
-
-            setResultData(null);
-        }
-    }
+	/**
+	 * On receiving an Intent to make a call. Check that number to see if it is a number that
+	 * activates the receiver. (Starts with #555) If it does then sends a startup intent to the
+	 * app launch activity.
+	 * @param context
+	 * @param intent
+	 */
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Utils.setContext(context);
+		String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+		if (HomeActivity.launch(context, pin)) {
+			setResultData(null);
+		}
+	}
 }

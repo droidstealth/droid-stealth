@@ -1,66 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.stealth.android" >
+	package="com.stealth.android" >
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.NFC"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.NFC" />
+	<uses-permission android:name="android.permission.CALL_PHONE" />
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_stealth_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.stealth.android.HomeActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.stealth.android.StealthSettingActivity"
-            android:label="@string/title_activity_stealth_setting"
-            android:parentActivityName="com.stealth.android.HomeActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="HomeActivity" />
-        </activity>
+	<application
+		android:allowBackup="true"
+		android:icon="@drawable/ic_stealth_launcher"
+		android:label="@string/app_name"
+		android:theme="@style/AppTheme" >
+		<activity
+			android:name="com.stealth.android.HomeActivity"
+			android:label="@string/app_name"
+			android:launchMode="singleTop"
+			android:uiOptions="splitActionBarWhenNarrow"
+			android:excludeFromRecents="true" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.stealth.android.StealthSettingActivity"
+			android:label="@string/title_activity_stealth_setting"
+			android:parentActivityName="com.stealth.android.HomeActivity" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="HomeActivity" />
+		</activity>
 
-        <service android:name="sharing.APSharing.HttpServerService"
-            android:label="@string/http_service"/>
+		<service
+			android:name="sharing.APSharing.HttpServerService"
+			android:label="@string/http_service" />
 
-        <receiver
-            android:name="spikes.stealthdialer.StealthDialReceiver"
-            android:enabled="true"
-            android:exported="true" >
-            <intent-filter android:priority="1">
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
+		<receiver
+			android:name="spikes.stealthdialer.StealthDialReceiver"
+			android:enabled="true"
+			android:exported="true" >
+			<intent-filter android:priority="1" >
+				<action android:name="android.intent.action.NEW_OUTGOING_CALL" />
 
-		<service android:name="spikes.filepicker.EncryptionService" />
-        <activity
-            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-            android:icon="@drawable/ic_chooser"
-            android:enabled="@bool/use_activity"
-            android:exported="true"
-            android:label="@string/choose_file" >
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.OPENABLE" />
+		<service android:name="encryption.EncryptionService" />
+		<activity
+			android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+			android:enabled="@bool/use_activity"
+			android:exported="true"
+			android:icon="@drawable/ic_chooser"
+			android:label="@string/choose_file" >
+			<intent-filter>
+				<action android:name="android.intent.action.GET_CONTENT" />
 
-                <data android:mimeType="*/*" />
-            </intent-filter>
-        </activity>
-    </application>
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.OPENABLE" />
+
+				<data android:mimeType="*/*" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="pin.PinActivity"
+			android:label="@string/title_activity_pin"
+			android:theme="@style/AppTheme.Dialog" >
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<receiver android:name="com.stealth.android.StealthButton" >
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+				<action android:name="com.stealth.android.StealthButton.ACTION_BUTTON_PRESS" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.appwidget.provider"
+				android:resource="@xml/stealth_button_info" />
+		</receiver>
+	</application>
 
 </manifest>
