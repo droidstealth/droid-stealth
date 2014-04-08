@@ -19,6 +19,7 @@
 			android:name="com.stealth.android.HomeActivity"
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
+			android:screenOrientation="portrait"
 			android:uiOptions="splitActionBarWhenNarrow"
 			android:excludeFromRecents="true" >
 			<intent-filter>
