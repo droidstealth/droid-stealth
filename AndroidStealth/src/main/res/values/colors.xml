@@ -6,6 +6,9 @@
 	<color name="content_name">#ffe8e8e8</color>
 	<color name="content_text">#33ffffff</color>
 
+	<color name="drawer_extra_details">#ff808080</color>
+	<color name="drawer_divider">#ffe8e8e8</color>
+
 	<color name="item_pressed">#ff33b5e5</color>
 	<color name="item_longpressed">#ff00ddff</color>
 	<color name="item_edge_selected">#ff0099cc</color>

@@ -106,7 +106,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			if (thumb.exists()) {
 				Bitmap bm = BitmapFactory.decodeFile(thumb.getPath());
 				if (bm != null) {
-					((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(bm);
+					((ImageView) view.findViewById(R.id.file_thumb)).setImageBitmap(bm);
 				}
 			}
 

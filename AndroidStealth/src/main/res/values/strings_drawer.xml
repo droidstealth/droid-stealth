@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<string name="drawer_version">Version</string>
+	<string name="drawer_authors">Made by a few students of Delft University of Technology</string>
     <string name="drawer_watch_folders">Watch folders</string>
     <string name="drawer_delete">Set shred pin</string>
     <string name="drawer_modify_app">App appearance</string>
