@@ -22,6 +22,7 @@ public class IndexedFile extends IndexedItem {
 
 	private String mTempLinkUID;
 	private Bitmap mThumb;
+	private boolean mRetrievingThumb;
 
 	private IndexedFolder mFolder;
 	private String mName;
@@ -211,7 +212,7 @@ public class IndexedFile extends IndexedItem {
 	/**
 	 * @param mThumb the thumbnail to remember for this file
 	 */
-	public void seThumbnail(Bitmap mThumb) {
+	public void setThumbnail(Bitmap mThumb) {
 		this.mThumb = mThumb;
 	}
 

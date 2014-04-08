@@ -176,7 +176,7 @@ public class EncryptedPreferences {
 					File cache = Utils.getRandomCacheFile();
 					Utils.d("Decrypting preferences file '" + mEncryptedFile.getName() + "'");
 					Utils.getMainCrypto().decrypt(mEncryptedFile, cache, mName);
-					mJson = new JSONObject(Utils.read(cache)); // correct way
+					mJson = new JSONObject(Utils.read(cache));
 					Utils.delete(cache);
 
 					// we succeeded

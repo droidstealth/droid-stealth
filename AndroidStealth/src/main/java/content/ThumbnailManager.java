@@ -2,6 +2,7 @@ package content;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,18 +17,35 @@ import com.stealth.utils.Utils;
  */
 public class ThumbnailManager {
 
+	private static ArrayList<IndexedFile> mRetrievingThumbs = new ArrayList<IndexedFile>();
+	private static ArrayList<IndexedFile> mCreatingThumbs = new ArrayList<IndexedFile>();
+
 	/**
 	 * Creates the thumbnail for an item, encrypts it and saves it in the thumbnail folder
 	 * @param item the file to generate the thumbnail of
 	 */
 	public static void createThumbnail(final IndexedFile item, final IOnResult<Boolean> callback) {
+
+		if (mCreatingThumbs.contains(item)) {
+			// we are already in the process of retrieving the thumbnail.
+			callback.onResult(false);
+			return;
+		}
+
+		mCreatingThumbs.add(item);
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				boolean result = false;
+
 				try {
+
 					// generate thumbnail
 					Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
-					if (thumb == null) return;
+					if (thumb == null) {
+						return;
+					}
 
 					// save thumbnail to cache
 					File cache = Utils.getRandomCacheFile(".jpg");
@@ -40,18 +58,17 @@ public class ThumbnailManager {
 					Utils.getMainCrypto().encrypt(thumbFile, cache, item.getName());
 					Utils.delete(cache);
 
-					if (callback != null) {
-						callback.onResult(true);
-					}
+					result = true;
 
 				} catch (Exception e) {
+
 					Utils.d("Failed to create thumbnail of item '" + item.getName() + "'. " + e.getMessage());
 					e.printStackTrace();
 
-					if (callback != null) {
-						callback.onResult(false);
-					}
 				}
+
+				mCreatingThumbs.remove(item);
+				Utils.runCallbackOnMain(callback, result);
 			}
 		}).start();
 	}
@@ -70,6 +87,12 @@ public class ThumbnailManager {
 			return;
 		}
 
+		if (mRetrievingThumbs.contains(item)) {
+			// we are already in the process of retrieving the thumbnail.
+			callback.onResult(false);
+			return;
+		}
+
 		final File thumbFile = item.getThumbFile();
 		if (!thumbFile.exists()) {
 			// there is no thumbnail to retrieve
@@ -77,9 +100,22 @@ public class ThumbnailManager {
 			return;
 		}
 
+		mRetrievingThumbs.add(item);
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				boolean result = false;
+
+				// just a precaution: wait until creation of thumbnail is done
+				while (mCreatingThumbs.contains(item)) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// this is fine, just keep waiting until thumbnail is created
+					}
+				}
+
 				try {
 
 					// decrypt
@@ -91,20 +127,18 @@ public class ThumbnailManager {
 					Bitmap bm = BitmapFactory.decodeFile(cache.getPath());
 					Utils.delete(cache);
 
-					item.seThumbnail(bm);
-
-					if (callback != null) {
-						callback.onResult(true);
-					}
+					item.setThumbnail(bm);
+					result = true;
 
 				} catch (Exception e) {
+
 					Utils.d("Failed to read thumbnail of item '" + item.getName() + "'. " + e.getMessage());
 					e.printStackTrace();
 
-					if (callback != null) {
-						callback.onResult(false);
-					}
 				}
+
+				mRetrievingThumbs.remove(item); // remember that we are done retrieving
+				Utils.runCallbackOnMain(callback, result);
 			}
 		}).start();
 	}

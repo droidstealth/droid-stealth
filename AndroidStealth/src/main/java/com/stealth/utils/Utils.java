@@ -175,7 +175,7 @@ public class Utils {
 						+ "@" + calledFrom.getLineNumber()
 						+ "]";
 
-		Log.d(tag(), String.format("%1$-"+75+ "s", message) + stack);
+		Log.d(tag(), String.format("%1$-" + 75 + "s", message) + stack);
 	}
 
 	/**
@@ -195,6 +195,22 @@ public class Utils {
 	public static void runOnMain(Runnable run) {
 		if (getContext() == null) return;
 		new Handler(getContext().getMainLooper()).post(run);
+	}
+
+	/**
+	 * Run a given callback on the main thread with the given result.
+	 * Checks for null on the callback.
+	 * @param callback the callback to run on the main thread
+	 * @param result the result to pass to the callback
+	 */
+	public static <T> void runCallbackOnMain(final IOnResult<T> callback, final T result) {
+		if (callback == null) return;
+		runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				callback.onResult(result);
+			}
+		});
 	}
 
 	/**

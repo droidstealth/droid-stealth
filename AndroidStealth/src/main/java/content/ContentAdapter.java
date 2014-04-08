@@ -74,7 +74,6 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 
 	@Override
 	public void notifyDataSetChanged() {
-		//mViews = new SparseArray<View>();
 		super.notifyDataSetChanged();
 	}
 
@@ -106,38 +105,32 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	}
 
 	private void styleFolderView(IndexedFolder folder, View view) {
-		//((TextView)finalView.findViewById(R.id.file_text)).setText(folder.getName());
+		// TODO #79
 	}
 
 	private void styleFileView(final IndexedFile file, final View view) {
 
-		// sets the retrieved thumbnail
-		final Runnable setThumbnail = new Runnable() {
-			@Override
-			public void run() {
-				((ImageView) view.findViewById(R.id.file_preview)).setImageBitmap(file.getThumbnail());
-			}
-		};
+		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
+		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
+		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
+		View statusBar = view.findViewById(R.id.content_item_status_line);
 
-		((ImageView) view.findViewById(R.id.file_preview)).setImageResource(0);
+		thumbImage.setImageResource(0);
+		thumbImage.invalidate();
 
 		if (file.getThumbnail() == null) {
-			// TODO check if there even is a thumbnail?
 			ThumbnailManager.retrieveThumbnail(file, new IOnResult<Boolean>() {
 				@Override
 				public void onResult(Boolean result) {
 					if (result) {
-						Utils.runOnMain(setThumbnail);
+						notifyDataSetChanged();
 					}
 				}
 			});
 		} else {
-			setThumbnail.run();
+			thumbImage.setImageBitmap(file.getThumbnail());
+			thumbImage.invalidate();
 		}
-
-		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
-		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
-		View statusBar = view.findViewById(R.id.content_item_status_line);
 
 		if (file.isUnlocked()) {
 			statusImage.clearAnimation();
