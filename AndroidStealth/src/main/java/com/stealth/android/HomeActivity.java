@@ -3,6 +3,7 @@ package com.stealth.android;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -79,8 +80,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			@Override
 			public void onResult(Boolean succeeded) {
 
-				// TODO: will be moved soon? should be in onStop/onStart?
-				VisibilityManager.hideApplication(HomeActivity.this);
 				if (succeeded) {
 					Utils.toast(R.string.pin_description_unlocked); // welcome, Mr. Bond
 					constructInterface(); // yay, we booted
@@ -108,6 +107,19 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		else {
 			mRequestedActivity = false;
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Utils.d("DESTROYING!!!!!! ");
+		VisibilityManager.hideApplication(HomeActivity.this);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
 	}
 
 	/**

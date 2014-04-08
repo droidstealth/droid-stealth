@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
 	private boolean mIsBound;
+	private File mTempFolder;
 	/**
 	 * Remembers which item is currently being selected in single selecton mode
 	 */
@@ -114,6 +116,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		doBindService();
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
+	}
+
 	/**
 	 * Loads ContentAdapter and ContentManager
 	 *
@@ -123,6 +131,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mTempFolder = Utils.getRandomCacheFile("").getParentFile();
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
@@ -186,6 +195,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				return true;
 			case R.id.content_make:
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
@@ -213,6 +223,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 					if (uri == null) {
 						Utils.d("Oops... Result was OK, but data was null. That's just great.");
+
 						return;
 					}
 
