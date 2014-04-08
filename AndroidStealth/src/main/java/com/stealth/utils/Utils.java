@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
+import com.stealth.files.DirectoryManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -193,7 +194,7 @@ public class Utils {
 						+ "@" + calledFrom.getLineNumber()
 						+ "]";
 
-		Log.d(tag(), String.format("%1$-"+75+ "s", message) + stack);
+		Log.d(tag(), String.format("%1$-" + 75 + "s", message) + stack);
 	}
 
 	/**
@@ -278,6 +279,16 @@ public class Utils {
 	public static File getRandomCacheFile(String extension)
 	{
 		return getRandomFile(getContext().getCacheDir(), extension);
+	}
+
+	/**
+	 * Gets random file name for temporary file reading and writing in our temp folder
+	 * @param extension the extension to use for this file (include the '.')
+	 * @return the temporary file
+	 */
+	public static File getRandomTempFile(String extension)
+	{
+		return getRandomFile(DirectoryManager.temp(), extension);
 	}
 
 	/**

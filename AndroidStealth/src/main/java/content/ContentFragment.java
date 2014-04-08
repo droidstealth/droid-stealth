@@ -131,7 +131,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mTempFolder = Utils.getRandomCacheFile("").getParentFile();
+		mTempFolder = Utils.getRandomTempFile(".jpg");
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
@@ -195,7 +195,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				return true;
 			case R.id.content_make:
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
+				//cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
@@ -217,13 +217,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			case CAMERA_REQUEST:
 			case REQUEST_CHOOSER:
 
-				if (resultCode == Activity.RESULT_OK) {
+				if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST) {
+
+					if (data == null) {
+						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
+						return;
+					}
 
 					final Uri uri = data.getData();
 
 					if (uri == null) {
-						Utils.d("Oops... Result was OK, but data was null. That's just great.");
-
+						Utils.d("Oops... Result was OK, but uri was null. That's just great.");
 						return;
 					}
 
