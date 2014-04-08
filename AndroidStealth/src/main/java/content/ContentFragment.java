@@ -454,6 +454,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				Log.e(this.getClass().toString() + ".onActionItemClicked",
 						"encryptionService was not bound");
 			}
+
+			for (IndexedItem item : with) {
+				if (item instanceof IndexedFile) {
+					// clear the thumbnails because if we lock the file
+					// it might have changed
+					((IndexedFile) item).clearThumbnail();
+				}
+			}
+
 			// don't use an IOnResult, because we will be notified anyway,
 			// because we are listening to the changes in the encryption service
 			mEncryptionManager.encryptItems(with, null);
