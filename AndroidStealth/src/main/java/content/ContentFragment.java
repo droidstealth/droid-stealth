@@ -211,8 +211,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 					final Uri uri = data.getData();
 
+					if (uri == null) {
+						Utils.d("Oops... Result was OK, but data was null. That's just great.");
+						return;
+					}
+
 					// Get the File path from the Uri
-					String path = FileUtils.getPath(getActivity(), uri);
+					String path = FileUtils.getPath(Utils.getContext(), uri);
 
 					// Alternatively, use FileUtils.getFile(Context, Uri)
 					if (path != null && FileUtils.isLocal(path)) {
