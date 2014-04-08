@@ -32,7 +32,7 @@ public class JobSequencer {
 	/**
 	 * Starts the sequencer on a separate thread
 	 */
-	public void startAsync() {
+	public void startThreaded() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

@@ -111,9 +111,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	}
 
 	/**
-	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
-	 *
-	 * @param position the item that is now active
+	 * Constructs the interface to show all main content to the user
 	 */
 	private void constructInterface() {
 		setContentView(R.layout.activity_home);

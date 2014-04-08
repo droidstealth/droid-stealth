@@ -58,12 +58,45 @@ public class BootManager {
 	};
 
 	/**
+	 * The job that will initialize the system with the correct values
+	 */
+	private static final IJob sInitializeSystem = new IJob() {
+		@Override
+		public void doJob(IOnResult<Boolean> onReady) {
+			Utils.setContext(sContext.getApplicationContext());
+			onReady.onResult(true);
+		}
+	};
+
+	/**
+	 * The job that will check the pin
+	 */
+	private static final IJob sCheckPin = new IJob() {
+		@Override
+		public void doJob(IOnResult<Boolean> onReady) {
+			checkPin(sPin, onReady);
+		}
+	};
+
+	/**
+	 * The job that will create the file index
+	 */
+	private static final IJob sCreateFileIndex = new IJob() {
+		@Override
+		public void doJob(IOnResult<Boolean> onReady) {
+			createFileIndex(onReady);
+		}
+	};
+
+	/**
 	 * Boots up everything that is needed to let the application function properly.
 	 * @param context the application context that will be used for booting
 	 * @param pin the pin that should be checked
 	 * @param callback the method that will be called when booting is ready.
 	 */
 	public static void boot(Context context, String pin, IOnResult<Boolean> callback){
+		Utils.d("BOOTING");
+
 		sCallback = callback;
 		sPin = pin;
 		sContext = context;
@@ -73,7 +106,7 @@ public class BootManager {
 		// step 2: decrypt & read file index (if not booted yet)
 		// step 3: ...
 		// step 4: profit
-		Utils.d("BOOTING");
+
 		JobSequencer jobs = new JobSequencer(sFail, sSuccess);
 		jobs.addJob(sInitializeSystem);
 		jobs.addJob(sCheckPin);
@@ -81,7 +114,7 @@ public class BootManager {
 			jobs.addJob(sCreateFileIndex);
 		}
 
-		jobs.startAsync();
+		jobs.startThreaded();
 	}
 
 	/**
@@ -94,42 +127,21 @@ public class BootManager {
 	}
 
 	/**
-	 * The job that will initialize the system with the correct values
-	 */
-	private static final IJob sInitializeSystem = new IJob() {
-		@Override
-		public void doJob(IOnResult<Boolean> onReady) {
-			Utils.d("Initializing system");
-			Utils.setContext(sContext.getApplicationContext());
-			onReady.onResult(true);
-		}
-	};
-
-	/**
 	 * Checks if the pin is valid
 	 * @param pin the pin to check
 	 * @param callback the method to notify the result
 	 */
 	private static void checkPin(String pin, IOnResult<Boolean> callback) {
-		if (BuildConfig.DEBUG || PinManager.get().isPin(pin) || pin == null) {
-			if (PinManager.get().isPin(pin)) Utils.d("Pin was correct"); // it was indeed the pin
-			// TODO let real or fake pin have an influence
+		if (BuildConfig.DEBUG || pin == null) {
+			callback.onResult(true);
+		} else if (PinManager.get().isPin(pin)) {
+			Utils.d("Pin was correct");
 			callback.onResult(true);
 		} else {
 			Utils.d("Incorrect pin");
 			callback.onResult(false);
 		}
 	}
-
-	/**
-	 * The job that will check the pin
-	 */
-	private static final IJob sCheckPin = new IJob() {
-		@Override
-		public void doJob(IOnResult<Boolean> onReady) {
-			checkPin(sPin, onReady);
-		}
-	};
 
 	/**
 	 * Creates the file index
@@ -149,15 +161,5 @@ public class BootManager {
 			}
 		});
 	}
-
-	/**
-	 * The job that will create the file index
-	 */
-	private static final IJob sCreateFileIndex = new IJob() {
-		@Override
-		public void doJob(IOnResult<Boolean> onReady) {
-			createFileIndex(onReady);
-		}
-	};
 
 }
