@@ -19,6 +19,7 @@ import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
 import com.stealth.android.BootManager;
 import com.stealth.files.FileIndex;
+import com.stealth.files.IndexedFile;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import spikes.notifications.FileStatusNotificationsManager;
@@ -158,10 +159,13 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		}).start();
 	}
 
-	public Future addCryptoTask(File encrypted, File unencrypted, final String entityName, final ConcealCrypto.CryptoMode mode,
+	public Future addCryptoTask(final IndexedFile file, final ConcealCrypto.CryptoMode mode,
 			final IOnResult<Boolean> callback) {
+
+		final String entityName = file.getUID();
+
 		CryptoTask task =
-				new CryptoTask(Utils.getMainCrypto(), encrypted, unencrypted, entityName, mode, new IOnResult<Boolean>() {
+				new CryptoTask(Utils.getMainCrypto(), file, entityName, mode, new IOnResult<Boolean>() {
 					@Override
 					public void onResult(Boolean result) {
 						if (mode == ConcealCrypto.CryptoMode.DECRYPT) {
@@ -183,52 +187,59 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		if (mode == ConcealCrypto.CryptoMode.ENCRYPT) {
 			mToEncrypt.put(entityName, task);
 		}
+
 		handleUpdate(true);
 
-		Log.d(Utils.tag(this), "Submitting new task..");
+		Utils.d("[" + mode + "] Submitting new task..");
+
 		if (mCryptoExecutor.isTerminated() || mCryptoExecutor.isShutdown()) {
-			Log.d(Utils.tag(this), "BUT WAIT.... THE EXECUTOR IS DEAD: terminated? " + mCryptoExecutor.isTerminated() + "; shutdown?? " + mCryptoExecutor.isShutdown() );
+			Utils.d("[" + mode + "] BUT WAIT.... THE EXECUTOR IS DEAD: terminated? " + mCryptoExecutor.isTerminated() + "; shutdown?? " + mCryptoExecutor.isShutdown());
 			createExecutor();
 		}
+
 		return mCryptoExecutor.submit(task);
 	}
 
 	private class CryptoTask implements Runnable {
 		private final ConcealCrypto encrypter;
-		private final File encryptedFile;
-		private final File unencryptedFile;
-		private final String entityName;
+		private final IndexedFile file;
+		private final String name;
 		private final ConcealCrypto.CryptoMode cryptoMode;
 		private IOnResult<Boolean> callback;
 
-		public CryptoTask(ConcealCrypto encrypter, File encryptedFile, File unencryptedFile, String entityName,
-				ConcealCrypto.CryptoMode mode, IOnResult<Boolean> callback) {
+		public CryptoTask(ConcealCrypto encrypter, IndexedFile file, String name, ConcealCrypto.CryptoMode mode,
+				IOnResult<Boolean> callback) {
 			this.encrypter = encrypter;
-			this.encryptedFile = encryptedFile;
-			this.unencryptedFile = unencryptedFile;
-			this.entityName = entityName;
+			this.file = file;
+			this.name = name;
 			this.cryptoMode = mode;
 			this.callback = callback;
 		}
 
 		@Override
 		public void run() {
+
+			File locked = file.getLockedFile();
+			File unlocked = file.getUnlockedFile();
+
 			try {
-				Log.d(Utils.tag(), "Starting en/decryption task.");
+				Utils.d("[" + cryptoMode + "] Starting en/decryption task.");
 				switch (cryptoMode) {
 					case ENCRYPT:
-						encryptedFile.createNewFile();
-						encrypter.encrypt(encryptedFile, unencryptedFile, entityName);
-						unencryptedFile.delete();
+						locked.createNewFile();
+						encrypter.encrypt(locked, unlocked, name);
+						unlocked.delete();
 						break;
 					case DECRYPT:
-						unencryptedFile.createNewFile();
-						encrypter.decrypt(encryptedFile, unencryptedFile, entityName);
-						encryptedFile.delete();
+						unlocked.createNewFile();
+						encrypter.decrypt(locked, unlocked, name);
+						locked.delete();
 						break;
 				}
 
-				Log.d(this.getClass().toString() + ".run", "Finished task!");
+				file.resetModificationTime();
+
+				Utils.d("[" + cryptoMode + "] Finished task!");
 			}
 			catch (KeyChainException e) {
 				Log.e(Utils.tag(), "KeychainException!", e);
@@ -243,9 +254,9 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				// TODO find reason error and fix
 				if (e instanceof NativeGCMCipherException) {
 					if (cryptoMode == ConcealCrypto.CryptoMode.ENCRYPT) {
-						unencryptedFile.delete();
+						unlocked.delete();
 					} else if (cryptoMode == ConcealCrypto.CryptoMode.DECRYPT) {
-						encryptedFile.delete();
+						locked.delete();
 					}
 				}
 			}

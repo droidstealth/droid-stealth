@@ -222,4 +222,49 @@ public class IndexedFile extends IndexedItem {
 	public void clearThumbnail() {
 		mThumb = null;
 	}
+
+	/**
+	 * Resets the last modified flag of all the files to 0. Allows easy
+	 * checking for modifications and prevents others from finding out when
+	 * file was modified. Does not protect for creation time, because android
+	 * does not support this.
+	 * @return returns true if succeeded. False if one or more failed.
+	 */
+	public boolean resetModificationTime() {
+		boolean success = true;
+		int resetcount = 0;
+
+		if (getUnlockedFile().exists()) {
+			success = getUnlockedFile().setLastModified(0);
+			resetcount++;
+		}
+
+		if (getLockedFile().exists()) {
+			success &= getUnlockedFile().setLastModified(0);
+			resetcount++;
+		}
+
+		if (getOriginalFile().exists()) {
+			success &= getUnlockedFile().setLastModified(0);
+			resetcount++;
+		}
+
+		if (getThumbFile().exists()) {
+			success &= getUnlockedFile().setLastModified(0);
+			resetcount++;
+		}
+
+		if (!success) Utils.d("[IndexedFile] Failed to reset modification date of " + getName() + ". Tried with " + resetcount + " files");
+		else Utils.d("[IndexedFile] Succeeded to reset modification date of " + getName() + ". Tried with " + resetcount + " files");
+
+		return success;
+	}
+
+	/**
+	 * Checks if the unlocked file was modified. If so, returns true.
+	 * @return true if unlocked file was modified.
+	 */
+	public boolean isModified() {
+		return getUnlockedFile().exists() && getUnlockedFile().lastModified() > 0;
+	}
 }

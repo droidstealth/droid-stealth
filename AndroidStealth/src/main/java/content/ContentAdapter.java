@@ -115,18 +115,25 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
 		View statusBar = view.findViewById(R.id.content_item_status_line);
 
-		thumbImage.setImageResource(0);
+		thumbImage.setImageBitmap(null);
 		thumbImage.invalidate();
 
 		if (file.getThumbnail() == null) {
-			ThumbnailManager.retrieveThumbnail(file, new IOnResult<Boolean>() {
+			IOnResult<Boolean> notifyChanges = new IOnResult<Boolean>() {
 				@Override
 				public void onResult(Boolean result) {
 					if (result) {
 						notifyDataSetChanged();
 					}
 				}
-			});
+			};
+
+			if (file.isModified()) {
+				ThumbnailManager.createThumbnail(file, notifyChanges);
+				file.resetModificationTime();
+			} else {
+				ThumbnailManager.retrieveThumbnail(file, notifyChanges);
+			}
 		} else {
 			thumbImage.setImageBitmap(file.getThumbnail());
 			thumbImage.invalidate();
