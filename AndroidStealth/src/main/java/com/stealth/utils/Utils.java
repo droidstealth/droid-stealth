@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
+import encryption.ConcealCrypto;
 import com.stealth.files.DirectoryManager;
 
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ public class Utils {
 
 	private static boolean sFakePin;
 	private static WeakReference<Context> sContext;
+	private static ConcealCrypto sCrypto;
 
 	/**
 	 * @return was the entered pin fake?
@@ -85,6 +87,18 @@ public class Utils {
 	 */
 	public static Context getContext() {
 		return sContext.get();
+	}
+
+	/**
+	 * Get the ConcealCrypto that uses the keys from the main folder,
+	 * in order to encrypt/decrypt items. Creates it if it doesn't yet exist.
+	 * @return the ConcealCrypto that uses the keys from the main folder
+	 */
+	public static ConcealCrypto getMainCrypto() {
+		if (sCrypto == null) {
+			sCrypto = new ConcealCrypto(getContext());
+		}
+		return sCrypto;
 	}
 
 	/**
@@ -217,6 +231,22 @@ public class Utils {
 	}
 
 	/**
+	 * Run a given callback on the main thread with the given result.
+	 * Checks for null on the callback.
+	 * @param callback the callback to run on the main thread
+	 * @param result the result to pass to the callback
+	 */
+	public static <T> void runCallbackOnMain(final IOnResult<T> callback, final T result) {
+		if (callback == null) return;
+		runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				callback.onResult(result);
+			}
+		});
+	}
+
+	/**
 	 * Generates a random string of a random size
 	 * @return
 	 */
@@ -269,6 +299,15 @@ public class Utils {
 				destination.close();
 			}
 		}
+	}
+
+	/**
+	 * Gets random file name for temporary file reading and writing, without extension
+	 * @return the temporary file
+	 */
+	public static File getRandomCacheFile()
+	{
+		return getRandomFile(getContext().getCacheDir(), "");
 	}
 
 	/**
