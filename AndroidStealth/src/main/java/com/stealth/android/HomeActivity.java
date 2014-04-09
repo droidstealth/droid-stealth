@@ -50,20 +50,13 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 		VisibilityManager.showApplication(context);
 
-		try {
-			Intent stealthCall = new Intent(context, HomeActivity.class);
-			stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-			stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
-			stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(stealthCall);
+		Intent stealthCall = new Intent(context, HomeActivity.class);
+		stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+		stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
+		stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(stealthCall);
 
-			return true;
-		}
-		catch (Exception e) {
-			VisibilityManager.hideApplication(context);
-			Utils.d("Could not launch stealth app");
-		}
-		return false;
+		return true;
 	}
 
 	public void setRequestedActivity(boolean mRequestedActivity) {
