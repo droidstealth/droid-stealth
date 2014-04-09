@@ -3,14 +3,19 @@ package content;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -41,11 +46,13 @@ import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
 import encryption.EncryptionService;
 import encryption.IContentManager;
+import sharing.SharingUtils;
 
 /**
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
-public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, EncryptionService.UpdateListener {
+public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
+		AdapterView.OnItemLongClickListener, EncryptionService.UpdateListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 
@@ -54,6 +61,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
+	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
 	private File mTempFolder;
 	/**
@@ -91,8 +99,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	void doBindService() {
 		Utils.d("Trying to bind service");
 		getActivity().getApplicationContext()
-					 .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
-							 Context.BIND_AUTO_CREATE);
+				.bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+						Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -127,6 +135,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 *
 	 * @param savedInstanceState
 	 */
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -141,6 +150,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mMode = null;
 		mAdapter = new ContentAdapter(mContentManager);
 		mContentManager.addContentChangedListener(mAdapter);
+
+		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
+				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
+		}
 
 		setHasOptionsMenu(true);
 	}
@@ -269,7 +284,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			if (view != null) {
 				int id = view.getItemID();
 				// keep this debug line commented, just in case we need to do these checks again
-				// Utils.debug("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " + view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + "; InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown());
+				// Utils.debug("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " +
+				// view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + ";
+				// InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown
+				// ());
 				if (mGridView.isItemChecked(id)) {
 					view.findViewById(R.id.file_select).setBackgroundResource(R.drawable.frame_selected);
 				}
@@ -302,7 +320,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 			else {
 				mMode.setTitle(Utils.str(R.string.action_select_multi)
-									.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+						.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 				setActionModeIcon(R.drawable.ic_select_multi);
 			}
 			mSingleSelected = position;
@@ -345,7 +363,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			mMode.setTitle(Utils.str(R.string.action_select_multi)
-								.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+					.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 			setActionModeIcon(R.drawable.ic_select_multi);
 
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
@@ -458,7 +476,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					//TODO share goes here
 					break;
 				case R.id.action_restore:
-					//TODO unlock files if necessary, remove from list and restore to choosen/original location (don't delete file)
+					//TODO unlock files if necessary, remove from list and restore to choosen/original location (don't
+					// delete file)
 					break;
 				case R.id.action_shred:
 					actionShred(selectedItems);
@@ -542,6 +561,19 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			if (actionMode == mMode) {
 				mMode = null;
 			}
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+
+		@Override
+		public Uri[] createBeamUris(NfcEvent nfcEvent) {
+			return new Uri[] { getApkUri() };
+		}
+
+		private Uri getApkUri() {
+			return Uri.fromFile(SharingUtils.getApk(getActivity()));
 		}
 	}
 }
