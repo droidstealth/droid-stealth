@@ -91,8 +91,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	void doBindService() {
 		Utils.d("Trying to bind service");
 		getActivity().getApplicationContext()
-		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
-				             Context.BIND_AUTO_CREATE);
+					 .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+							 Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -302,7 +302,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 			else {
 				mMode.setTitle(Utils.str(R.string.action_select_multi)
-				                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+									.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 				setActionModeIcon(R.drawable.ic_select_multi);
 			}
 			mSingleSelected = position;
@@ -345,7 +345,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			mMode.setTitle(Utils.str(R.string.action_select_multi)
-			                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+								.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 			setActionModeIcon(R.drawable.ic_select_multi);
 
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
