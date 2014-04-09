@@ -192,6 +192,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				mSharing.shareApk();
 				return true;
 			case R.id.action_settings:
+				setRequestedActivity(true);
 				Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
 				startActivity(settingsIntent);
 				return true;
