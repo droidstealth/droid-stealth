@@ -23,6 +23,7 @@ public class DirectoryManager
 	public static final String SUBFOLDER_LOCKED = "Locked";
 	public static final String SUBFOLDER_UNLOCKED = "Unlocked";
 	public static final String FOLDER_PREFS= "Preferences";
+	public static final String FOLDER_TEMP= "Temp";
 
 	private File mMainDir;
 	private File mPrefsDir;
@@ -30,6 +31,7 @@ public class DirectoryManager
 	private File mLockedDir;
 	private File mUnlockedDir;
 	private File mThumbDir;
+	private File mTempDir;
 
 	private static DirectoryManager sInstance;
 
@@ -57,6 +59,7 @@ public class DirectoryManager
 		mPrefsDir = new File(mMainDir, FOLDER_PREFS);
 		mLockedDir = new File(mFilesDir, SUBFOLDER_LOCKED);
 		mUnlockedDir = new File(mFilesDir, SUBFOLDER_UNLOCKED);
+		mTempDir = new File(mTempDir, FOLDER_TEMP);
 
 		mThumbDir.mkdir();
 		mMainDir.mkdir();
@@ -64,6 +67,7 @@ public class DirectoryManager
 		mPrefsDir.mkdir();
 		mLockedDir.mkdir();
 		mUnlockedDir.mkdir();
+		mTempDir.mkdir();
 	}
 
 	/**
@@ -72,6 +76,14 @@ public class DirectoryManager
 	 */
 	public static File main() {
 		return get().mMainDir;
+	}
+
+	/**
+	 * Get the File object of our current temp folder.
+	 * @return the file object
+	 */
+	public static File temp() {
+		return get().mTempDir;
 	}
 
 	/**
