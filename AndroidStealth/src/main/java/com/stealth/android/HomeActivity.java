@@ -17,7 +17,6 @@ import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
 import pin.PinManager;
-import sharing.APSharing.APSharing;
 import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -31,7 +30,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-	private APSharing mSharing;
 
 	private boolean mRequestedActivity;
 
@@ -164,33 +162,15 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 			// decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.home, menu);
 
-			checkHotspotAvailability(menu);
-
 			restoreActionBar();
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/**
-	 * Check if the device has AP Wifi support. If not, disable the 'Share Application' menu entry.
-	 *
-	 * @param menu that contains the 'Share Application' menu entry.
-	 */
-	private void checkHotspotAvailability(Menu menu) {
-		MenuItem appSharingItem = menu.findItem(R.id.app_sharing);
-
-		if (!SharingUtils.hasAPWifiSupport(this)) {
-			appSharingItem.setEnabled(false);
-		}
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.app_sharing:
-				mSharing.shareApk();
-				return true;
 			case R.id.action_settings:
 				Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
 				startActivity(settingsIntent);
