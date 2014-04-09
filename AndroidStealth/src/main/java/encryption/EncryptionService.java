@@ -28,6 +28,7 @@ import spikes.notifications.FileStatusNotificationsManager;
  */
 public class EncryptionService extends Service implements FileIndex.OnFileIndexChangedListener {
 
+	public static final String TAP_TO_LOCK = "tapToLock";
 	private static final int POOL_SIZE = 10;
 
 	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
@@ -71,7 +72,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getAction() != null && intent.getAction().equals(FileStatusNotificationsManager.ACTION_LOCK_ALL)) {
+		if (intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
 			Utils.d("You tapped to lock. Will do!");
 			EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
 			return super.onStartCommand(intent, flags, startId);
