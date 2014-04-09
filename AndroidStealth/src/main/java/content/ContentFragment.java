@@ -94,8 +94,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	void doBindService() {
 		getActivity().getApplicationContext()
-		             .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
-				             Context.BIND_AUTO_CREATE);
+					 .bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
+							 Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -140,9 +140,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
 				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-            mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(),getActivity());
-        }
+			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(),getActivity());
+		}
 
 		setHasOptionsMenu(true);
 	}
@@ -293,7 +293,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 			else {
 				mMode.setTitle(Utils.str(R.string.action_select_multi)
-				                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+									.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 				setActionModeIcon(R.drawable.ic_select_multi);
 			}
 			mSingleSelected = position;
@@ -336,7 +336,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			mMode.setTitle(Utils.str(R.string.action_select_multi)
-			                    .replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+								.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
 			setActionModeIcon(R.drawable.ic_select_multi);
 
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
@@ -537,7 +537,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+	private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
 
 		@Override
 		public Uri[] createBeamUris(NfcEvent nfcEvent) {
