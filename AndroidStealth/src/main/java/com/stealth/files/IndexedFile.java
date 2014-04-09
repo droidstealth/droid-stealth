@@ -1,6 +1,7 @@
 package com.stealth.files;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import com.stealth.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +15,7 @@ import java.io.File;
 public class IndexedFile extends IndexedItem {
 	public static final String LOCKED_EXTENSION = ".crypto";
 	public static final String THUMB_EXTENSION = ".crypto";
+	public static final String MODIFICATION_CHECKER_EXTENSION = ".check";
 
 	public static final int FILE_FOLDER = 1;
 	public static final int FILE_NAME = 2;
@@ -117,6 +119,13 @@ public class IndexedFile extends IndexedItem {
 	}
 
 	/**
+	 * @return the filename of the modification checker when file is unlocked. Used to check for modifications.
+	 */
+	private String getModificationCheckerFilename() {
+		return getUID() + MODIFICATION_CHECKER_EXTENSION;
+	}
+
+	/**
 	 * @return the filename as it should be in its locked state.
 	 */
 	public String getThumbFilename() {
@@ -149,6 +158,13 @@ public class IndexedFile extends IndexedItem {
 	 */
 	public File getOriginalFile() {
 		return new File(mOriginal);
+	}
+
+	/**
+	 * @return the file as it should be in its unlocked state.
+	 */
+	private File getModificationCheckerFile() {
+		return new File(DirectoryManager.unlocked(), getModificationCheckerFilename());
 	}
 
 	/**
@@ -224,40 +240,32 @@ public class IndexedFile extends IndexedItem {
 	}
 
 	/**
-	 * Resets the last modified flag of all the files to 0. Allows easy
-	 * checking for modifications and prevents others from finding out when
-	 * file was modified. Does not protect for creation time, because android
-	 * does not support this.
-	 * @return returns true if succeeded. False if one or more failed.
+	 * Creates the file that will allow the check for modifications
 	 */
-	public boolean resetModificationTime() {
-		boolean success = true;
-		int resetcount = 0;
-
-		if (getUnlockedFile().exists()) {
-			success = getUnlockedFile().setLastModified(0);
-			resetcount++;
+	public void createModificationChecker() {
+		File f = getModificationCheckerFile();
+		if (f.exists()) f.delete();
+		try {
+			f.createNewFile();
+		} catch (Exception e) {
+			Log.d(Utils.tag(), "Couldn't create modification checker.", e);
 		}
+	}
 
-		if (getLockedFile().exists()) {
-			success &= getUnlockedFile().setLastModified(0);
-			resetcount++;
-		}
+	/**
+	 * Removes the file that will allow the check for modifications
+	 */
+	public void removeModificationChecker() {
+		File f = getModificationCheckerFile();
+		if (f.exists()) f.delete();
+	}
 
-		if (getOriginalFile().exists()) {
-			success &= getUnlockedFile().setLastModified(0);
-			resetcount++;
-		}
-
-		if (getThumbFile().exists()) {
-			success &= getUnlockedFile().setLastModified(0);
-			resetcount++;
-		}
-
-		if (!success) Utils.d("[IndexedFile] Failed to reset modification date of " + getName() + ". Tried with " + resetcount + " files");
-		else Utils.d("[IndexedFile] Succeeded to reset modification date of " + getName() + ". Tried with " + resetcount + " files");
-
-		return success;
+	/**
+	 * Resets the file that will allow the check for modifications to the current
+	 * date and time. This will let isModified() return false until a new modification is done.
+	 */
+	public void resetModificationChecker() {
+		createModificationChecker();
 	}
 
 	/**
@@ -265,6 +273,7 @@ public class IndexedFile extends IndexedItem {
 	 * @return true if unlocked file was modified.
 	 */
 	public boolean isModified() {
-		return getUnlockedFile().exists() && getUnlockedFile().lastModified() > 0;
+		return isUnlocked() && getModificationCheckerFile().exists()
+				&& getUnlockedFile().lastModified() > getModificationCheckerFile().lastModified();
 	}
 }

@@ -104,9 +104,6 @@ public class ContentManager implements IContentManager {
 							// add to the index
 							mIndex.addFile(indexedFile);
 
-							// reset modification times
-							indexedFile.resetModificationTime();
-
 							// notify that we are done
 							notifyContentChangedListeners();
 							if (callback != null) callback.onResult(indexedFile);

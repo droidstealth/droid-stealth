@@ -226,6 +226,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				Utils.d("[" + cryptoMode + "] Starting en/decryption task.");
 				switch (cryptoMode) {
 					case ENCRYPT:
+						file.removeModificationChecker();
 						locked.createNewFile();
 						encrypter.encrypt(locked, unlocked, name);
 						unlocked.delete();
@@ -234,10 +235,9 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 						unlocked.createNewFile();
 						encrypter.decrypt(locked, unlocked, name);
 						locked.delete();
+						file.createModificationChecker();
 						break;
 				}
-
-				file.resetModificationTime();
 
 				Utils.d("[" + cryptoMode + "] Finished task!");
 			}
