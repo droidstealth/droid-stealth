@@ -3,13 +3,18 @@ package content;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -40,6 +45,7 @@ import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
 import encryption.EncryptionService;
 import encryption.IContentManager;
+import sharing.SharingUtils;
 
 /**
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
@@ -53,7 +59,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
+	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
+
 	/**
 	 * Remembers which item is currently being selected in single selecton mode
 	 */
@@ -115,6 +123,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 *
 	 * @param savedInstanceState
 	 */
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -128,6 +137,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mMode = null;
 		mAdapter = new ContentAdapter(mContentManager);
 		mContentManager.addContentChangedListener(mAdapter);
+
+		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
+				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+            mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(),getActivity());
+        }
 
 		setHasOptionsMenu(true);
 	}
@@ -518,6 +533,19 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			if (actionMode == mMode) {
 				mMode = null;
 			}
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+
+		@Override
+		public Uri[] createBeamUris(NfcEvent nfcEvent) {
+			return new Uri[] { getApkUri() };
+		}
+
+		private Uri getApkUri() {
+			return Uri.fromFile(SharingUtils.getApk(getActivity()));
 		}
 	}
 }
