@@ -75,6 +75,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 				if (succeeded) {
 					Utils.toast(R.string.pin_description_unlocked); // welcome, Mr. Bond
+					mSharing = new APSharing(HomeActivity.this);
 					constructInterface(); // yay, we booted
 				}
 				else {
@@ -105,7 +106,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		Utils.d("DESTROYING!!!!!! ");
 		VisibilityManager.hideApplication(HomeActivity.this);
 	}
 
