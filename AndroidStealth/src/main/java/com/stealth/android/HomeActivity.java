@@ -75,7 +75,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 				if (succeeded) {
 					Utils.toast(R.string.pin_description_unlocked); // welcome, Mr. Bond
-					mSharing = new APSharing(HomeActivity.this);
 					constructInterface(); // yay, we booted
 				}
 				else {
@@ -129,6 +128,16 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				.replace(R.id.container, new ContentFragment())
 				.commit();
 	}
+
+	@Override
+	public void onBackPressed() {
+		if (mNavDrawer.isDrawerOpen()) {
+			mNavDrawer.closeDrawer();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	/**
 	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
 	 *
