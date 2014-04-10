@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+	<translate xmlns:android="http://schemas.android.com/apk/res/android"
+		android:fromXDelta="0%"
+		android:toXDelta="-1%"
+		android:duration="15"
+		android:startOffset="0"/>
+	<translate xmlns:android="http://schemas.android.com/apk/res/android"
+		android:fromXDelta="-1%"
+		android:toXDelta="1%"
+		android:duration="30"
+		android:startOffset="15"/>
+	<translate xmlns:android="http://schemas.android.com/apk/res/android"
+		android:fromXDelta="1%"
+		android:toXDelta="0%"
+		android:duration="15"
+		android:startOffset="45"/>
+</set>

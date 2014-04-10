@@ -52,14 +52,13 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 	}
 
 	@Override
-	public void onPinEntry(String pin) {
+	public boolean onPinEntry(String pin) {
 		mPinFrag.pinClear();
 		if (HomeActivity.launch(getApplicationContext(), pin)) {
 			finish();
-		} else {
-			Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-			mPinFrag.getView().startAnimation(shake);
+			return true;
 		}
+		return false;
 	}
 
 	@Override
