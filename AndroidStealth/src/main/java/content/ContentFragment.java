@@ -348,10 +348,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-		if (isSelecting()) {
-			showMultiSelectionFeedback();
+		if (isMultiSelecting()) {
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
+			showMultiSelectionFeedback();
 			disableIfNoneChecked();
+		} else if (isSingleSelecting()) {
+			startMultiSelection(position);
+			mGridView.setItemChecked(mSingleSelected, true);
 		} else {
 			startMultiSelection(position);
 		}
