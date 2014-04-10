@@ -19,14 +19,14 @@
 	<string name="pin_hashtag">#</string>
 
 	<string name="pin_1_sub"> </string>
-	<string name="pin_2_sub">abc</string>
-	<string name="pin_3_sub">def</string>
-	<string name="pin_4_sub">ghi</string>
-	<string name="pin_5_sub">jkl</string>
-	<string name="pin_6_sub">mno</string>
-	<string name="pin_7_sub">pqrs</string>
-	<string name="pin_8_sub">tuv</string>
-	<string name="pin_9_sub">wxyz</string>
+	<string name="pin_2_sub">ABC</string>
+	<string name="pin_3_sub">DEF</string>
+	<string name="pin_4_sub">GHI</string>
+	<string name="pin_5_sub">JKL</string>
+	<string name="pin_6_sub">MNO</string>
+	<string name="pin_7_sub">PQRS</string>
+	<string name="pin_8_sub">TUV</string>
+	<string name="pin_9_sub">WXYZ</string>
 	<string name="pin_0_sub">_</string>
 	<string name="pin_asterisk_sub"> </string>
 	<string name="pin_hashtag_sub"> </string>
