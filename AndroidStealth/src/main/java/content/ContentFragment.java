@@ -1,6 +1,7 @@
 package content;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
@@ -61,6 +62,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
+	private ContentShareMultiModeListener mMultiModeListener;
 	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
 	private File mTempFolder;
@@ -257,9 +259,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							@Override
 							public void onResult(IndexedFile result) {
 								if (result != null) {
+
+									ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
+									itemList.add(result);
+									mMultiModeListener.actionLock(itemList); // lock right now
+
 									Utils.toast(R.string.content_success_add);
-								}
-								else {
+								} else {
 									Utils.toast(R.string.content_fail_add);
 								}
 							}
@@ -309,34 +315,22 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-		if (mMode != null) {
-			if (mGridView.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
+		if (isSelecting()) {
+			if (isSingleSelecting()) {
 				if (mSingleSelected == position && mGridView.isItemChecked(position)) {
 					// the item was already previously set to true, but now we pressed it again, so
 					// let's disable it. Selection mode will stop afterwards, because in theory
 					// nothing is selected anymore.
 					mGridView.setItemChecked(position, false);
+					showSingleSelectionFeedback();
 				}
-			}
-			else {
-				mMode.setTitle(Utils.str(R.string.action_select_multi)
-						.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
-				setActionModeIcon(R.drawable.ic_select_multi);
+			} else {
+				showMultiSelectionFeedback();
 			}
 			mSingleSelected = position;
 			disableIfNoneChecked();
-		}
-		else {
-			// so we want to try to see how it feels if clicking on a file always starts the
-			// selection UI
-			mGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			mMode = ((ActionBarActivity) getActivity())
-					.startSupportActionMode(new ContentShareMultiModeListener());
-			mGridView.setItemChecked(position, true);
-			mSingleSelected = position;
-
-			mMode.setTitle(Utils.str(R.string.action_select_single));
-			setActionModeIcon(R.drawable.ic_select_single);
+		} else {
+			startSingleSelection(position);
 		}
 		handleActionButtons();
 		handleSelection();
@@ -354,25 +348,83 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-		if (mMode == null) {
-			mMode = ((ActionBarActivity) getActivity())
-					.startSupportActionMode(new ContentShareMultiModeListener());
-			mGridView.setItemChecked(position, true);
-		}
-		else {
-			mMode.setTitle(Utils.str(R.string.action_select_multi)
-					.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
-			setActionModeIcon(R.drawable.ic_select_multi);
-
+		if (isSelecting()) {
+			showMultiSelectionFeedback();
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			disableIfNoneChecked();
+		} else {
+			startMultiSelection(position);
 		}
+
 		handleActionButtons();
 		handleSelection();
 
 		return true;
+	}
+
+	/**
+	 * Starts the single selection mode with given file
+	 * @param withItemId the item to select
+	 */
+	public void startSingleSelection(int withItemId) {
+		mGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		mMultiModeListener = new ContentShareMultiModeListener();
+		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
+		mGridView.setItemChecked(withItemId, true);
+		mSingleSelected = withItemId;
+
+		showSingleSelectionFeedback();
+	}
+
+	/**
+	 * Starts the multi selection mode with given file
+	 * @param withItemId the item to select
+	 */
+	public void startMultiSelection(int withItemId) {
+		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		mMultiModeListener = new ContentShareMultiModeListener();
+		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
+		mGridView.setItemChecked(withItemId, true);
+
+		showMultiSelectionFeedback();
+	}
+
+	/**
+	 * Check if we are currently in multi selection mode
+	 */
+	public boolean isMultiSelecting() {
+		return isSelecting() && mGridView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE;
+	}
+
+	/**
+	 * Check if we are currently in single selection mode
+	 */
+	public boolean isSingleSelecting() {
+		return isSelecting() && mGridView.getChoiceMode() == ListView.CHOICE_MODE_SINGLE;
+	}
+
+	/**
+	 * Check if we are currently in a selection mode
+	 */
+	public boolean isSelecting() {
+		return mMode != null;
+	}
+
+	/**
+	 * Shows the feedback of the single selection mode
+	 */
+	private void showSingleSelectionFeedback() {
+		mMode.setTitle(Utils.str(R.string.action_select_single));
+		setActionModeIcon(R.drawable.ic_select_single);
+	}
+
+	/**
+	 * Shows the feedback of the multi selection mode
+	 */
+	private void showMultiSelectionFeedback() {
+		mMode.setTitle(Utils.str(R.string.action_select_multi)
+				.replace("{COUNT}", "" + mGridView.getCheckedItemIds().length));
+		setActionModeIcon(R.drawable.ic_select_multi);
 	}
 
 	/**
