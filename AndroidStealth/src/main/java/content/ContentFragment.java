@@ -453,10 +453,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		@Override
 		public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
 			long[] selected = mGridView.getCheckedItemIds();
-			actionMode.finish();
 
 			if (selected.length == 0) {
-				actionMode.finish();
 				return false;
 			}
 
