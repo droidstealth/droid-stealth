@@ -27,6 +27,14 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private List<IndexedItem> mContentItems;
 	private ArrayList<CheckableLinearLayout> mViews;
 	private IndexedFolder mLastFolder;
+	private IOnResult<Boolean> mNotifyChanges = new IOnResult<Boolean>() {
+		@Override
+		public void onResult(Boolean result) {
+			if (result) {
+				notifyDataSetChanged();
+			}
+		}
+	};
 
 	/**
 	 * Creates a new ContentAdapter
@@ -115,24 +123,29 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
 		View statusBar = view.findViewById(R.id.content_item_status_line);
 
-		thumbImage.setImageResource(0);
+		boolean isUnlocked = file.isUnlocked();
+
+		thumbImage.setImageBitmap(null);
 		thumbImage.invalidate();
 
-		if (file.getThumbnail() == null) {
-			ThumbnailManager.retrieveThumbnail(file, new IOnResult<Boolean>() {
-				@Override
-				public void onResult(Boolean result) {
-					if (result) {
-						notifyDataSetChanged();
-					}
+		if (file.getThumbFile().exists()) {
+			boolean modified = isUnlocked && file.isModified();
+			if (file.getThumbnail() == null || modified) {
+				if (modified) {
+					Utils.d("A file has been modified! Getting new thumbnail.");
+					file.resetModificationChecker();
+					ThumbnailManager.createThumbnail(file, mNotifyChanges);
+				} else {
+					ThumbnailManager.retrieveThumbnail(file, mNotifyChanges);
 				}
-			});
-		} else {
-			thumbImage.setImageBitmap(file.getThumbnail());
-			thumbImage.invalidate();
+			}
+			else {
+				thumbImage.setImageBitmap(file.getThumbnail());
+				thumbImage.invalidate();
+			}
 		}
 
-		if (file.isUnlocked()) {
+		if (isUnlocked) {
 			statusImage.clearAnimation();
 			statusImage.setImageResource(R.drawable.ic_status_unlocked);
 			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));

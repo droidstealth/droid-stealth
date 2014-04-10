@@ -58,6 +58,8 @@ public class ThumbnailManager {
 					Utils.getMainCrypto().encrypt(thumbFile, cache, item.getName());
 					Utils.delete(cache);
 
+					item.setThumbnail(thumb);
+
 					result = true;
 
 				} catch (Exception e) {
