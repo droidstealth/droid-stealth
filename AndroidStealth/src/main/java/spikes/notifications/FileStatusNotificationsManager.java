@@ -17,8 +17,6 @@ import encryption.EncryptionService;
  */
 public class FileStatusNotificationsManager {
 
-	public static final String ACTION_LOCK_ALL = "lockAllItems";
-
 	private static FileStatusNotificationsManager sInstance = null;
 	public static FileStatusNotificationsManager get() {
 		if (sInstance == null) {
@@ -165,7 +163,7 @@ public class FileStatusNotificationsManager {
 	{
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(mContext, EncryptionService.class);
-		resultIntent.setAction(ACTION_LOCK_ALL);
+		resultIntent.setAction(EncryptionService.TAP_TO_LOCK);
 		return PendingIntent.getService(Utils.getContext(), 0, resultIntent, 0);
 	}
 }

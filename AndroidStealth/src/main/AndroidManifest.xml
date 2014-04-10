@@ -20,6 +20,7 @@
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
 			android:uiOptions="splitActionBarWhenNarrow"
+			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:excludeFromRecents="true" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -50,7 +51,12 @@
 			</intent-filter>
 		</receiver>
 
-		<service android:name="encryption.EncryptionService" />
+		<service android:name="encryption.EncryptionService"
+				android:exported="false">
+			<intent-filter>
+				<action android:name="encryption.EncryptionService.TAP_TO_LOCK" />
+			</intent-filter>
+		</service>
 		<activity
 			android:name="com.ipaulpro.afilechooser.FileChooserActivity"
 			android:enabled="@bool/use_activity"

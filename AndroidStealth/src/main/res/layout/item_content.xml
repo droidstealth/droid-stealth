@@ -33,7 +33,17 @@
 				android:layout_alignParentTop="true"
 				android:layout_alignParentBottom="true" />
 				<!--android:background="@drawable/frame_selected"-->
-			<ImageView
+		<ImageView
+				android:id="@+id/file_status_background"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:adjustViewBounds="true"
+				android:layout_centerHorizontal="true"
+				android:layout_alignParentTop="true"
+				android:src="@drawable/ic_status_dummy"
+				android:padding="@dimen/content_status_icon_padding"
+				android:background="@color/locked"/>
+		<ImageView
 				android:id="@+id/file_status"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -41,8 +51,7 @@
 				android:layout_centerHorizontal="true"
 				android:layout_alignParentTop="true"
 				android:src="@drawable/ic_status_locked"
-				android:padding="@dimen/content_status_icon_padding"
-				android:background="@color/locked"/>
+				android:padding="@dimen/content_status_icon_padding"/>
 		</RelativeLayout>
 	<!-- removing the textview because normally filenames of pictures arent that necessary. We can also show it
 	at the bottom of the app in an info bar when the user pressed on the file -->

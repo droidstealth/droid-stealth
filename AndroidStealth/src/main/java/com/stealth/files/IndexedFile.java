@@ -1,5 +1,7 @@
 package com.stealth.files;
 
+import android.graphics.Bitmap;
+import android.util.Log;
 import com.stealth.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +14,8 @@ import java.io.File;
  */
 public class IndexedFile extends IndexedItem {
 	public static final String LOCKED_EXTENSION = ".crypto";
-	public static final String THUMB_EXTENSION = ".jpg";
+	public static final String THUMB_EXTENSION = ".crypto";
+	public static final String MODIFICATION_CHECKER_EXTENSION = ".check";
 
 	public static final int FILE_FOLDER = 1;
 	public static final int FILE_NAME = 2;
@@ -20,6 +23,8 @@ public class IndexedFile extends IndexedItem {
 	public static final int FILE_ORIGINAL = 4;
 
 	private String mTempLinkUID;
+	private Bitmap mThumb;
+	private boolean mRetrievingThumb;
 
 	private IndexedFolder mFolder;
 	private String mName;
@@ -114,6 +119,13 @@ public class IndexedFile extends IndexedItem {
 	}
 
 	/**
+	 * @return the filename of the modification checker when file is unlocked. Used to check for modifications.
+	 */
+	private String getModificationCheckerFilename() {
+		return getUID() + MODIFICATION_CHECKER_EXTENSION;
+	}
+
+	/**
 	 * @return the filename as it should be in its locked state.
 	 */
 	public String getThumbFilename() {
@@ -149,6 +161,34 @@ public class IndexedFile extends IndexedItem {
 	}
 
 	/**
+	 * @return the file as it should be in its unlocked state.
+	 */
+	private File getModificationCheckerFile() {
+		return new File(DirectoryManager.unlocked(), getModificationCheckerFilename());
+	}
+
+	/**
+	 * @return true if file is currently locked
+	 */
+	public boolean isLocked() {
+		return !getUnlockedFile().exists() && getLockedFile().exists();
+	}
+
+	/**
+	 * @return true if file is currently unlocked
+	 */
+	public boolean isUnlocked() {
+		return getUnlockedFile().exists() && !getLockedFile().exists();
+	}
+
+	/**
+	 * @return true if file is currently being processed
+	 */
+	public boolean isProcessing() {
+		return getUnlockedFile().exists() && getLockedFile().exists();
+	}
+
+	/**
 	 * Set the parent virtual folder of this file
 	 * Only the FileIndex can do this.
 	 * @param mFolder the new folder
@@ -176,5 +216,64 @@ public class IndexedFile extends IndexedItem {
 	 */
 	void setExtension(String mExtension) {
 		this.mExtension = mExtension;
+	}
+
+	/**
+	 * @return get the remembered thumbnail
+	 */
+	public Bitmap getThumbnail() {
+		return mThumb;
+	}
+
+	/**
+	 * @param mThumb the thumbnail to remember for this file
+	 */
+	public void setThumbnail(Bitmap mThumb) {
+		this.mThumb = mThumb;
+	}
+
+	/**
+	 * Clears the thumbnail and sets it to be garbage collected
+	 */
+	public void clearThumbnail() {
+		mThumb = null;
+	}
+
+	/**
+	 * Creates the file that will allow the check for modifications
+	 */
+	public void createModificationChecker() {
+		File f = getModificationCheckerFile();
+		if (f.exists()) f.delete();
+		try {
+			f.createNewFile();
+		} catch (Exception e) {
+			Log.d(Utils.tag(), "Couldn't create modification checker.", e);
+		}
+	}
+
+	/**
+	 * Removes the file that will allow the check for modifications
+	 */
+	public void removeModificationChecker() {
+		File f = getModificationCheckerFile();
+		if (f.exists()) f.delete();
+	}
+
+	/**
+	 * Resets the file that will allow the check for modifications to the current
+	 * date and time. This will let isModified() return false until a new modification is done.
+	 */
+	public void resetModificationChecker() {
+		createModificationChecker();
+	}
+
+	/**
+	 * Checks if the unlocked file was modified. If so, returns true.
+	 * @return true if unlocked file was modified.
+	 */
+	public boolean isModified() {
+		return isUnlocked() && getModificationCheckerFile().exists()
+				&& getUnlockedFile().lastModified() > getModificationCheckerFile().lastModified();
 	}
 }
