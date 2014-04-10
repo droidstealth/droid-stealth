@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+			android:id="@+id/action_unlock"
+			android:icon="@drawable/ic_menu_unlock"
+			android:showAsAction="ifRoom"
+			android:title="@string/action_unlock_show"
+			/>
+	<item
+			android:id="@+id/action_shred"
+			android:icon="@drawable/ic_menu_shred"
+			android:showAsAction="ifRoom"
+			android:title="@string/action_shred"
+			/>
+</menu>
