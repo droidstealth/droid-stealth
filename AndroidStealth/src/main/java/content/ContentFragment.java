@@ -54,35 +54,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		AdapterView.OnItemLongClickListener, EncryptionService.UpdateListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
-
-	public enum ContentActionMode {
-		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
-	}
-
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
 	private ContentShareMultiModeListener mModeListener;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
-	private NfcAdapter mNfcAdapter;
-	private boolean mIsBound;
-	private File mTempFolder;
-	/**
-	 * Remembers which item is currently being selected in single selecton mode
-	 */
-	private int mSingleSelected;
-
-	public static ContentFragment newInstance(boolean loadEmpty) {
-		ContentFragment contentFragment = new ContentFragment();
-
-		Bundle bundle = new Bundle();
-		bundle.putBoolean("LOAD_EMPTY", loadEmpty);
-		contentFragment.setArguments(bundle);
-
-		return contentFragment;
-	}
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -99,6 +76,35 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			// TODO destory encryption manager
 		}
 	};
+	private NfcAdapter mNfcAdapter;
+	private boolean mIsBound;
+	/**
+	 * Remembers which item is currently being selected in single selection mode
+	 */
+	private int mSingleSelected;
+	private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
+		@Override
+		public void onResult(Boolean result) {
+			Utils.runOnMain(new Runnable() {
+				@Override
+				public void run() {
+					Utils.d("updating list");
+					mContentManager.notifyContentChangedListeners();
+					handleActionButtons();
+				}
+			});
+		}
+	};
+
+	public static ContentFragment newInstance(boolean loadEmpty) {
+		ContentFragment contentFragment = new ContentFragment();
+
+		Bundle bundle = new Bundle();
+		bundle.putBoolean("LOAD_EMPTY", loadEmpty);
+		contentFragment.setArguments(bundle);
+
+		return contentFragment;
+	}
 
 	void doBindService() {
 		Utils.d("Trying to bind service");
@@ -129,8 +135,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig)
-	{
+	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
 
@@ -144,7 +149,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mTempFolder = Utils.getRandomTempFile(".jpg");
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
@@ -307,19 +311,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		if (selectedItems.size() > 1) {
 			if (locked && unlocked) {
 				return ContentActionMode.MULTI_MIXED;
-			} else if (locked) {
+			}
+			else if (locked) {
 				return ContentActionMode.MULTI_LOCKED;
-			} else if (unlocked) {
+			}
+			else if (unlocked) {
 				return ContentActionMode.MULTI_UNLOCKED;
-			} else {
+			}
+			else {
 				return ContentActionMode.PROCESSING;
 			}
-		} else {
+		}
+		else {
 			if (locked) {
 				return ContentActionMode.SINGLE_LOCKED;
-			} else if (unlocked) {
+			}
+			else if (unlocked) {
 				return ContentActionMode.SINGLE_UNLOCKED;
-			} else {
+			}
+			else {
 				return ContentActionMode.PROCESSING;
 			}
 		}
@@ -331,8 +341,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * locked or being locked
 	 */
 	public void handleActionButtons() {
-		if (mModeListener != null)
+		if (mModeListener != null) {
 			mModeListener.inflate(getContentActionMode());
+		}
 	}
 
 	/**
@@ -467,18 +478,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mNotifyOnResult.onResult(true);
 	}
 
-	private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
-		@Override
-		public void onResult(Boolean result) {
-			Utils.runOnMain(new Runnable() {
-				@Override
-				public void run() {
-					Utils.d("updating list");
-					mContentManager.notifyContentChangedListeners();
-				}
-			});
-		}
-	};
+	public enum ContentActionMode {
+		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
+	}
 
 	/**
 	 * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html Helper
@@ -505,10 +507,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 		/**
 		 * Inflates the given content action mode to fit the selected context
+		 *
 		 * @param mode the mode to inflate
 		 */
 		public void inflate(ContentActionMode mode) {
-			if (mode == mContentMode) return; // already inflated
+			if (mode == mContentMode) {
+				return; // already inflated
+			}
 
 			Utils.d("Inflating " + mode);
 
