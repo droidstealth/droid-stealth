@@ -5,8 +5,10 @@ import java.util.ArrayList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -33,9 +35,12 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.dialog.DialogManager;
+import com.stealth.dialog.IConfirmResponse;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -581,8 +586,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 *
 	 * @param with the items to perform this action on
 	 */
-	public void actionShred(ArrayList<IndexedItem> with) {
-		mContentManager.removeItems(with, new IOnResult<Boolean>() {
+	public void actionShred(final ArrayList<IndexedItem> with) {
+
+		final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
@@ -592,7 +598,32 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					Utils.toast(R.string.content_fail_shred);
 				}
 			}
-		});
+		};
+
+		DialogManager.showConfirm(
+				getActivity(),
+				R.string.dialog_shred_title,
+				R.string.dialog_shred_description,
+				R.string.cancel,
+				R.string.yes,
+				new IConfirmResponse() {
+					@Override
+					public void onPositive() {
+						mContentManager.removeItems(with, shredListener);
+						disableIfNoneChecked();
+					}
+
+					@Override
+					public void onNegative() {
+						// do nothing
+					}
+
+					@Override
+					public void onCancel() {
+						// do nothing
+					}
+				}
+		);
 	}
 
 	public enum ContentActionMode {
