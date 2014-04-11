@@ -1,7 +1,6 @@
 package content;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
@@ -273,7 +272,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 									actionLock(itemList); // lock right now
 
 									Utils.toast(R.string.content_success_add);
-								} else {
+								}
+								else {
 									Utils.toast(R.string.content_fail_add);
 								}
 							}
@@ -349,7 +349,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void handleActionButtons() {
 		if (mMultiModeListener != null) {
 			mMultiModeListener.inflate(getContentActionMode());
-	}
+		}
 	}
 
 	/**
@@ -394,12 +394,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					mGridView.setItemChecked(position, false);
 					showSingleSelectionFeedback();
 				}
-			} else {
+			}
+			else {
 				showMultiSelectionFeedback();
 			}
 			mSingleSelected = position;
 			disableIfNoneChecked();
-		} else {
+		}
+		else {
 			startSingleSelection(position);
 		}
 		handleActionButtons();
@@ -422,10 +424,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			showMultiSelectionFeedback();
 			disableIfNoneChecked();
-		} else if (isSingleSelecting()) {
+		}
+		else if (isSingleSelecting()) {
 			startMultiSelection(position);
 			mGridView.setItemChecked(mSingleSelected, true);
-		} else {
+		}
+		else {
 			startMultiSelection(position);
 		}
 
@@ -437,6 +441,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Starts the single selection mode with given file
+	 *
 	 * @param withItemId the item to select
 	 */
 	public void startSingleSelection(int withItemId) {
@@ -451,6 +456,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Starts the multi selection mode with given file
+	 *
 	 * @param withItemId the item to select
 	 */
 	public void startMultiSelection(int withItemId) {
@@ -531,10 +537,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mNotifyOnResult.onResult(true);
 	}
 
-	public enum ContentActionMode {
-		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
-	}
-
 	/**
 	 * Locks all items
 	 *
@@ -591,6 +593,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				}
 			}
 		});
+	}
+
+	public enum ContentActionMode {
+		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
 
 	/**
