@@ -681,6 +681,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				return false;
 			}
 
+			if (selectedItems.size() > 1) {
+				actionMode.finish();
+			}
+
 			switch (menuItem.getItemId()) {
 				case R.id.action_lock:
 					actionLock(selectedItems);
