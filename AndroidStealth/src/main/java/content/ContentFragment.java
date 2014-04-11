@@ -5,10 +5,9 @@ import java.util.ArrayList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -23,6 +22,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,12 +35,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.dialog.DialogInput;
 import com.stealth.dialog.DialogManager;
-import com.stealth.dialog.IConfirmResponse;
+import com.stealth.dialog.DialogOptions;
+import com.stealth.dialog.IDialogResponse;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -515,7 +516,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Disables the ActionMode if no more items are checked
 	 */
 	private void disableIfNoneChecked() {
-		if (mGridView.getCheckedItemIds().length == 0) {
+		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
 			mMultiModeListener = null;
 			mMode.finish();
 		}
@@ -600,15 +601,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 		};
 
-		DialogManager.showConfirm(
+		DialogOptions options = new DialogOptions()
+				.setTitle(R.string.dialog_shred_title)
+				.setDescription(R.string.dialog_shred_description)
+				.setNegative(R.string.cancel)
+				.setPositive(R.string.yes);
+
+		DialogManager.show(
 				getActivity(),
-				R.string.dialog_shred_title,
-				R.string.dialog_shred_description,
-				R.string.cancel,
-				R.string.yes,
-				new IConfirmResponse() {
+				options,
+				new IDialogResponse() {
 					@Override
-					public void onPositive() {
+					public void onPositive(ArrayList<String> input) {
 						mContentManager.removeItems(with, shredListener);
 						disableIfNoneChecked();
 					}

@@ -29,14 +29,24 @@
 			android:paddingLeft="@dimen/dialog_paddings"
 			android:paddingRight="@dimen/dialog_paddings"
 			android:paddingBottom="@dimen/dialog_paddings"/>
-	<EditText
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/dialog_input"
-			android:layout_gravity="center_horizontal"
-			android:layout_marginRight="@dimen/dialog_paddings"
-			android:layout_marginLeft="@dimen/dialog_paddings"
-			android:layout_marginBottom="@dimen/dialog_paddings"/>
+
+	<LinearLayout android:layout_width="match_parent"
+	              android:layout_height="200dp"
+	              android:layout_marginLeft="@dimen/dialog_paddings"
+	              android:layout_marginRight="@dimen/dialog_paddings"
+	              android:layout_marginBottom="@dimen/dialog_paddings"
+	              android:id="@+id/dialog_scroll_wrap">
+		<ScrollView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:id="@+id/dialog_scroll">
+			<LinearLayout android:layout_width="match_parent"
+			              android:layout_height="wrap_content"
+			              android:orientation="vertical"
+			              android:id="@+id/dialog_inputs">
+			</LinearLayout>
+		</ScrollView>
+	</LinearLayout>
+
 	<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="match_parent"
