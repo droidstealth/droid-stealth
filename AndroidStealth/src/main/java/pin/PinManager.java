@@ -17,6 +17,8 @@ public class PinManager {
 	private static final String PIN_REAL = "REAL_PIN";
 	private static final String PIN_FAKE_DEFAULT = "#666";
 	private static final String PIN_REAL_DEFAULT = "#555";
+	public static final int PIN_MAX_SIZE = 20;
+	public static final int PIN_MIN_SIZE = 3;
 	private static PinManager sInstance;
 
 	/**

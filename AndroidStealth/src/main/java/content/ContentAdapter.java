@@ -56,6 +56,10 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		return mContentItems.get(i);
 	}
 
+	public int getItemId(IndexedItem item) {
+		return mContentItems.indexOf(item);
+	}
+
 	public ArrayList<CheckableLinearLayout> getViews() {
 		return mViews;
 	}
