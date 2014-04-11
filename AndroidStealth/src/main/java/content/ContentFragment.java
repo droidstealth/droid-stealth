@@ -701,7 +701,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					break;
 				case R.id.action_open:
 					//TODO open selected file
-					// delete file)
 					break;
 				case R.id.action_shred:
 					actionShred(selectedItems);
