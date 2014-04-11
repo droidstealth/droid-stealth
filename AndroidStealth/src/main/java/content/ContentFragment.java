@@ -343,7 +343,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void handleActionButtons() {
 		if (mModeListener != null) {
 			mModeListener.inflate(getContentActionMode());
-	}
+		}
 	}
 
 	/**
@@ -480,7 +480,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
-				}
+	}
 
 	/**
 	 * Source: http://www.miximum.fr/porting-the-contextual-anction-mode-for-pre-honeycomb-android-apps.html Helper
