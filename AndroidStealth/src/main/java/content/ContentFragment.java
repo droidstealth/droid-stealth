@@ -263,8 +263,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					}
 
 					//Something failed somewhere
-					if(dataFile == null || !dataFile.exists())
+					if(dataFile == null || !dataFile.exists()) {
+						Utils.d("Empty result was found!");
 						return;
+					}
 
 					IndexedFolder dir = mContentManager.getCurrentFolder();
 					mContentManager.addFile(dir, dataFile, new IOnResult<IndexedFile>() {
