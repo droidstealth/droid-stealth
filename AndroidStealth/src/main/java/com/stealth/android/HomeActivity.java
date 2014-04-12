@@ -1,37 +1,36 @@
 package com.stealth.android;
 
-import android.content.ComponentName;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.stealth.files.FileIndex;
+import com.stealth.drawer.NavigationDrawerFragment;
+import com.stealth.visibility.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
 import pin.PinManager;
-import sharing.APSharing.APSharing;
-import sharing.SharingUtils;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	 */
-	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private NavigationDrawerFragment mNavDrawer;
 
 	/**
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-	private APSharing mSharing;
+	private int mActiveNavigationOption = 0;
+	private ProgressDialog mProgress = null;
 
 	private boolean mRequestedActivity;
 
@@ -46,32 +45,16 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		if (!PinManager.get().isPin(pin)) {
 			return false;
 		}
-		try {
-			PackageManager pm = context.getPackageManager();
-			ComponentName homeName = new ComponentName(context, HomeActivity.class);
 
-			if (pm != null) {
-				// make sure activity can be called
-				pm.setComponentEnabledSetting(
-						homeName,
-						PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
-						PackageManager.DONT_KILL_APP);
-			}
+		VisibilityManager.showApplication(context);
 
-			Intent stealthCall = new Intent(context, HomeActivity.class);
-			stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
-			stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
-			stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(stealthCall);
+		Intent stealthCall = new Intent(context, HomeActivity.class);
+		stealthCall.addCategory(Intent.CATEGORY_LAUNCHER);
+		stealthCall.putExtra(PinManager.EXTRA_PIN, pin.trim());
+		stealthCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(stealthCall);
 
-			Utils.toast(R.string.pin_description_unlocked);
-
-			return true;
-		}
-		catch (Exception e) {
-			Log.e("STEALTH", "Could not launch stealth app", e);
-		}
-		return false;
+		return true;
 	}
 
 	public void setRequestedActivity(boolean mRequestedActivity) {
@@ -81,25 +64,22 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_home);
-		Utils.setContext(this);
+		setContentView(R.layout.activity_home_loading);
 
-		mNavigationDrawerFragment = (NavigationDrawerFragment)
-				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-		mTitle = getTitle();
+		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
+		BootManager.boot(this, pin, new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean succeeded) {
 
-		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(
-				R.id.navigation_drawer,
-				(DrawerLayout) findViewById(R.id.drawer_layout));
-
-		PackageManager pm = getPackageManager();
-		ComponentName homeName = new ComponentName(this, HomeActivity.class);
-		if (pm.getComponentEnabledSetting(homeName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
-			Log.w("Hiding: Disable", "Disabling app drawer icon.");
-			pm.setComponentEnabledSetting(homeName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-					PackageManager.DONT_KILL_APP);
-		}
+				if (succeeded) {
+					Utils.toast(R.string.pin_description_unlocked); // welcome, Mr. Bond
+					constructInterface(); // yay, we booted
+				}
+				else {
+					finish(); // something went wrong. Incorrect pin maybe.
+				}
+			}
+		});
 	}
 
 	/**
@@ -120,6 +100,42 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		VisibilityManager.hideApplication(HomeActivity.this);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
+	}
+
+	/**
+	 * Constructs the interface to show all main content to the user
+	 */
+	private void constructInterface() {
+		setContentView(R.layout.activity_home);
+		mNavDrawer = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+		mNavDrawer.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+		mTitle = getTitle();
+
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.container, new ContentFragment())
+				.commit();
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mNavDrawer.isDrawerOpen()) {
+			mNavDrawer.closeDrawer();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	/**
 	 * This method is meant to fill the content fragment based on the navigation drawer's selected page
 	 *
@@ -128,25 +144,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		Utils.setContext(this); // onCreate is called later... so let's call this now :)
-
-		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
-		if (BuildConfig.DEBUG || PinManager.get().isPin(pin)) {
-			// TODO let real or fake pin have an influence
-			FileIndex.create(false, new IOnResult<FileIndex>() {
-				@Override
-				public void onResult(FileIndex result) {
-					Utils.d("Created file index: " + result);
-					if (result == null) {
-						return;
-					}
-
-					FragmentManager fragmentManager = getSupportFragmentManager();
-					fragmentManager.beginTransaction()
-					               .replace(R.id.container, new ContentFragment())
-					               .commit();
-				}
-			});
-		}
+		mActiveNavigationOption = position;
 	}
 
 	public void restoreActionBar() {
@@ -158,13 +156,11 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!mNavigationDrawerFragment.isDrawerOpen()) {
+		if (mNavDrawer != null && !mNavDrawer.isDrawerOpen()) {
 			// Only show items in the action bar relevant to this screen
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.home, menu);
-
-			checkHotspotAvailability(menu);
 
 			restoreActionBar();
 			return true;
@@ -172,25 +168,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/**
-	 * Check if the device has AP Wifi support. If not, disable the 'Share Application' menu entry.
-	 *
-	 * @param menu that contains the 'Share Application' menu entry.
-	 */
-	private void checkHotspotAvailability(Menu menu) {
-		MenuItem appSharingItem = menu.findItem(R.id.app_sharing);
-
-		if (!SharingUtils.hasAPWifiSupport(this)) {
-			appSharingItem.setEnabled(false);
-		}
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.app_sharing:
-				mSharing.shareApk();
-				return true;
 			case R.id.action_settings:
 				Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
 				startActivity(settingsIntent);

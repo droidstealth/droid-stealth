@@ -1,4 +1,4 @@
-package com.stealth.android;
+package com.stealth.drawer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import com.stealth.android.R;
+import com.stealth.android.StealthSettingActivity;
+import com.stealth.utils.Utils;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -89,8 +94,12 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-	    View root = inflater.inflate(
+	    LinearLayout root = (LinearLayout) inflater.inflate(
 			    R.layout.fragment_navigation_drawer, container, false);
+
+	    TextView tv = (TextView)root.findViewById(R.id.drawer_version);
+	    tv.setText(Utils.str(R.string.drawer_version) + " " + Utils.getVersionName());
+
         mDrawerListView = (ListView) root.findViewById(R.id.drawer_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -99,23 +108,31 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.drawer_watch_folders),
-                        getString(R.string.drawer_delete),
-                        getString(R.string.drawer_modify_app),
-                        getString(R.string.drawer_wifi),
-                        getString(R.string.drawer_tutorial)
-                }));
+		        getActionBar().getThemedContext(),
+		        android.R.layout.simple_list_item_1,
+		        android.R.id.text1,
+		        new String[] {
+				        getString(R.string.drawer_watch_folders),
+				        getString(R.string.drawer_delete),
+				        getString(R.string.drawer_modify_app),
+				        getString(R.string.drawer_wifi),
+				        getString(R.string.drawer_tutorial)
+		        }
+        ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        return root;
     }
 
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
+
+	/**
+	 * Closes the navigation drawer
+	 */
+	public void closeDrawer() {
+		mDrawerLayout.closeDrawers();
+	}
 
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
@@ -267,7 +284,7 @@ public class NavigationDrawerFragment extends Fragment {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
+        actionBar.setTitle(R.string.true_app_name);
     }
 
     private ActionBar getActionBar() {

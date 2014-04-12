@@ -1,5 +1,6 @@
 package com.stealth.files;
 
+import com.stealth.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +73,11 @@ public class JSONArrayUnsorted {
 	 */
 	public JSONArrayUnsorted(JSONArray toManage) {
 		mManaged = toManage;
+		try {
+			mManaged.put(0, Math.max(0, toManage.length() - 1));
+		} catch (JSONException e) {
+			Utils.d("huh? seriously? " + e.getMessage());
+		}
 	}
 
 	/**

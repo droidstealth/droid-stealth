@@ -3,7 +3,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	tools:context="pin.PinFragment"
-	android:background="#eee"
+	android:background="@color/content_list_background"
 	android:orientation="vertical">
 
 		<TextView
@@ -21,7 +21,10 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:padding="7dp"
+			android:paddingTop="7dp"
+			android:paddingBottom="7dp"
+			android:paddingLeft="16dp"
+			android:paddingRight="16dp"
 			android:layout_margin="10dp"
 			android:background="@drawable/frame_pin"
 			android:text="*****"
@@ -33,7 +36,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/pin_keyboard"
-		android:background="#f3f3f3">
+		android:background="@color/content_list_background">
 
 		<TableRow
 			android:layout_width="fill_parent"

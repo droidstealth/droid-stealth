@@ -6,10 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.stealth.android.R;
-import com.stealth.utils.Utils;
 
 
 /**
@@ -28,6 +29,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 	private int mDescriptionResource;
 	private String mPin;
+	private Animation mSmallShake;
+	private Animation mNormalShake;
 
 	private OnPinResult mListener;
 
@@ -92,6 +95,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 		((TextView)root.findViewById(R.id.pin_entry)).setText(mPin);
 
+		mSmallShake = AnimationUtils.loadAnimation(root.getContext(), R.anim.shake_small);
+		mNormalShake = AnimationUtils.loadAnimation(root.getContext(), R.anim.shake_normal);
+
 		return root;
 	}
 
@@ -104,6 +110,19 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnFragmentInteractionListener");
 		}
+	}
+
+	/**
+	 * Shakes this fragment shortly to indicate a minor error.
+	 */
+	public void shakeSmall() {
+		getView().startAnimation(mSmallShake);
+	}
+	/**
+	 * Shakes this fragment to indicate an error.
+	 */
+	public void shakeNormal() {
+		getView().startAnimation(mNormalShake);
 	}
 
 	@Override
@@ -121,8 +140,12 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * @param character
 	 */
 	public void pinAdd(String character) {
-		mPin += character;
-		updatePin();
+		if (mPin.length() < PinManager.PIN_MAX_SIZE) {
+			mPin += character;
+			updatePin();
+		} else {
+			shakeSmall();
+		}
 	}
 
 	/**
@@ -161,7 +184,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 			case R.id.pin_accept:
 				if(mListener != null)
-					mListener.onPinEntry(mPin);
+					if (!mListener.onPinEntry(mPin)) {
+						shakeNormal();
+					}
 				break;
 			case R.id.pin_cancel:
 				if(mListener != null)
@@ -182,7 +207,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * Allows interaction with this fragment
 	 */
 	public interface OnPinResult {
-		public void onPinEntry(String pin);
+		public boolean onPinEntry(String pin);
 		public void onPinCancel();
 	}
 

@@ -3,30 +3,31 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:background="@color/content_list_background"
-	    tools:context="com.stealth.android.NavigationDrawerFragment"
+	    tools:context="com.stealth.drawer.NavigationDrawerFragment"
 		android:orientation="vertical">
 	<ListView
 			android:id="@+id/drawer_list"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:choiceMode="singleChoice"
-			android:divider="@color/drawer_divider"
-			android:dividerHeight="1dp"
-			tools:context="com.stealth.android.NavigationDrawerFragment" />
-	<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textStyle="bold"
-			android:text="@string/app_name"
-			android:textColor="@color/drawer_extra_details"
-			android:id="@+id/drawer_name"
-			android:paddingTop="15dp"/>
+			android:dividerHeight="0dp"
+			tools:context="com.stealth.drawer.NavigationDrawerFragment" />
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textStyle="bold"
+			android:text="@string/true_app_name"
+			android:textColor="@color/drawer_extra_details"
+			android:id="@+id/drawer_name"
+			android:paddingTop="16dp"
+			android:paddingLeft="16dp"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:text="@string/drawer_version"
 			android:textColor="@color/drawer_extra_details"
-			android:id="@+id/drawer_version"/>
+			android:id="@+id/drawer_version"
+			android:paddingLeft="16dp"/>
 </LinearLayout>

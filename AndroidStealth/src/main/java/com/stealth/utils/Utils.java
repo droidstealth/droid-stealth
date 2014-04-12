@@ -3,9 +3,11 @@ package com.stealth.utils;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
+import encryption.ConcealCrypto;
+import com.stealth.files.DirectoryManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,23 +39,80 @@ public class Utils {
 	private static final int MAX_RANDOM_STRING_LENGTH = 15;
 	private static final String TAG = "TUDELFT";
 
+	private static boolean sFakePin;
 	private static WeakReference<Context> sContext;
+	private static ConcealCrypto sCrypto;
+
+	/**
+	 * @return was the entered pin fake?
+	 */
+	public static boolean isFakePin() {
+		return sFakePin;
+	}
+
+	/**
+	 * Remember whether the entered pin was the fake or true pin
+	 * @param fakePin was the pin fake?
+	 */
+	public static void setFakePin(boolean fakePin) {
+		Utils.sFakePin = sFakePin;
+	}
+
+	/**
+	 * @param api_nr the api version you want to check
+	 * @return true if given number is the current API number
+	 */
+	public static boolean isAPI(int api_nr) {
+		return Build.VERSION.SDK_INT == api_nr;
+	}
+
+	/**
+	 * @param api_nr the api version you want to check for
+	 * @return true the API of current android system is at least the given version number
+	 */
+	public static boolean isAtLeastAPI(int api_nr) {
+		return Build.VERSION.SDK_INT >= api_nr;
+	}
+
+	/**
+	 * Get the version name of the application
+	 * @return version name
+	 */
+	public static String getVersionName() {
+		try {
+			PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+			return pInfo.versionName;
+		} catch (Exception e) {
+			return ""; // can't happen really..
+		}
+	}
 
 	/**
 	 * Set the context value of the main activity, so others can easily access it.
-	 * @param context
+	 * @param context the context to remember
 	 */
 	public static void setContext(Context context) {
 		sContext = new WeakReference<Context>(context.getApplicationContext());
 	}
 
 	/**
-	 * Get the context so you can easily access for instance the resources of this app,
+	 * @return the context so you can easily access for instance the resources of this app,
 	 * show notifications or access the device's sensors.
-	 * @return
 	 */
 	public static Context getContext() {
 		return sContext.get();
+	}
+
+	/**
+	 * Get the ConcealCrypto that uses the keys from the main folder,
+	 * in order to encrypt/decrypt items. Creates it if it doesn't yet exist.
+	 * @return the ConcealCrypto that uses the keys from the main folder
+	 */
+	public static ConcealCrypto getMainCrypto() {
+		if (sCrypto == null) {
+			sCrypto = new ConcealCrypto(getContext());
+		}
+		return sCrypto;
 	}
 
 	/**
@@ -161,7 +222,7 @@ public class Utils {
 						+ "@" + calledFrom.getLineNumber()
 						+ "]";
 
-		Log.d(tag(), String.format("%1$-"+75+ "s", message) + stack);
+		Log.d(tag(), String.format("%1$-" + 75 + "s", message) + stack);
 	}
 
 	/**
@@ -181,6 +242,22 @@ public class Utils {
 	public static void runOnMain(Runnable run) {
 		if (getContext() == null) return;
 		new Handler(getContext().getMainLooper()).post(run);
+	}
+
+	/**
+	 * Run a given callback on the main thread with the given result.
+	 * Checks for null on the callback.
+	 * @param callback the callback to run on the main thread
+	 * @param result the result to pass to the callback
+	 */
+	public static <T> void runCallbackOnMain(final IOnResult<T> callback, final T result) {
+		if (callback == null) return;
+		runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				callback.onResult(result);
+			}
+		});
 	}
 
 	/**
@@ -239,6 +316,15 @@ public class Utils {
 	}
 
 	/**
+	 * Gets random file name for temporary file reading and writing, without extension
+	 * @return the temporary file
+	 */
+	public static File getRandomCacheFile()
+	{
+		return getRandomFile(getContext().getCacheDir(), "");
+	}
+
+	/**
 	 * Gets random file name for temporary file reading and writing
 	 * @param extension the extension to use for this file (include the '.')
 	 * @return the temporary file
@@ -246,6 +332,16 @@ public class Utils {
 	public static File getRandomCacheFile(String extension)
 	{
 		return getRandomFile(getContext().getCacheDir(), extension);
+	}
+
+	/**
+	 * Gets random file name for temporary file reading and writing in our temp folder
+	 * @param extension the extension to use for this file (include the '.')
+	 * @return the temporary file
+	 */
+	public static File getRandomTempFile(String extension)
+	{
+		return getRandomFile(DirectoryManager.temp(), extension);
 	}
 
 	/**

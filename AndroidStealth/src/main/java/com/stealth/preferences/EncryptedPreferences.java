@@ -1,9 +1,11 @@
 package com.stealth.preferences;
 
+import com.facebook.crypto.exception.CryptoInitializationException;
 import com.stealth.files.DirectoryManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
+import encryption.ConcealCrypto;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -115,7 +117,7 @@ public class EncryptedPreferences {
 		mReady = false;
 		mName = name;
 		mJson = new JSONObject();
-		mEncryptedFile = new File(DirectoryManager.prefs(), name + ".crypto");
+		mEncryptedFile = new File(DirectoryManager.prefs(), mName + ".crypto");
 
 		if (mEncryptedFile.exists()) // one can only read it if it exists
 		{
@@ -171,27 +173,19 @@ public class EncryptedPreferences {
 			{
 				try
 				{
-					File cache = Utils.getRandomCacheFile(".prefs");
-
-					// TODO decrypt mEncryptedFile to mDecryptedFile
-
-					//Read text from file
-					//mJson = new JSONObject(Utils.read(cache)); // correct way
-					mJson = new JSONObject(Utils.read(mEncryptedFile)); //TEMPORARY
+					File cache = Utils.getRandomCacheFile();
+					Utils.d("Decrypting preferences file '" + mEncryptedFile.getName() + "'");
+					Utils.getMainCrypto().decrypt(mEncryptedFile, cache, mName);
+					mJson = new JSONObject(Utils.read(cache));
+					Utils.delete(cache);
 
 					// we succeeded
 					if (callback != null)
 						callback.onResult(true);
 				}
-				catch (JSONException e)
+				catch (Exception e)
 				{
-					Utils.d("Can't read preferences file.. " + e.getMessage());
-					if (callback != null)
-						callback.onResult(false);
-				}
-				catch (IOException e)
-				{
-					Utils.d("Can't read preferences file.. " + e.getMessage());
+					Utils.d("Can't read preferences file '" + mEncryptedFile.getName() + "'. " + e.getMessage());
 					if (callback != null)
 						callback.onResult(false);
 				}
@@ -205,7 +199,14 @@ public class EncryptedPreferences {
 	 */
 	private void writePreferences()
 	{
-		if (mWriting) mWriteAgain = true;
+		if (mWriting) {
+			// if we are already writing, and another write request was made,
+			// apparently something else changed in the meantime as well. So once we are done
+			// with the current writing task, we'll just do it again.
+			mWriteAgain = true;
+			return;
+		}
+
 		mWriting = true;
 
 		new Thread(new Runnable()
@@ -217,14 +218,13 @@ public class EncryptedPreferences {
 				{
 					File cache = Utils.getRandomCacheFile(".prefs");
 					Utils.write(cache, mJson.toString());
-
-					// TODO encrypt mDecryptedFile to mEncryptedFile
-					// TODO then remove the mDecryptedFile
-					Utils.copyFile(cache, mEncryptedFile);
+					Utils.d("Encrypting preferences file '" + mEncryptedFile.getName() + "'");
+					Utils.getMainCrypto().encrypt(mEncryptedFile, cache, mName);
+					Utils.delete(cache);
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{
-					Utils.d("Can't write preferences file.. " + e.getMessage());
+					Utils.d("Can't write preferences file '" + mEncryptedFile.getName() + "'. " + e.getMessage());
 				}
 
 				mWriting = false;
