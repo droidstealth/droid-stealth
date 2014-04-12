@@ -667,12 +667,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 */
 	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
 		if (actionMode == null) return;
-		Utils.runOnMain(new Runnable() {
-			@Override
-			public void run() {
-				actionMode.finish();
-			}
-		});
+		if (getSelectedItems().size() > 1) {
+			Utils.runOnMain(new Runnable() {
+				@Override
+				public void run() {
+					actionMode.finish();
+				}
+			});
+		}
 	}
 
 	/**
