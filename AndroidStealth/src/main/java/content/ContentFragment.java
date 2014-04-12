@@ -36,6 +36,9 @@ import android.widget.ListView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.dialog.DialogConstructor;
+import com.stealth.dialog.DialogOptions;
+import com.stealth.dialog.IDialogResponse;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -60,6 +63,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
+
+	private File mTempImageFile;
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -218,8 +223,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
 			case R.id.content_make:
+				mTempImageFile = Utils.getRandomCacheFile(".jpg");
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				//cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
@@ -241,44 +247,44 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			case CAMERA_REQUEST:
 			case REQUEST_CHOOSER:
 
-				if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST) {
+				if (resultCode == Activity.RESULT_OK) {
+
+					File dataFile = null;
 
 					if (data == null) {
+						//In this case, we can retrieve the url from temp image pos
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
+						dataFile = mTempImageFile;
+					}
+					else {
+						//In this case, we can find file in Uri path
+						dataFile = FileUtils.getFile(getActivity(), data.getData());
+					}
+
+					//Something failed somewhere
+					if (dataFile == null || !dataFile.exists()) {
+						Utils.d("Empty result was found!");
 						return;
 					}
 
-					final Uri uri = data.getData();
+					IndexedFolder dir = mContentManager.getCurrentFolder();
+					mContentManager.addFile(dir, dataFile, new IOnResult<IndexedFile>() {
+						@Override
+						public void onResult(IndexedFile result) {
+							if (result != null) {
 
-					if (uri == null) {
-						Utils.d("Oops... Result was OK, but uri was null. That's just great.");
-						return;
-					}
+								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
+								itemList.add(result);
+								actionLock(itemList, mMode); // lock right now
 
-					// Get the File path from the Uri
-					String path = FileUtils.getPath(Utils.getContext(), uri);
-
-					// Alternatively, use FileUtils.getFile(Context, Uri)
-					if (path != null && FileUtils.isLocal(path)) {
-						File file = new File(path);
-						IndexedFolder dir = mContentManager.getCurrentFolder();
-						mContentManager.addFile(dir, file, new IOnResult<IndexedFile>() {
-							@Override
-							public void onResult(IndexedFile result) {
-								if (result != null) {
-
-									ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
-									itemList.add(result);
-									actionLock(itemList); // lock right now
-
-									Utils.toast(R.string.content_success_add);
-								}
-								else {
-									Utils.toast(R.string.content_fail_add);
-								}
+								Utils.toast(R.string.content_success_add);
 							}
-						});
-					}
+							else {
+								Utils.toast(R.string.content_fail_add);
+							}
+						}
+					});
+
 				}
 				break;
 		}
@@ -510,9 +516,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Disables the ActionMode if no more items are checked
 	 */
 	private void disableIfNoneChecked() {
-		if (mGridView.getCheckedItemIds().length == 0) {
+		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
 			mMultiModeListener = null;
-			mMode.finish();
+			finishActionMode(mMode);
 		}
 	}
 
@@ -540,12 +546,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Locks all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
+	 * @param actionMode the mode to finish if desired
 	 */
-	public void actionLock(ArrayList<IndexedItem> with) {
+	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
 		if (!mIsBound) {
-			Log.e(this.getClass().toString() + ".onActionItemClicked",
-					"encryptionService was not bound");
+			Utils.d("EncryptionService was not bound");
+		}
+
+		if (with == null) {
+			Utils.d("We got an empty list to process. Can't deal with this.");
+			return;
 		}
 
 		for (IndexedItem item : with) {
@@ -556,47 +567,108 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 		}
 
-		// don't use an IOnResult, because we will be notified anyway,
-		// because we are listening to the changes in the encryption service
-		mEncryptionManager.encryptItems(with, null);
-	}
-
-	/**
-	 * Unlocks all items
-	 *
-	 * @param with the items to perform this action on
-	 */
-	public void actionUnlock(ArrayList<IndexedItem> with) {
-		if (!mIsBound) {
-			Log.e(this.getClass().toString() + ".onActionItemClicked",
-					"encryptionService was not bound");
-		}
-		// don't use an IOnResult, because we will be notified anyway,
-		// because we are listening to the changes in the encryption service
-		mEncryptionManager.decryptItems(with, null);
-	}
-
-	/**
-	 * Shreds all items
-	 *
-	 * @param with the items to perform this action on
-	 */
-	public void actionShred(ArrayList<IndexedItem> with) {
-		mContentManager.removeItems(with, new IOnResult<Boolean>() {
+		mEncryptionManager.encryptItems(with, new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
-					Utils.toast(R.string.content_success_shred);
-				}
-				else {
-					Utils.toast(R.string.content_fail_shred);
+					finishActionMode(actionMode);
 				}
 			}
 		});
 	}
 
+	/**
+	 * Unlocks all items
+	 *
+	 * @param with       the items to perform this action on
+	 * @param actionMode the mode to finish if desired
+	 */
+	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
+		if (!mIsBound) {
+			Log.e(this.getClass().toString() + ".onActionItemClicked",
+					"encryptionService was not bound");
+		}
+
+		mEncryptionManager.decryptItems(with, new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					finishActionMode(actionMode);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Shreds all items
+	 *
+	 * @param with       the items to perform this action on
+	 * @param actionMode the mode to finish if desired
+	 */
+	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
+
+		final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					Utils.toast(R.string.content_success_shred);
+					finishActionMode(actionMode);
+				}
+				else {
+					Utils.toast(R.string.content_fail_shred);
+				}
+			}
+		};
+
+		DialogOptions options = new DialogOptions()
+				.setTitle(R.string.dialog_shred_title)
+				.setDescription(R.string.dialog_shred_description)
+				.setNegative(R.string.cancel)
+				.setPositive(R.string.yes)
+				.setReverseColors(true);
+
+		DialogConstructor.show(
+				getActivity(),
+				options,
+				new IDialogResponse() {
+					@Override
+					public void onPositive(ArrayList<String> input) {
+						mContentManager.removeItems(with, shredListener);
+						disableIfNoneChecked();
+					}
+
+					@Override
+					public void onNegative() {
+						// do nothing
+					}
+
+					@Override
+					public void onCancel() {
+						// do nothing
+					}
+				}
+		);
+	}
+
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
 	}
 
 	/**
@@ -676,18 +748,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		public boolean onActionItemClicked(android.support.v7.view.ActionMode actionMode, MenuItem menuItem) {
 
 			ArrayList<IndexedItem> selectedItems = getSelectedItems();
-			actionMode.finish();
 
 			if (selectedItems.size() == 0) {
+				finishActionMode(actionMode);
 				return false;
 			}
 
 			switch (menuItem.getItemId()) {
 				case R.id.action_lock:
-					actionLock(selectedItems);
+					actionLock(selectedItems, actionMode);
 					break;
 				case R.id.action_unlock:
-					actionUnlock(selectedItems);
+					actionUnlock(selectedItems, actionMode);
 					break;
 				case R.id.action_share:
 					//TODO share goes here
@@ -701,7 +773,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					// delete file)
 					break;
 				case R.id.action_shred:
-					actionShred(selectedItems);
+					actionShred(selectedItems, actionMode);
 					break;
 			}
 

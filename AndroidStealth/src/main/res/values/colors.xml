@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="locked">#ff82cd14</color>
+	<color name="negative">#ff1a45</color>
+	<color name="positive">#ff82cd14</color>
 	<color name="processing">#ffeec200</color>
-	<color name="unlocked">#ff1a45</color>
+
+	<color name="locked">@color/positive</color>
+	<color name="unlocked">@color/negative</color>
 	<color name="content_list_background">#ff232323</color>
 	<color name="content_name">#ffe8e8e8</color>
 	<color name="content_text">#33ffffff</color>
+	<color name="white">#ffffffff</color>
 
 	<color name="drawer_extra_details">#ff808080</color>
 	<color name="drawer_divider">#ffe8e8e8</color>

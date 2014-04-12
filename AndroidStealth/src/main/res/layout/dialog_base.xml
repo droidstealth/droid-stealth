@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/content_list_background">
+
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:id="@+id/dialog_title"
+			android:textColor="@color/title_color"
+			android:textStyle="bold"
+			android:text="Are you sure?"
+			android:fontFamily="sans-serif-condensed"
+			android:paddingLeft="@dimen/dialog_paddings"
+			android:paddingRight="@dimen/dialog_paddings"
+			android:paddingBottom="@dimen/dialog_paddings"
+			android:paddingTop="@dimen/dialog_paddings"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/dialog_description"
+			android:text="Do you want to continue?"
+			android:textColor="@color/white"
+			android:paddingLeft="@dimen/dialog_paddings"
+			android:paddingRight="@dimen/dialog_paddings"
+			android:paddingBottom="@dimen/dialog_paddings"/>
+
+	<LinearLayout android:layout_width="match_parent"
+	              android:layout_height="200dp"
+	              android:layout_marginLeft="@dimen/dialog_paddings"
+	              android:layout_marginRight="@dimen/dialog_paddings"
+	              android:layout_marginBottom="@dimen/dialog_paddings"
+	              android:id="@+id/dialog_scroll_wrap">
+		<ScrollView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:id="@+id/dialog_scroll">
+			<LinearLayout android:layout_width="match_parent"
+			              android:layout_height="wrap_content"
+			              android:orientation="vertical"
+			              android:id="@+id/dialog_inputs">
+			</LinearLayout>
+		</ScrollView>
+	</LinearLayout>
+
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Nope"
+				android:textStyle="bold"
+				android:background="@drawable/pin_button_dialer"
+				android:textColor="@color/negative"
+				android:id="@+id/dialog_negative"/>
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Oki"
+				android:textStyle="bold"
+				android:background="@drawable/pin_button_dialer"
+				android:textColor="@color/positive"
+				android:id="@+id/dialog_positive"/>
+	</LinearLayout>
+</LinearLayout>
