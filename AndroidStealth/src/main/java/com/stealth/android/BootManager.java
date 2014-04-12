@@ -88,9 +88,9 @@ public class BootManager {
 		sBooting = false;
 
 		if (result) {
-			Utils.d("BOOTED ++++++++++++");
+			Utils.d("Booted!");
 		} else {
-			Utils.d("BOOT FAILED ////////////");
+			Utils.d("Boot failed...");
 		}
 
 		Utils.runOnMain(new Runnable() {
@@ -115,7 +115,7 @@ public class BootManager {
 			Utils.d("We already booted!");
 			callback.onResult(sBootResult);
 		} else if (callback != null) {
-			Utils.d(" Added boot callback to callback list.");
+			Utils.d("Added boot callback to callback list.");
 			mBootCallbacks.add(callback);
 		}
 	}
@@ -134,7 +134,7 @@ public class BootManager {
 			return;
 		}
 
-		Utils.d("BOOTING ~~~~~~~~~~~~~");
+		Utils.d("Booting...");
 
 		sBooting = true;
 		sPin = pin;

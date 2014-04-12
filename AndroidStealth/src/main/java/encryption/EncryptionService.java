@@ -2,9 +2,11 @@ package encryption;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,7 +35,8 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	private static final int POOL_SIZE = 10;
 
 	// static, because it needs to survive multiple service lifecycles
-	private static ArrayList<IUpdateListener> sListeners = new ArrayList<IUpdateListener>();
+	private static ArrayList<WeakReference<IUpdateListener>> sListeners
+			= new ArrayList<WeakReference<IUpdateListener>>();
 
 	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
 	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
@@ -107,9 +110,12 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 * @param listener the listener.
 	 */
 	public static void addUpdateListener(IUpdateListener listener) {
-		if (!sListeners.contains(listener)) {
-			sListeners.add(listener);
+		for (WeakReference<IUpdateListener> ref : sListeners) {
+			if (ref.get() == listener) {
+				return; // is already added
+			}
 		}
+		sListeners.add(new WeakReference<IUpdateListener>(listener));
 	}
 
 	/**
@@ -118,8 +124,10 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 * @param listener the listener.
 	 */
 	public static void removeUpdateListener(IUpdateListener listener) {
-		if (sListeners.contains(listener)) {
-			sListeners.remove(listener);
+		for (WeakReference<IUpdateListener> ref : sListeners) {
+			if (ref.get() == listener) {
+				sListeners.remove(ref);
+			}
 		}
 	}
 
@@ -128,17 +136,15 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 */
 	private void handleUpdate(boolean notifyListenersOnUpdate) {
 		if (notifyListenersOnUpdate) {
-			boolean somethingWasNull = false;
-			for (IUpdateListener listener : sListeners) {
+			Iterator<WeakReference<IUpdateListener>> i = sListeners.iterator();
+			while (i.hasNext()) {
+				WeakReference<IUpdateListener> ref = i.next();
+				IUpdateListener listener = ref.get();
 				if (listener != null) {
 					listener.onEncryptionServiceUpdate();
 				} else {
-					somethingWasNull = true;
+					i.remove(); // keeping it clean
 				}
-			}
-			if (somethingWasNull) {
-				// keep the list clean :)
-				sListeners.removeAll(Collections.singleton(null));
 			}
 		}
 		handleNotifications();
