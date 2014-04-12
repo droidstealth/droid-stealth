@@ -64,6 +64,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
 
+	private File mTempImageFile;
+
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -221,8 +223,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
 			case R.id.content_make:
+				mTempImageFile = Utils.getRandomCacheFile(".jpg");
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				//cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
@@ -246,42 +249,42 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 				if (resultCode == Activity.RESULT_OK) {
 
+					File dataFile = null;
+
 					if (data == null) {
+						//In this case, we can retrieve the url from temp image pos
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
+						dataFile = mTempImageFile;
+					}
+					else {
+						//In this case, we can find file in Uri path
+						dataFile = FileUtils.getFile(getActivity(), data.getData());
+					}
+
+					//Something failed somewhere
+					if (dataFile == null || !dataFile.exists()) {
+						Utils.d("Empty result was found!");
 						return;
 					}
 
-					final Uri uri = data.getData();
+					IndexedFolder dir = mContentManager.getCurrentFolder();
+					mContentManager.addFile(dir, dataFile, new IOnResult<IndexedFile>() {
+						@Override
+						public void onResult(IndexedFile result) {
+							if (result != null) {
 
-					if (uri == null) {
-						Utils.d("Oops... Result was OK, but uri was null. That's just great.");
-						return;
-					}
+								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
+								itemList.add(result);
+								actionLock(itemList, mMode); // lock right now
 
-					// Get the File path from the Uri
-					String path = FileUtils.getPath(Utils.getContext(), uri);
-
-					// Alternatively, use FileUtils.getFile(Context, Uri)
-					if (path != null && FileUtils.isLocal(path)) {
-						File file = new File(path);
-						IndexedFolder dir = mContentManager.getCurrentFolder();
-						mContentManager.addFile(dir, file, new IOnResult<IndexedFile>() {
-							@Override
-							public void onResult(IndexedFile result) {
-								if (result != null) {
-
-									ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
-									itemList.add(result);
-									actionLock(itemList, null); // lock right now
-
-									Utils.toast(R.string.content_success_add);
-								}
-								else {
-									Utils.toast(R.string.content_fail_add);
-								}
+								Utils.toast(R.string.content_success_add);
 							}
-						});
-					}
+							else {
+								Utils.toast(R.string.content_fail_add);
+							}
+						}
+					});
+
 				}
 				break;
 		}
@@ -543,7 +546,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Locks all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -577,7 +580,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Unlocks all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -599,7 +602,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Shreds all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -653,10 +656,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Finishes the action mode on the UI thread
+	 *
 	 * @param actionMode the action mode the finish
 	 */
 	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) return;
+		if (actionMode == null) {
+			return;
+		}
 		Utils.runOnMain(new Runnable() {
 			@Override
 			public void run() {
