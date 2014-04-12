@@ -241,7 +241,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			case CAMERA_REQUEST:
 			case REQUEST_CHOOSER:
 
-				if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST) {
+				if (resultCode == Activity.RESULT_OK) {
 
 					if (data == null) {
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
