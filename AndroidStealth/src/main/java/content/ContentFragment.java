@@ -275,7 +275,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 									ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
 									itemList.add(result);
-									actionLock(itemList); // lock right now
+									actionLock(itemList, null); // lock right now
 
 									Utils.toast(R.string.content_success_add);
 								}
@@ -518,7 +518,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private void disableIfNoneChecked() {
 		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
 			mMultiModeListener = null;
-			mMode.finish();
+			finishActionMode(mMode);
 		}
 	}
 
@@ -547,11 +547,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Locks all items
 	 *
 	 * @param with the items to perform this action on
+	 * @param actionMode the mode to finish if desired
 	 */
-	public void actionLock(ArrayList<IndexedItem> with) {
+	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
 		if (!mIsBound) {
-			Log.e(this.getClass().toString() + ".onActionItemClicked",
-					"encryptionService was not bound");
+			Utils.d("EncryptionService was not bound");
+		}
+
+		if (with == null) {
+			Utils.d("We got an empty list to process. Can't deal with this.");
+			return;
 		}
 
 		for (IndexedItem item : with) {
@@ -562,38 +567,52 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			}
 		}
 
-		// don't use an IOnResult, because we will be notified anyway,
-		// because we are listening to the changes in the encryption service
-		mEncryptionManager.encryptItems(with, null);
+		mEncryptionManager.encryptItems(with, new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					finishActionMode(actionMode);
+				}
+			}
+		});
 	}
 
 	/**
 	 * Unlocks all items
 	 *
 	 * @param with the items to perform this action on
+	 * @param actionMode the mode to finish if desired
 	 */
-	public void actionUnlock(ArrayList<IndexedItem> with) {
+	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
 		if (!mIsBound) {
 			Log.e(this.getClass().toString() + ".onActionItemClicked",
 					"encryptionService was not bound");
 		}
-		// don't use an IOnResult, because we will be notified anyway,
-		// because we are listening to the changes in the encryption service
-		mEncryptionManager.decryptItems(with, null);
+
+		mEncryptionManager.decryptItems(with, new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					finishActionMode(actionMode);
+				}
+			}
+		});
 	}
 
 	/**
 	 * Shreds all items
 	 *
 	 * @param with the items to perform this action on
+	 * @param actionMode the mode to finish if desired
 	 */
-	public void actionShred(final ArrayList<IndexedItem> with) {
+	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
 
 		final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
 					Utils.toast(R.string.content_success_shred);
+					finishActionMode(actionMode);
 				}
 				else {
 					Utils.toast(R.string.content_fail_shred);
@@ -632,6 +651,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) return;
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
 	}
 
 	/**
@@ -711,18 +744,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		public boolean onActionItemClicked(android.support.v7.view.ActionMode actionMode, MenuItem menuItem) {
 
 			ArrayList<IndexedItem> selectedItems = getSelectedItems();
-			actionMode.finish();
 
 			if (selectedItems.size() == 0) {
+				finishActionMode(actionMode);
 				return false;
 			}
 
 			switch (menuItem.getItemId()) {
 				case R.id.action_lock:
-					actionLock(selectedItems);
+					actionLock(selectedItems, actionMode);
 					break;
 				case R.id.action_unlock:
-					actionUnlock(selectedItems);
+					actionUnlock(selectedItems, actionMode);
 					break;
 				case R.id.action_share:
 					//TODO share goes here
@@ -736,7 +769,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					// delete file)
 					break;
 				case R.id.action_shred:
-					actionShred(selectedItems);
+					actionShred(selectedItems, actionMode);
 					break;
 			}
 
