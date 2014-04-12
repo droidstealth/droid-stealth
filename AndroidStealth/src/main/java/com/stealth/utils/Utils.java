@@ -341,7 +341,7 @@ public class Utils {
 	 */
 	public static File getRandomCacheFile()
 	{
-		return getRandomFile(getContext().getCacheDir(), "");
+		return getRandomFile(getContext().getExternalCacheDir(), "");
 	}
 
 	/**
@@ -351,7 +351,7 @@ public class Utils {
 	 */
 	public static File getRandomCacheFile(String extension)
 	{
-		return getRandomFile(getContext().getCacheDir(), extension);
+		return getRandomFile(getContext().getExternalCacheDir(), extension);
 	}
 
 	/**
