@@ -1,5 +1,7 @@
 package com.stealth.drawer;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,7 +57,8 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private DrawerLayout mDrawerLayout;
+	private DrawerLayout mDrawerLayout;
+	private NavigationDrawerAdapter mAdapter;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
@@ -107,18 +110,16 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-		        getActionBar().getThemedContext(),
-		        android.R.layout.simple_list_item_1,
-		        android.R.id.text1,
-		        new String[] {
-				        getString(R.string.drawer_watch_folders),
-				        getString(R.string.drawer_delete),
-				        getString(R.string.drawer_modify_app),
-				        getString(R.string.drawer_wifi),
-				        getString(R.string.drawer_tutorial)
-		        }
-        ));
+
+	    ArrayList<NavigationDrawerItem> items = new ArrayList<NavigationDrawerItem>();
+	    items.add(new NavigationDrawerItem(R.string.drawer_home, R.drawable.ic_drawer_home, R.color.drawer_home));
+	    items.add(new NavigationDrawerItem(R.string.drawer_morph, R.drawable.ic_drawer_morph, R.color.drawer_morph));
+	    items.add(new NavigationDrawerItem(R.string.drawer_launch, R.drawable.ic_drawer_launch, R.color.drawer_launch));
+	    items.add(new NavigationDrawerItem(R.string.drawer_general, R.drawable.ic_drawer_general, R.color.drawer_general));
+	    items.add(new NavigationDrawerItem(R.string.drawer_pin, R.drawable.ic_drawer_pin, R.color.drawer_pin));
+
+	    mAdapter = new NavigationDrawerAdapter(root.getContext(), items);
+        mDrawerListView.setAdapter(mAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return root;
     }

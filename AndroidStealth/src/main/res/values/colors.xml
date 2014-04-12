@@ -17,4 +17,10 @@
 	<color name="transparent">#00000000</color>
 	<color name="divider_color">#99333333</color>
 	<color name="title_color">#33B5E5</color>
+
+	<color name="drawer_home">#ff00b6ff</color>
+	<color name="drawer_morph">#ff00ff4c</color>
+	<color name="drawer_launch">#ffff8200</color>
+	<color name="drawer_general">#ffff005a</color>
+	<color name="drawer_pin">#fffff400</color>
 </resources>
