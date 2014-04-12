@@ -41,6 +41,10 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		startup(null);
+	}
+
+	private void startup(final IOnResult<Boolean> callback) {
 		mBinder = new ServiceBinder();
 		BootManager.boot(this, new IOnResult<Boolean>() {
 			@Override
@@ -50,6 +54,10 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				//use a scheduled thread pool for the running of our crypto system
 				createExecutor();
 				handleUpdate(false);
+
+				if (callback != null) {
+					callback.onResult(result);
+				}
 			}
 		});
 	}
@@ -75,7 +83,13 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
 			Utils.d("You tapped to lock. Will do!");
-			EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
+			startup(new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					EncryptionManager.create(EncryptionService.this)
+							.encryptItems(FileIndex.get().getUnlockedFiles(), null);
+				}
+			});
 			return super.onStartCommand(intent, flags, startId);
 		}
 		else {
