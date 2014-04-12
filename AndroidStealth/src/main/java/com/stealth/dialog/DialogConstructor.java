@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,7 +22,7 @@ import com.stealth.utils.Utils;
  * This class can show different dialogs.
  * Created by OlivierHokke on 11-Apr-14.
  */
-public class DialogManager {
+public class DialogConstructor {
 
 	public static void show(Activity activity, final DialogOptions options, final IDialogResponse response) {
 
@@ -69,6 +70,19 @@ public class DialogManager {
 
 		final Button positive = (Button)dialog.findViewById(R.id.dialog_positive);
 		positive.setText(options.getPositive());
+
+		if (options.isReverseColors()) {
+			negative.setTextColor(Utils.color(R.color.positive));
+			positive.setTextColor(Utils.color(R.color.negative));
+		}
+
+		if (!options.isNegativeButtonEnabled()) {
+			Utils.remove(negative);
+		}
+
+		if (!options.isPositiveButtonEnabled()) {
+			Utils.remove(positive);
+		}
 
 		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 			@Override

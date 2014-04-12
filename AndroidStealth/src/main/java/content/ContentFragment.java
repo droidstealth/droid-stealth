@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,8 +36,7 @@ import android.widget.ListView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
-import com.stealth.dialog.DialogInput;
-import com.stealth.dialog.DialogManager;
+import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
 import com.stealth.files.FileIndex;
@@ -624,9 +621,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				.setTitle(R.string.dialog_shred_title)
 				.setDescription(R.string.dialog_shred_description)
 				.setNegative(R.string.cancel)
-				.setPositive(R.string.yes);
+				.setPositive(R.string.yes)
+				.setReverseColors(true);
 
-		DialogManager.show(
+		DialogConstructor.show(
 				getActivity(),
 				options,
 				new IDialogResponse() {
