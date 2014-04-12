@@ -22,6 +22,7 @@
 	<dimen name="content_text_side_padding">4dp</dimen>
 	<dimen name="content_status_icon_padding">1dp</dimen>
 	<dimen name="text_margin">8dp</dimen>
+	<dimen name="dialog_paddings">16dp</dimen>
 
 	<!-- not used..? -->
 	<dimen name="divider_width">1dp</dimen>
