@@ -256,14 +256,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
 						dataFile = mTempImageFile;
 					}
-					else
-					{
+					else {
 						//In this case, we can find file in Uri path
-						dataFile = FileUtils.getFile(getActivity(),data.getData());
+						dataFile = FileUtils.getFile(getActivity(), data.getData());
 					}
 
 					//Something failed somewhere
-					if(dataFile == null || !dataFile.exists()) {
+					if (dataFile == null || !dataFile.exists()) {
 						Utils.d("Empty result was found!");
 						return;
 					}
@@ -547,7 +546,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Locks all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -581,7 +580,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Unlocks all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -603,7 +602,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Shreds all items
 	 *
-	 * @param with the items to perform this action on
+	 * @param with       the items to perform this action on
 	 * @param actionMode the mode to finish if desired
 	 */
 	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
@@ -657,10 +656,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Finishes the action mode on the UI thread
+	 *
 	 * @param actionMode the action mode the finish
 	 */
 	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) return;
+		if (actionMode == null) {
+			return;
+		}
 		Utils.runOnMain(new Runnable() {
 			@Override
 			public void run() {
