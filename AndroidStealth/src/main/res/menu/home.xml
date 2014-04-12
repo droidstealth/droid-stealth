@@ -7,4 +7,6 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+	<item android:id="@+id/share_app"
+          android:title="@string/morph_app"/>
 </menu>

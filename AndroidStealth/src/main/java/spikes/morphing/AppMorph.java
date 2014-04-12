@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -23,12 +24,8 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 
 import kellinwood.security.zipsigner.ZipSigner;
-import kellinwood.security.zipsigner.optional.CustomKeySigner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -36,12 +33,12 @@ import org.xml.sax.SAXException;
  */
 public class AppMorph {
 	public enum ProgressStep {
-		Started,
-		Extracted,
-		LabelSet,
-		IconSet,
-		Packaged,
-		Signed
+		Extracting,
+		SettingLabel,
+		SettingIcons,
+		Repackaging,
+		Signing,
+		Finished
 	}
 	public interface MorphProgressListener {
 		void onProgress(ProgressStep progress);
@@ -103,28 +100,28 @@ public class AppMorph {
     public File morphApp(String label, Uri icon) {
 	    File signedApkFile = null;
 
-	    setProgressStep(ProgressStep.Started);
 	    try {
+		    setProgressStep(ProgressStep.Extracting);
 		    File jarDir = extractApk();
-		    setProgressStep(ProgressStep.Extracted);
 
+		    //setProgressStep(ProgressStep.SettingLabel);
 		    //String iconResName = setManifestLabel(jarDir, label);
-			//setProgressStep(ProgressStep.LabelSet);
 
-		    //setIcons(jarDir, icon, iconResName);
-	        //setProgressStep(ProgressStep.IconSet);
+		    setProgressStep(ProgressStep.SettingIcons);
+		    setIcons(jarDir, icon, "ic_stealth_launcher");
 
+		    setProgressStep(ProgressStep.Repackaging);
 		    File unSignedApkFile = createJar(jarDir);
-		    setProgressStep(ProgressStep.Packaged);
 
+		    setProgressStep(ProgressStep.Signing);
 		    signedApkFile = signApk(unSignedApkFile);
-		    setProgressStep(ProgressStep.Signed);
+
 	    } catch (Exception e){
 			if(mListener != null)
 				mListener.onMorphFailed(mProgressStep, e.getMessage());
 	    }
 
-	    Log.d("AppMorph", "Morph finalized");
+	    setProgressStep(ProgressStep.Finished);
 
         return signedApkFile;
     }
@@ -201,6 +198,7 @@ public class AppMorph {
 	 * @throws FileNotFoundException
 	 */
 	private boolean setIcons(File jarDir, final Uri icon, String iconResName) throws FileNotFoundException {
+
 		Bitmap original = BitmapFactory.decodeStream(mAppContext.getContentResolver().openInputStream(icon));
 
 		if(iconResName == null)
@@ -219,12 +217,14 @@ public class AppMorph {
 
 		boolean singleIconFailed = false;
 
+		String newFileName = iconResName + "." + getExtension(FileUtils.getFile(mAppContext, icon));
+
 		for(File file : drawables){
 			if(!file.isDirectory())
 				continue;
 
 			try {
-				replaceIcon(original, file, iconResName);
+				replaceIcon(original, file, iconResName, newFileName);
 			}
 			catch (FileNotFoundException e){
 				singleIconFailed = true;
@@ -241,10 +241,11 @@ public class AppMorph {
 	 * @param iconResName name of the icon
 	 * @throws FileNotFoundException
 	 */
-	private void replaceIcon(Bitmap replacement, File currentDir, final String iconResName) throws FileNotFoundException {
+	private void replaceIcon(Bitmap replacement, File currentDir, final String iconResName, String newIconName) throws FileNotFoundException {
 		File[] iconFilesInDir = currentDir.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File file, String s) {
+				s = s.replaceFirst("[.][^.]+$", "");
 				return s.equalsIgnoreCase(iconResName);
 			}
 		});
@@ -257,7 +258,7 @@ public class AppMorph {
 		String filename = currentDir.getName();
 		String size = filename.substring(filename.indexOf('-')+1);
 
-		File iconFile = new File(currentDir, iconResName);
+		File iconFile = new File(currentDir, newIconName);
 
 		if(ICON_SIZES.containsKey(size)){
 			int iconSize = ICON_SIZES.get(size);
@@ -366,4 +367,21 @@ public class AppMorph {
             deleteContent(folder);
         folder.delete();
     }
+
+	/**
+	 * Retrieves the extension from a file
+	 * @param f The file to retrieve the extension from
+	 * @return The extension
+	 */
+	private String getExtension(File f){
+		String extension = "";
+		String name = f.getName();
+
+		int i = name.lastIndexOf('.');
+		if (i > 0) {
+			extension = name.substring(i+1);
+		}
+
+		return extension;
+	}
 }

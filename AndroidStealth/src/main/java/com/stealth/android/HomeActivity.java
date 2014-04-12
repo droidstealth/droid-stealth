@@ -4,21 +4,28 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.visibility.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
 import pin.PinManager;
 import sharing.SharingUtils;
+import spikes.morphing.AppMorph;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, AppMorph.MorphProgressListener {
+
+	private static final int ICON_CHOOSER = 2625;
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -31,6 +38,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	private CharSequence mTitle;
 	private int mActiveNavigationOption = 0;
 	private ProgressDialog mProgress = null;
+	private AppMorph mAppMorph;
 
 	private boolean mRequestedActivity;
 
@@ -65,6 +73,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home_loading);
+
+		mAppMorph = new AppMorph(this);
+		mAppMorph.setMorphProgressListener(this);
 
 		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
 		BootManager.boot(this, pin, new IOnResult<Boolean>() {
@@ -110,6 +121,15 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	public void onConfigurationChanged(Configuration newConfig)
 	{
 		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+			if(requestCode == ICON_CHOOSER && resultCode == RESULT_OK){
+				new MorphTask("test", data.getData()).execute();
+			}
 	}
 
 	/**
@@ -175,9 +195,41 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 				Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
 				startActivity(settingsIntent);
 				return true;
+			case R.id.share_app:
+				Intent getContentIntent = FileUtils.createGetContentIntent();
+				Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+				setRequestedActivity(true);
+				startActivityForResult(intent, ICON_CHOOSER);
 			default:
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onProgress(AppMorph.ProgressStep progress) {
+		Log.d("HomeActivity", "Progress: " + progress.toString());
+	}
+
+	@Override
+	public void onMorphFailed(AppMorph.ProgressStep atPoint, String text) {
+		Log.d("HomeActivity", "Failure at " + atPoint.toString());
+	}
+
+	private class MorphTask extends AsyncTask<Void, Void, Void> {
+
+		private String mLabel;
+		private Uri mIcon;
+
+		public MorphTask(String label, Uri icon){
+			mLabel = label;
+			mIcon = icon;
+		}
+
+		@Override
+		protected Void doInBackground(Void... voids) {
+			mAppMorph.morphApp(mLabel, mIcon);
+			return null;
+		}
 	}
 }
