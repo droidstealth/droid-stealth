@@ -9,7 +9,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewManager;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -102,6 +105,16 @@ public class Utils {
 	}
 
 	/**
+	 * Remove a view from a layout
+	 * @param v the view to remove
+	 */
+	public static void remove(View v) {
+		if (v.getParent() != null) {
+			((ViewManager) v.getParent()).removeView(v);
+		}
+	}
+
+	/**
 	 * Returns the log tag for class
 	 * @param object the class
 	 * @return logtag
@@ -136,6 +149,26 @@ public class Utils {
 	public static int color(int resource) {
 		if (getContext() == null) return Color.WHITE;
 		return getContext().getResources().getColor(resource);
+	}
+
+	/**
+	 * Get the pixel value of the given dp value
+	 * @param dp the dp value to convert
+	* @return the pixel value
+	*/
+	public static int px(int dp) {
+		DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+		return (int)((dp * displayMetrics.density) + 0.5);
+	}
+
+	/**
+	 * Get the dp value of the given px value
+	 * @param px the pixel value to convert
+	 * @return the dp value
+	 */
+	public static int dp(int px) {
+		DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+		return (int) ((px / displayMetrics.density) + 0.5);
 	}
 
 	/**
