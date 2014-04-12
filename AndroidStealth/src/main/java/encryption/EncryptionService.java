@@ -32,19 +32,18 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	public static final String TAP_TO_LOCK = "tapToLock";
 	private static final int POOL_SIZE = 10;
 
+	// static, because it needs to survive multiple service lifecycles
+	private static ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
+
 	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
 	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
-	private ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
 	private IBinder mBinder;
 	private ExecutorService mCryptoExecutor;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		startup(null);
-	}
 
-	private void startup(final IOnResult<Boolean> callback) {
 		mBinder = new ServiceBinder();
 		BootManager.boot(this, new IOnResult<Boolean>() {
 			@Override
@@ -54,10 +53,6 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				//use a scheduled thread pool for the running of our crypto system
 				createExecutor();
 				handleUpdate(false);
-
-				if (callback != null) {
-					callback.onResult(result);
-				}
 			}
 		});
 	}
@@ -81,20 +76,20 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
+		if (intent != null && intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
 			Utils.d("You tapped to lock. Will do!");
-			startup(new IOnResult<Boolean>() {
+			// if service was turned off: we wait until the boot is ready, if so, this will be called after the
+			// boot in onCreate, because the onStartCommand gets called later.
+			// if service was still on: then we already booted, in which case this will be called at once.
+			BootManager.addBootCallback(new IOnResult<Boolean>() {
 				@Override
 				public void onResult(Boolean result) {
 					EncryptionManager.create(EncryptionService.this)
 							.encryptItems(FileIndex.get().getUnlockedFiles(), null);
 				}
 			});
-			return super.onStartCommand(intent, flags, startId);
 		}
-		else {
-			throw new IllegalStateException("EncryptionService should not be started through Intent anymore");
-		}
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
@@ -111,11 +106,21 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 *
 	 * @param listener the listener.
 	 */
-	public void addUpdateListener(UpdateListener listener) {
-		if (mListeners.contains(listener)) {
-			return;
+	public static void addUpdateListener(UpdateListener listener) {
+		if (!mListeners.contains(listener)) {
+			mListeners.add(listener);
 		}
-		mListeners.add(listener);
+	}
+
+	/**
+	 * Removes a listener in order to stop listening to changes in the queues
+	 *
+	 * @param listener the listener.
+	 */
+	public static void removeUpdateListener(UpdateListener listener) {
+		if (mListeners.contains(listener)) {
+			mListeners.remove(listener);
+		}
 	}
 
 	/**

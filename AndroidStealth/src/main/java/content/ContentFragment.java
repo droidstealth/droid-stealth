@@ -60,21 +60,21 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
+	private EncryptionService mEncryptionService;
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-			EncryptionService service = ((EncryptionService.ServiceBinder) iBinder).getService();
-			mEncryptionManager = EncryptionManager.create(service);
-			service.addUpdateListener(ContentFragment.this);
+			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
+			mEncryptionManager = EncryptionManager.create(mEncryptionService);
 			Utils.d("Encryption manager is connected!");
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
 			mEncryptionManager = null;
+			mEncryptionService = null;
 			Utils.d("Encryption manager is disconnected..?");
-			// TODO destory encryption manager
 		}
 	};
 	private NfcAdapter mNfcAdapter;
@@ -83,7 +83,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Remembers which item is currently being selected in single selection mode
 	 */
 	private int mSingleSelected;
-	private IOnResult<Boolean> mNotifyOnResult = new IOnResult<Boolean>() {
+	private IOnResult<Boolean> mUpdateList = new IOnResult<Boolean>() {
 		@Override
 		public void onResult(Boolean result) {
 			Utils.runOnMain(new Runnable() {
@@ -109,6 +109,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	void doBindService() {
 		Utils.d("Trying to bind service");
+		EncryptionService.addUpdateListener(ContentFragment.this);
 		getActivity().getApplicationContext()
 				.bindService(new Intent(getActivity(), EncryptionService.class), mConnection,
 						Context.BIND_AUTO_CREATE);
@@ -118,26 +119,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	void doUnbindService() {
 		if (mIsBound) {
 			Utils.d("Trying to unbind service");
+
 			getActivity().getApplicationContext().unbindService(mConnection);
+			EncryptionService.removeUpdateListener(this);
 			mIsBound = false;
 		}
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		doUnbindService();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		doBindService();
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
 	}
 
 	/**
@@ -168,6 +154,35 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 		setHasOptionsMenu(true);
 	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		doUnbindService();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		doBindService();
+		mUpdateList.onResult(true);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public void onEncryptionServiceUpdate() {
+		if (getActivity() != null) {
+			mUpdateList.onResult(true);
+		} else {
+			Utils.d("Calling the service UpdateListener but its activity does not exist anymore. " +
+					"We should have stopped listening.. why didn't we?");
+		}
+	}
+
 
 	/**
 	 * Inflates normal Menu.
@@ -530,11 +545,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		catch (Exception e) {
 			// could not set image
 		}
-	}
-
-	@Override
-	public void onEncryptionServiceUpdate() {
-		mNotifyOnResult.onResult(true);
 	}
 
 	/**

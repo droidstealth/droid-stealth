@@ -309,7 +309,9 @@ public class FileIndex {
 			@Override
 			public void run() {
 				for (OnFileIndexChangedListener listener : mListeners) {
-					listener.onFileIndexChanged();
+					if (listener != null) {
+						listener.onFileIndexChanged();
+					}
 				}
 			}
 		});
