@@ -578,7 +578,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
-					finishActionMode(actionMode);
+					finishMultiActionMode(actionMode);
 				}
 			}
 		});
@@ -600,7 +600,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
-					finishActionMode(actionMode);
+					finishMultiActionMode(actionMode);
 				}
 			}
 		});
@@ -619,7 +619,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			public void onResult(Boolean result) {
 				if (result) {
 					Utils.toast(R.string.content_success_shred);
-					finishActionMode(actionMode);
+					finishMultiActionMode(actionMode);
 				}
 				else {
 					Utils.toast(R.string.content_fail_shred);
@@ -666,6 +666,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * @param actionMode the action mode the finish
 	 */
 	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) return;
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
 		if (actionMode == null) return;
 		if (getSelectedItems().size() > 1) {
 			Utils.runOnMain(new Runnable() {
