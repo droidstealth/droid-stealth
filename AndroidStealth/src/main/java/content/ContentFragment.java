@@ -61,6 +61,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
 
+	private File mTempImageFile;
+
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -218,8 +220,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
 			case R.id.content_make:
+				mTempImageFile = Utils.getRandomCacheFile(".jpg");
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				//cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFolder));
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(cameraIntent, CAMERA_REQUEST);
 				return true;
@@ -243,42 +246,30 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 				if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST) {
 
-					if (data == null) {
-						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
+					//we failed with creation of image
+					if(mTempImageFile == null || !mTempImageFile.exists())
 						return;
-					}
-
-					final Uri uri = data.getData();
-
-					if (uri == null) {
-						Utils.d("Oops... Result was OK, but uri was null. That's just great.");
-						return;
-					}
-
-					// Get the File path from the Uri
-					String path = FileUtils.getPath(Utils.getContext(), uri);
 
 					// Alternatively, use FileUtils.getFile(Context, Uri)
-					if (path != null && FileUtils.isLocal(path)) {
-						File file = new File(path);
-						IndexedFolder dir = mContentManager.getCurrentFolder();
-						mContentManager.addFile(dir, file, new IOnResult<IndexedFile>() {
-							@Override
-							public void onResult(IndexedFile result) {
-								if (result != null) {
 
-									ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
-									itemList.add(result);
-									actionLock(itemList); // lock right now
+					IndexedFolder dir = mContentManager.getCurrentFolder();
+					mContentManager.addFile(dir, mTempImageFile, new IOnResult<IndexedFile>() {
+						@Override
+						public void onResult(IndexedFile result) {
+							if (result != null) {
 
-									Utils.toast(R.string.content_success_add);
-								}
-								else {
-									Utils.toast(R.string.content_fail_add);
-								}
+								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
+								itemList.add(result);
+								actionLock(itemList); // lock right now
+
+								Utils.toast(R.string.content_success_add);
 							}
-						});
-					}
+							else {
+								Utils.toast(R.string.content_fail_add);
+							}
+						}
+					});
+
 				}
 				break;
 		}
