@@ -33,7 +33,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	private static final int POOL_SIZE = 10;
 
 	// static, because it needs to survive multiple service lifecycles
-	private static ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
+	private static ArrayList<IUpdateListener> sListeners = new ArrayList<IUpdateListener>();
 
 	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
 	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
@@ -97,7 +97,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		handleUpdate(false);
 	}
 
-	public interface UpdateListener {
+	public interface IUpdateListener {
 		public abstract void onEncryptionServiceUpdate();
 	}
 
@@ -106,9 +106,9 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 *
 	 * @param listener the listener.
 	 */
-	public static void addUpdateListener(UpdateListener listener) {
-		if (!mListeners.contains(listener)) {
-			mListeners.add(listener);
+	public static void addUpdateListener(IUpdateListener listener) {
+		if (!sListeners.contains(listener)) {
+			sListeners.add(listener);
 		}
 	}
 
@@ -117,9 +117,9 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 *
 	 * @param listener the listener.
 	 */
-	public static void removeUpdateListener(UpdateListener listener) {
-		if (mListeners.contains(listener)) {
-			mListeners.remove(listener);
+	public static void removeUpdateListener(IUpdateListener listener) {
+		if (sListeners.contains(listener)) {
+			sListeners.remove(listener);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	private void handleUpdate(boolean notifyListenersOnUpdate) {
 		if (notifyListenersOnUpdate) {
 			boolean somethingWasNull = false;
-			for (UpdateListener listener : mListeners) {
+			for (IUpdateListener listener : sListeners) {
 				if (listener != null) {
 					listener.onEncryptionServiceUpdate();
 				} else {
@@ -138,7 +138,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 			}
 			if (somethingWasNull) {
 				// keep the list clean :)
-				mListeners.removeAll(Collections.singleton(null));
+				sListeners.removeAll(Collections.singleton(null));
 			}
 		}
 		handleNotifications();

@@ -51,7 +51,7 @@ import sharing.SharingUtils;
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
-		AdapterView.OnItemLongClickListener, EncryptionService.UpdateListener {
+		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 	private GridView mGridView;
@@ -178,7 +178,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		if (getActivity() != null) {
 			mUpdateList.onResult(true);
 		} else {
-			Utils.d("Calling the service UpdateListener but its activity does not exist anymore. " +
+			Utils.d("Calling the service IUpdateListener but its activity does not exist anymore. " +
 					"We should have stopped listening.. why didn't we?");
 		}
 	}
