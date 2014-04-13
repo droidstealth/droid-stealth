@@ -16,14 +16,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-
-		// only do for API 11 and above
-		if (Utils.isAtLeastAPI(11)) {
-			setScaleY(0.1f);
-			setAlpha(0);
-			animate().setStartDelay(mItemID * 20).setDuration(200).scaleY(1f).alpha(1).setInterpolator(
-					new DecelerateInterpolator(2f)).start();
-		}
+		Utils.fadein(this, mItemID * 20);
 	}
 
 	public CheckableLinearLayout(Context context) {

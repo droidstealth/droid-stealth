@@ -131,6 +131,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 			return root;
 		}
 
+		long animStep = 20;
+		long animNow = 100;
+
 		mTitle = (TextView)root.findViewById(R.id.pin_title);
 		mTitle.setText(mTitleResource);
 		mDescription = (TextView)root.findViewById(R.id.pin_description);
@@ -156,6 +159,25 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 		root.findViewById(R.id.pin_accept).setOnClickListener(this);
 		root.findViewById(R.id.pin_delete).setOnClickListener(this);
 		root.findViewById(R.id.pin_delete).setOnLongClickListener(this);
+
+		Utils.fadein(mTitle, animNow); animNow += animStep;
+		Utils.fadein(mDescription, animNow); animNow += animStep;
+		Utils.fadein(mPin, animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_1_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_2_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_3_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_4_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_5_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_6_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_7_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_8_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_9_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_asterisk_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_0_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_hashtag_container), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_cancel), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_accept), animNow); animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_delete), animNow);
 
 		mSmallShake = AnimationUtils.loadAnimation(root.getContext(), R.anim.shake_small);
 		mNormalShake = AnimationUtils.loadAnimation(root.getContext(), R.anim.shake_normal);

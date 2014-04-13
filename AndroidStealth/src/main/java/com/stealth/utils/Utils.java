@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -292,6 +293,21 @@ public class Utils {
 				callback.onResult(result);
 			}
 		});
+	}
+
+	/**
+	 * Fade in a view with a vertical flip. Only works for API11+.
+	 * @param v the view to fade in
+	 * @param delay the delay fade in with
+	 */
+	public static void fadein(View v, long delay) {
+		// only do for API 11 and above
+		if (Utils.isAtLeastAPI(11)) {
+			v.setScaleY(0.1f);
+			v.setAlpha(0);
+			v.animate().setStartDelay(delay).setDuration(200).scaleY(1f).alpha(1).setInterpolator(
+					new DecelerateInterpolator(2f)).start();
+		}
 	}
 
 	/**
