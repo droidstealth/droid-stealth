@@ -2,9 +2,11 @@ package encryption;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -32,15 +34,19 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	public static final String TAP_TO_LOCK = "tapToLock";
 	private static final int POOL_SIZE = 10;
 
+	// static, because it needs to survive multiple service lifecycles
+	private static ArrayList<WeakReference<IUpdateListener>> sListeners
+			= new ArrayList<WeakReference<IUpdateListener>>();
+
 	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
 	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
-	private ArrayList<UpdateListener> mListeners = new ArrayList<UpdateListener>();
 	private IBinder mBinder;
 	private ExecutorService mCryptoExecutor;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		mBinder = new ServiceBinder();
 		BootManager.boot(this, new IOnResult<Boolean>() {
 			@Override
@@ -73,14 +79,20 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
+		if (intent != null && intent.getAction() != null && intent.getAction().equals(TAP_TO_LOCK)) {
 			Utils.d("You tapped to lock. Will do!");
-			EncryptionManager.create(this).encryptItems(FileIndex.get().getUnlockedFiles(), null);
-			return super.onStartCommand(intent, flags, startId);
+			// if service was turned off: we wait until the boot is ready, if so, this will be called after the
+			// boot in onCreate, because the onStartCommand gets called later.
+			// if service was still on: then we already booted, in which case this will be called at once.
+			BootManager.addBootCallback(new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					EncryptionManager.create(EncryptionService.this)
+							.encryptItems(FileIndex.get().getUnlockedFiles(), null);
+				}
+			});
 		}
-		else {
-			throw new IllegalStateException("EncryptionService should not be started through Intent anymore");
-		}
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
@@ -88,7 +100,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		handleUpdate(false);
 	}
 
-	public interface UpdateListener {
+	public interface IUpdateListener {
 		public abstract void onEncryptionServiceUpdate();
 	}
 
@@ -97,11 +109,26 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 *
 	 * @param listener the listener.
 	 */
-	public void addUpdateListener(UpdateListener listener) {
-		if (mListeners.contains(listener)) {
-			return;
+	public static void addUpdateListener(IUpdateListener listener) {
+		for (WeakReference<IUpdateListener> ref : sListeners) {
+			if (ref.get() == listener) {
+				return; // is already added
+			}
 		}
-		mListeners.add(listener);
+		sListeners.add(new WeakReference<IUpdateListener>(listener));
+	}
+
+	/**
+	 * Removes a listener in order to stop listening to changes in the queues
+	 *
+	 * @param listener the listener.
+	 */
+	public static void removeUpdateListener(IUpdateListener listener) {
+		for (WeakReference<IUpdateListener> ref : sListeners) {
+			if (ref.get() == listener) {
+				sListeners.remove(ref);
+			}
+		}
 	}
 
 	/**
@@ -109,17 +136,15 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	 */
 	private void handleUpdate(boolean notifyListenersOnUpdate) {
 		if (notifyListenersOnUpdate) {
-			boolean somethingWasNull = false;
-			for (UpdateListener listener : mListeners) {
+			Iterator<WeakReference<IUpdateListener>> i = sListeners.iterator();
+			while (i.hasNext()) {
+				WeakReference<IUpdateListener> ref = i.next();
+				IUpdateListener listener = ref.get();
 				if (listener != null) {
 					listener.onEncryptionServiceUpdate();
 				} else {
-					somethingWasNull = true;
+					i.remove(); // keeping it clean
 				}
-			}
-			if (somethingWasNull) {
-				// keep the list clean :)
-				mListeners.removeAll(Collections.singleton(null));
 			}
 		}
 		handleNotifications();

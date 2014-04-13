@@ -39,6 +39,7 @@ import java.util.Random;
 public class Utils {
 
 	private static final int MAX_RANDOM_STRING_LENGTH = 15;
+	private static final int MIN_RANDOM_STRING_LENGTH = 5;
 	private static final String TAG = "TUDELFT";
 
 	private static boolean sFakePin;
@@ -286,7 +287,7 @@ public class Utils {
 	public static String randomString() {
 		// ensure different seed than next randomString call
 		Random random = new Random(System.nanoTime() - 10);
-		return randomString(random.nextInt(MAX_RANDOM_STRING_LENGTH));
+		return randomString(MIN_RANDOM_STRING_LENGTH + random.nextInt(MAX_RANDOM_STRING_LENGTH - MIN_RANDOM_STRING_LENGTH));
 	}
 
 	/**
