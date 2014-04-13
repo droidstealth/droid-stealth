@@ -41,7 +41,7 @@ public class DialogConstructor {
 		} else {
 			for (DialogInput i : inputList) {
 				EditText et = new EditText(activity);
-				et.setTextColor(Utils.color(R.color.white));
+				et.setTextColor(Utils.color(R.color.base));
 				et.setInputType(i.getInputType());
 				et.setHint(i.getInputHint());
 				et.setText(i.getValue());

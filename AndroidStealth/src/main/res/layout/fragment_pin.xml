@@ -7,14 +7,14 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			tools:context="pin.PinFragment"
-			android:background="@color/content_list_background"
+			android:background="@color/background"
 			android:orientation="vertical"
 			android:id="@+id/pin_container">
 
 			<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:textColor="#33aacc"
+					android:textColor="@color/accent"
 					android:text="Your pin"
 					android:layout_marginLeft="10dp"
 					android:layout_marginRight="10dp"
@@ -27,7 +27,7 @@
 			<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:textColor="#33aacc"
+					android:textColor="@color/accent"
 					android:text="Hello, please enter your pin, because I am sad and I want your pin"
 					android:layout_marginLeft="40dp"
 					android:layout_marginRight="40dp"
@@ -53,7 +53,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/pin_keyboard"
-				android:background="@color/content_list_background">
+				android:background="@color/background">
 
 			<TableRow
 				android:layout_width="fill_parent"

@@ -3,7 +3,7 @@
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/content_list_background">
+		android:background="@color/background">
 
 
 	<TextView
@@ -11,7 +11,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:id="@+id/dialog_title"
-			android:textColor="@color/title_color"
+			android:textColor="@color/accent"
 			android:textStyle="bold"
 			android:text="Are you sure?"
 			android:fontFamily="sans-serif-condensed"
