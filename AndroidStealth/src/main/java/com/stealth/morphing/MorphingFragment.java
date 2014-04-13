@@ -1,15 +1,25 @@
 package com.stealth.morphing;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +27,17 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
 import com.stealth.dialog.DialogButton;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
+import com.stealth.files.IndexedFile;
+import com.stealth.files.IndexedFolder;
+import com.stealth.files.IndexedItem;
+import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
 /**
@@ -30,6 +46,8 @@ import com.stealth.utils.Utils;
  * create an instance of this fragment.
  */
 public class MorphingFragment extends Fragment implements View.OnClickListener {
+
+	private static final int REQUEST_CHOOSER = 65456;
 
 	private List<ApplicationInfo> mPackages;
 	private ImageView mIcon;
@@ -144,9 +162,57 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 				showApplicationPicker();
 				break;
 			case R.id.morph_pick_icon:
+				Intent getContentIntent = FileUtils.createGetContentIntent();
+				Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(intent, REQUEST_CHOOSER);
 				break;
 			case R.id.morph_share:
 				// do morph and share
+				break;
+		}
+	}
+	/**
+	 * Listens for the return of the get content intent. Adds the items if successful
+	 *
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			case REQUEST_CHOOSER:
+				if (resultCode == Activity.RESULT_OK) {
+
+					Uri selectedImageUri = Uri.parse(data.getDataString());
+
+					if (getActivity() == null) return;
+					if (getActivity().getApplicationContext() == null) return;
+
+					try {
+						Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+								getActivity().getApplicationContext().getContentResolver(),
+								selectedImageUri);
+
+						if (bitmap.getHeight() > 256 || bitmap.getWidth() > 256) {
+							bitmap = Utils.cropSquare(bitmap);
+							bitmap = Bitmap.createScaledBitmap(bitmap, 256, 256, true);
+						}
+
+						mIcon.setImageBitmap(bitmap);
+						Utils.fadein(mIcon, 75);
+
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						Log.e(Utils.tag(this), "Well, crap...", e);
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						Log.e(Utils.tag(this), "Well, crap...", e);
+						e.printStackTrace();
+					}
+				}
 				break;
 		}
 	}

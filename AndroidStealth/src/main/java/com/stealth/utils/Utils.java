@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -334,6 +335,36 @@ public class Utils {
 			sb.append(c);
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Crops the given bitmap to a square
+	 * @param bm the bitmap to crop
+	 * @return the cropped bitmap
+	 */
+	public static Bitmap cropSquare(Bitmap bm) {
+		Bitmap dstBmp;
+		if (bm.getWidth() >= bm.getHeight()){
+
+			dstBmp = Bitmap.createBitmap(
+					bm,
+					bm.getWidth()/2 - bm.getHeight()/2,
+					0,
+					bm.getHeight(),
+					bm.getHeight()
+			);
+
+		}else{
+
+			dstBmp = Bitmap.createBitmap(
+					bm,
+					0,
+					bm.getHeight()/2 - bm.getWidth()/2,
+					bm.getWidth(),
+					bm.getWidth()
+			);
+		}
+		return dstBmp;
 	}
 
 	/**
