@@ -27,5 +27,7 @@
 			android:textColor="@color/base"
 			android:layout_gravity="center_vertical"
 			android:id="@+id/dialog_button_title"
+			android:ellipsize="end"
+			android:maxLines="1"
 			android:text="Large Text"/>
 </LinearLayout>

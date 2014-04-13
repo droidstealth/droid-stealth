@@ -22,6 +22,7 @@ import com.stealth.dialog.DialogButton;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
+import com.stealth.utils.Utils;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -129,6 +130,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 				ApplicationInfo ai = mPackages.get(i);
 				mIcon.setImageDrawable(packageManager.getApplicationIcon(ai));
 				mName.setText(packageManager.getApplicationLabel(ai).toString());
+				Utils.fadein(mIcon, 75);
+				Utils.fadein(mName, 100);
 				return true;
 			}
 		});
