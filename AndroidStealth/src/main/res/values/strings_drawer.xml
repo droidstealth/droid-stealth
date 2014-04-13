@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="drawer_watch_folders">Watch folders</string>
-    <string name="drawer_delete">Set shred pin</string>
-    <string name="drawer_modify_app">App appearance</string>
-    <string name="drawer_wifi">Wifi settings</string>
-    <string name="drawer_tutorial">Show tutorial</string>
+	<string name="drawer_version">Version</string>
+	<string name="drawer_home">Your vault</string>
+	<string name="drawer_morph">App morphing</string>
+    <string name="drawer_launch">Launch settings</string>
+    <string name="drawer_general">General settings</string>
+	<string name="drawer_pin">Pin settings</string>
 
 </resources>

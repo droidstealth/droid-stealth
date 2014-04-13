@@ -1,4 +1,6 @@
-package com.stealth.android;
+package com.stealth.drawer;
+
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import com.stealth.android.R;
+import com.stealth.android.StealthSettingActivity;
+import com.stealth.utils.Utils;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -28,6 +35,12 @@ import android.widget.ListView;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
+
+	public static final int POSITION_HOME = 0;
+	public static final int POSITION_MORPH = 1;
+	public static final int POSITION_LAUNCH = 2;
+	public static final int POSITION_GENERAL = 3;
+	public static final int POSITION_PIN = 4;
 
     /**
      * Remember the position of the selected item.
@@ -50,7 +63,8 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private DrawerLayout mDrawerLayout;
+	private DrawerLayout mDrawerLayout;
+	private NavigationDrawerAdapter mAdapter;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
@@ -89,27 +103,36 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+	    LinearLayout root = (LinearLayout) inflater.inflate(
+			    R.layout.fragment_navigation_drawer, container, false);
+
+	    TextView tv = (TextView)root.findViewById(R.id.drawer_version);
+	    tv.setText(Utils.str(R.string.drawer_version) + " " + Utils.getVersionName());
+
+        mDrawerListView = (ListView) root.findViewById(R.id.drawer_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.drawer_watch_folders),
-                        getString(R.string.drawer_delete),
-                        getString(R.string.drawer_modify_app),
-                        getString(R.string.drawer_wifi),
-                        getString(R.string.drawer_tutorial)
-                }));
+
+	    ArrayList<NavigationDrawerItem> items = new ArrayList<NavigationDrawerItem>();
+	    items.add(POSITION_HOME,
+			    new NavigationDrawerItem(R.string.drawer_home, R.drawable.ic_drawer_home, R.color.drawer_home));
+	    items.add(POSITION_MORPH,
+			    new NavigationDrawerItem(R.string.drawer_morph, R.drawable.ic_drawer_morph, R.color.drawer_morph));
+	    items.add(POSITION_LAUNCH,
+			    new NavigationDrawerItem(R.string.drawer_launch, R.drawable.ic_drawer_launch, R.color.drawer_launch));
+	    items.add(POSITION_GENERAL,
+			    new NavigationDrawerItem(R.string.drawer_general, R.drawable.ic_drawer_general, R.color.drawer_general));
+	    items.add(POSITION_PIN,
+			    new NavigationDrawerItem(R.string.drawer_pin, R.drawable.ic_drawer_pin, R.color.drawer_pin));
+
+	    mAdapter = new NavigationDrawerAdapter(root.getContext(), items);
+        mDrawerListView.setAdapter(mAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        return root;
     }
 
     public boolean isDrawerOpen() {
@@ -273,7 +296,7 @@ public class NavigationDrawerFragment extends Fragment {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
+        actionBar.setTitle(R.string.true_app_name);
     }
 
     private ActionBar getActionBar() {

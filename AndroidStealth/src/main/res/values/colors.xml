@@ -11,6 +11,9 @@
 	<color name="content_text">#33ffffff</color>
 	<color name="white">#ffffffff</color>
 
+	<color name="drawer_extra_details">#ff808080</color>
+	<color name="drawer_divider">#ffe8e8e8</color>
+
 	<color name="item_pressed">#ff33b5e5</color>
 	<color name="item_longpressed">#ff00ddff</color>
 	<color name="item_edge_selected">#ff0099cc</color>
@@ -18,4 +21,10 @@
 	<color name="transparent">#00000000</color>
 	<color name="divider_color">#99333333</color>
 	<color name="title_color">#33B5E5</color>
+
+	<color name="drawer_home">#ff00b6ff</color>
+	<color name="drawer_morph">#ff00ff4c</color>
+	<color name="drawer_launch">#ffff8200</color>
+	<color name="drawer_general">#ffff005a</color>
+	<color name="drawer_pin">#fffff400</color>
 </resources>

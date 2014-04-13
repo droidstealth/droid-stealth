@@ -3,6 +3,7 @@ package com.stealth.utils;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -75,6 +77,19 @@ public class Utils {
 	 */
 	public static boolean isAtLeastAPI(int api_nr) {
 		return Build.VERSION.SDK_INT >= api_nr;
+	}
+
+	/**
+	 * Get the version name of the application
+	 * @return version name
+	 */
+	public static String getVersionName() {
+		try {
+			PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+			return pInfo.versionName;
+		} catch (Exception e) {
+			return ""; // can't happen really..
+		}
 	}
 
 	/**
@@ -278,6 +293,21 @@ public class Utils {
 				callback.onResult(result);
 			}
 		});
+	}
+
+	/**
+	 * Fade in a view with a vertical flip. Only works for API11+.
+	 * @param v the view to fade in
+	 * @param delay the delay fade in with
+	 */
+	public static void fadein(View v, long delay) {
+		// only do for API 11 and above
+		if (Utils.isAtLeastAPI(11)) {
+			v.setScaleY(0.1f);
+			v.setAlpha(0);
+			v.animate().setStartDelay(delay).setDuration(200).scaleY(1f).alpha(1).setInterpolator(
+					new DecelerateInterpolator(2f)).start();
+		}
 	}
 
 	/**
