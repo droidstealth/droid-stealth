@@ -27,14 +27,6 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private List<IndexedItem> mContentItems;
 	private ArrayList<CheckableLinearLayout> mViews;
 	private IndexedFolder mLastFolder;
-	private IOnResult<Boolean> mNotifyChanges = new IOnResult<Boolean>() {
-		@Override
-		public void onResult(Boolean result) {
-			if (result) {
-				notifyDataSetChanged();
-			}
-		}
-	};
 
 	/**
 	 * Creates a new ContentAdapter
@@ -132,15 +124,27 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		thumbImage.setImageBitmap(null);
 		thumbImage.invalidate();
 
+		IOnResult<Boolean> notifyChanges = new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					Utils.d("We have a bitmap to show!");
+					notifyDataSetChanged();
+				} else {
+					Utils.d("We failed to get the bitmap :(");
+				}
+			}
+		};
+
 		if (file.getThumbFile().exists()) {
 			boolean modified = isUnlocked && file.isModified();
 			if (file.getThumbnail() == null || modified) {
 				if (modified) {
 					Utils.d("A file has been modified! Getting new thumbnail.");
 					file.resetModificationChecker();
-					ThumbnailManager.createThumbnail(file, mNotifyChanges);
+					ThumbnailManager.createThumbnail(file, notifyChanges);
 				} else {
-					ThumbnailManager.retrieveThumbnail(file, mNotifyChanges);
+					ThumbnailManager.retrieveThumbnail(file, notifyChanges);
 				}
 			}
 			else {

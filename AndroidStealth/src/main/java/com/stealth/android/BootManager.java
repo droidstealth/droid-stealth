@@ -1,5 +1,7 @@
 package com.stealth.android;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import com.stealth.files.FileIndex;
 import com.stealth.sequencing.IJob;
@@ -15,9 +17,11 @@ import pin.PinManager;
 public class BootManager {
 
 	private static boolean sBooted = false;
-	private static IOnResult<Boolean> sCallback = null;
+	private static boolean sBootResult = false;
+	private static boolean sBooting = false;
 	private static String sPin = null;
 	private static Context sContext = null;
+	private static ArrayList<IOnResult<Boolean>> mBootCallbacks = new ArrayList<IOnResult<Boolean>>();
 
 	/**
 	 * Method used to fail the boot: remember that the app has failed, and run
@@ -27,14 +31,7 @@ public class BootManager {
 	private static final Runnable sFail = new Runnable() {
 		@Override
 		public void run() {
-			sBooted = false;
-			Utils.d("App failed to boot.");
-			Utils.runOnMain(new Runnable() {
-				@Override
-				public void run() {
-					sCallback.onResult(false);
-				}
-			});
+			booted(false);
 		}
 	};
 
@@ -46,14 +43,7 @@ public class BootManager {
 	private static final Runnable sSuccess = new Runnable() {
 		@Override
 		public void run() {
-			sBooted = true;
-			Utils.d("App booted!");
-			Utils.runOnMain(new Runnable() {
-				@Override
-				public void run() {
-					sCallback.onResult(true);
-				}
-			});
+			booted(true);
 		}
 	};
 
@@ -89,15 +79,64 @@ public class BootManager {
 	};
 
 	/**
+	 * Notify the bootmanager that we booted.
+	 * @param result the state or result of the boot. Did it succeed?
+	 */
+	private static void booted(final boolean result) {
+		sBooted = true;
+		sBootResult = result;
+		sBooting = false;
+
+		if (result) {
+			Utils.d("Booted!");
+		} else {
+			Utils.d("Boot failed...");
+		}
+
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				for (IOnResult<Boolean> callback : mBootCallbacks) {
+					if (callback != null) {
+						callback.onResult(result);
+					}
+				}
+				mBootCallbacks.clear();
+			}
+		});
+	}
+
+	/**
+	 * Adds a callback to the list of callbacks. It will be called when booting is ready.
+	 * @param callback the callback to add
+	 */
+	public static void addBootCallback(IOnResult<Boolean> callback){
+		if (sBooted) {
+			Utils.d("We already booted!");
+			callback.onResult(sBootResult);
+		} else if (callback != null) {
+			Utils.d("Added boot callback to callback list.");
+			mBootCallbacks.add(callback);
+		}
+	}
+
+	/**
 	 * Boots up everything that is needed to let the application function properly.
 	 * @param context the application context that will be used for booting
 	 * @param pin the pin that should be checked
 	 * @param callback the method that will be called when booting is ready.
 	 */
 	public static void boot(Context context, String pin, IOnResult<Boolean> callback){
-		Utils.d("BOOTING");
 
-		sCallback = callback;
+		addBootCallback(callback);
+
+		if (sBooted || sBooting) {
+			return;
+		}
+
+		Utils.d("Booting...");
+
+		sBooting = true;
 		sPin = pin;
 		sContext = context;
 
