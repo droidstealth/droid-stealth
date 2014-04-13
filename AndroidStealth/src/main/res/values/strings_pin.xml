@@ -12,7 +12,7 @@
 	<string name="pin_reset_success_title">Great success!</string>
 
 	<string name="pin_reset_your">Please provide your current pin in order to change it.</string>
-	<string name="pin_reset_first">Great! Now enter your desired new pin.</string>
+	<string name="pin_reset_first">Great! Now enter your desired new pin. New pin must be at least 3 characters long and at most 20.</string>
 	<string name="pin_reset_second">Superb! Please re-enter your new pin so you won\'t forget.</string>
 	<string name="pin_reset_done">Pin is successfully reset! You can practice some more by entering your new pin:</string>
 	<string name="pin_reset_spam">
