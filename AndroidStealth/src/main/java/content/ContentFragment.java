@@ -21,6 +21,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,8 +63,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentShareMultiModeListener mMultiModeListener;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
-	private EncryptionManager mEncryptionManager;
 	private EncryptionService mEncryptionService;
+	private IActionManager mActionManager;
 
 	private File mTempImageFile;
 
@@ -71,14 +72,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
-			mEncryptionManager = EncryptionManager.create(mEncryptionService);
+			mActionManager.setEncryptionManager(EncryptionManager.create(mEncryptionService));
 			Utils.d("Encryption manager is connected!");
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
-			mEncryptionManager = null;
 			mEncryptionService = null;
+			mActionManager.setEncryptionManager(null);
 			Utils.d("Encryption manager is disconnected..?");
 		}
 	};
@@ -140,6 +141,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mMode = null;
 		mAdapter = new ContentAdapter(mContentManager);
 		mContentManager.addContentChangedListener(mAdapter);
+
+		mActionManager = new ActionManager(mContentManager);
 
 		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
 				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
@@ -280,7 +283,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
 								itemList.add(result);
-								actionLock(itemList, mMode); // lock right now
+								mActionManager.actionLock(itemList, null); // lock right now
 
 								Utils.toast(R.string.content_success_add);
 							}
@@ -543,113 +546,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	}
 
-	/**
-	 * Locks all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-		if (!mIsBound) {
-			Utils.d("EncryptionService was not bound");
-		}
-
-		if (with == null) {
-			Utils.d("We got an empty list to process. Can't deal with this.");
-			return;
-		}
-
-		for (IndexedItem item : with) {
-			if (item instanceof IndexedFile) {
-				// clear the thumbnails because if we lock the file
-				// it might have changed
-				((IndexedFile) item).clearThumbnail();
-			}
-		}
-
-		mEncryptionManager.encryptItems(with, new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					finishMultiActionMode(actionMode);
-				}
-			}
-		});
-	}
-
-	/**
-	 * Unlocks all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-		if (!mIsBound) {
-			Log.e(this.getClass().toString() + ".onActionItemClicked",
-					"encryptionService was not bound");
-		}
-
-		mEncryptionManager.decryptItems(with, new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					finishMultiActionMode(actionMode);
-				}
-			}
-		});
-	}
-
-	/**
-	 * Shreds all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-
-		final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					Utils.toast(R.string.content_success_shred);
-					finishMultiActionMode(actionMode);
-				}
-				else {
-					Utils.toast(R.string.content_fail_shred);
-				}
-			}
-		};
-
-		DialogOptions options = new DialogOptions()
-				.setTitle(R.string.dialog_shred_title)
-				.setDescription(R.string.dialog_shred_description)
-				.setNegative(R.string.cancel)
-				.setPositive(R.string.yes)
-				.setReverseColors(true);
-
-		DialogConstructor.show(
-				getActivity(),
-				options,
-				new IDialogResponse() {
-					@Override
-					public void onPositive(ArrayList<String> input) {
-						mContentManager.removeItems(with, shredListener);
-						disableIfNoneChecked();
-					}
-
-					@Override
-					public void onNegative() {
-						// do nothing
-					}
-
-					@Override
-					public void onCancel() {
-						// do nothing
-					}
-				}
-		);
-	}
-
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
@@ -667,6 +563,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			@Override
 			public void run() {
 				actionMode.finish();
+
+				mActionManager.setActionMode(null);
 			}
 		});
 	}
@@ -706,6 +604,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		@Override
 		public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
 			mMenu = menu;
+			mActionManager.setActionMode(actionMode);
 			inflate(mContentMode);
 			return true;
 		}
@@ -772,28 +671,70 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			switch (menuItem.getItemId()) {
 				case R.id.action_lock:
-					actionLock(selectedItems, actionMode);
+					mActionManager.actionLock(selectedItems, null);
 					break;
 				case R.id.action_unlock:
-					actionUnlock(selectedItems, actionMode);
+					mActionManager.actionUnlock(selectedItems, null);
 					break;
 				case R.id.action_share:
-					//TODO share goes here
+					mActionManager.actionShare(selectedItems, null);
 					break;
 				case R.id.action_restore:
-					//TODO unlock files if necessary, remove from list and restore to choosen/original location (don't
-					// delete file)
+					mActionManager.actionRestore(selectedItems, null);
 					break;
 				case R.id.action_open:
-					//TODO open selected file
-					// delete file)
+					mActionManager.actionOpen(selectedItems.get(0), null);
 					break;
 				case R.id.action_shred:
-					actionShred(selectedItems, actionMode);
+					shredAll(selectedItems);
 					break;
 			}
 
 			return true;
+		}
+
+		private void shredAll(final ArrayList<IndexedItem> with){
+			final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					if (result) {
+						Utils.toast(R.string.content_success_shred);
+						finishMultiActionMode(mMode);
+					}
+					else {
+						Utils.toast(R.string.content_fail_shred);
+					}
+				}
+			};
+
+			DialogOptions options = new DialogOptions()
+					.setTitle(R.string.dialog_shred_title)
+					.setDescription(R.string.dialog_shred_description)
+					.setNegative(R.string.cancel)
+					.setPositive(R.string.yes)
+					.setReverseColors(true);
+
+			DialogConstructor.show(
+					getActivity(),
+					options,
+					new IDialogResponse() {
+						@Override
+						public void onPositive(ArrayList<String> input) {
+							mActionManager.actionShred(with, shredListener);
+						}
+
+						@Override
+						public void onNegative() {
+							// do nothing
+						}
+
+						@Override
+						public void onCancel() {
+							// do nothing
+						}
+					}
+			);
+
 		}
 
 		/**
