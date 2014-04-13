@@ -60,6 +60,12 @@ public class DialogConstructor {
 					final DialogButton db = (DialogButton) i;
 					LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.dialog_button, null);
 					if (ll == null) continue;
+					inputsContainer.addView(ll);
+
+					LinearLayout.LayoutParams lp = ((LinearLayout.LayoutParams)ll.getLayoutParams());
+					if (lp == null) continue;
+					lp.setMargins(0, Utils.px(1), 0, 0); // we want a tiny spacing between the elements
+					ll.setLayoutParams(lp);
 
 					((ImageView)ll.findViewById(R.id.dialog_button_icon)).setImageDrawable(db.getIcon());
 					((TextView)ll.findViewById(R.id.dialog_button_title)).setText(db.getTitle());
@@ -74,7 +80,6 @@ public class DialogConstructor {
 						}
 					});
 
-					inputsContainer.addView(ll);
 
 				}
 			}

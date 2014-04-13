@@ -1,9 +1,11 @@
 package com.stealth.morphing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -81,6 +83,17 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
     }
 
 	/**
+	 * Get the list of applications, sorted on their label.
+	 * @param packageManager the package manager to get the info from
+	 * @return the sorted application list
+	 */
+	public List<ApplicationInfo> getInstalledApplication(PackageManager packageManager) {
+		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
+		Collections.sort(apps, new ApplicationInfo.DisplayNameComparator(packageManager));
+		return apps;
+	}
+
+	/**
 	 * Shows the application picker in order to obtain the icon and name of another application
 	 */
 	private void showApplicationPicker() {
@@ -95,7 +108,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 
 		final PackageManager packageManager = getActivity().getPackageManager();
 		if (mPackages == null) { // only load it if we haven't yet
-			mPackages = getActivity().getPackageManager().getInstalledApplications(0);
+			mPackages = getInstalledApplication(packageManager);
 		}
 
 		for (ApplicationInfo ai : mPackages) {

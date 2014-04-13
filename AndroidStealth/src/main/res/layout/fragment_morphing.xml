@@ -66,6 +66,7 @@
 					android:background="@drawable/frame_input_states"
 					android:layout_gravity="center_vertical"
 					android:hint="@string/morph_edit_name"
+					android:text="@string/morphable_app_name"
 					style="@style/EditText"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal"
