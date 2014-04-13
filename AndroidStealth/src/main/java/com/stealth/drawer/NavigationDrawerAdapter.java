@@ -41,7 +41,7 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 		NavigationDrawerItem p = getItem(position);
 
 		if (p != null && v != null) {
-			FrameLayout col = (FrameLayout) v.findViewById(R.id.drawer_item_color);
+			View col = v.findViewById(R.id.drawer_item_color);
 			ImageView ico = (ImageView) v.findViewById(R.id.drawer_item_icon);
 			TextView name = (TextView) v.findViewById(R.id.drawer_item_name);
 

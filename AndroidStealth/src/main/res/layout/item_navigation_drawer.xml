@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
 			  android:background="@drawable/drawer_item">
 
-	<FrameLayout
+	<View
 			android:layout_width="4dp"
 			android:layout_height="match_parent"
 			android:background="@color/locked"
