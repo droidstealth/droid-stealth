@@ -27,22 +27,10 @@
 			android:paddingBottom="@dimen/dialog_paddings"
 			style="@style/RegularText"/>
 
-	<LinearLayout android:layout_width="match_parent"
-	              android:layout_height="300dp"
-	              android:layout_marginLeft="@dimen/dialog_paddings"
-	              android:layout_marginRight="@dimen/dialog_paddings"
-	              android:layout_marginBottom="@dimen/dialog_paddings"
-	              android:id="@+id/dialog_scroll_wrap">
-		<ScrollView android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:id="@+id/dialog_scroll">
-			<LinearLayout android:layout_width="match_parent"
-			              android:layout_height="wrap_content"
-			              android:orientation="vertical"
-			              android:id="@+id/dialog_inputs">
-			</LinearLayout>
-		</ScrollView>
-	</LinearLayout>
+	<ListView android:layout_width="match_parent"
+              android:layout_height="300dp"
+              android:orientation="vertical"
+              android:id="@+id/dialog_list" />
 
 	<LinearLayout
 			android:orientation="horizontal"

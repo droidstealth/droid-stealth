@@ -4,7 +4,7 @@ package com.stealth.dialog;
  * Allows one to add input fields to a dialog
  * Created by OlivierHokke on 11-Apr-14.
  */
-public class DialogInput implements IDialogElement {
+public class DialogInput {
 	private int mInputHint;
 	private String mValue;
 	private int mInputType;

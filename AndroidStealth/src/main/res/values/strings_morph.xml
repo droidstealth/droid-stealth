@@ -12,6 +12,7 @@
 	<string name="morph_settings_title">Morphing the icon and name</string>
 	<string name="morph_share">Share this morphed app</string>
 	<string name="morph_edit_name">New name</string>
+	<string name="morph_select_image">Select image</string>
 
 	<string name="morph_apppicker_title">Installed applications</string>
 	<string name="morph_apppicker_description">Pick an application from the list below in order to copy its icon

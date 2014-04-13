@@ -638,7 +638,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				options,
 				new IDialogResponse() {
 					@Override
-					public void onPositive(ArrayList<String> input) {
+					public void onPositive() {
 						mContentManager.removeItems(with, shredListener);
 						disableIfNoneChecked();
 					}
@@ -651,11 +651,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					@Override
 					public void onCancel() {
 						// do nothing
-					}
-
-					@Override
-					public boolean onButton(int i) {
-						return false;
 					}
 				}
 		);

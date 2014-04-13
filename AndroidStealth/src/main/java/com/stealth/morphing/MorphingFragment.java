@@ -1,20 +1,16 @@
 package com.stealth.morphing;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,27 +19,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
-import com.stealth.dialog.DialogButton;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
-import com.stealth.dialog.IDialogResponse;
-import com.stealth.files.IndexedFile;
-import com.stealth.files.IndexedFolder;
-import com.stealth.files.IndexedItem;
-import com.stealth.utils.IOnResult;
+import com.stealth.dialog.IDialogAdapter;
 import com.stealth.utils.Utils;
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Use the {@link MorphingFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A simple {@link android.support.v4.app.Fragment} subclass. Use the {@link MorphingFragment#newInstance} factory
+ * method to create an instance of this fragment.
  */
 public class MorphingFragment extends Fragment implements View.OnClickListener {
 
@@ -52,57 +42,96 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 	private List<ApplicationInfo> mPackages;
 	private ImageView mIcon;
 	private EditText mName;
-	private LinearLayout mPickApp;
-	private LinearLayout mPickIcon;
-	private LinearLayout mShare;
+	private View.OnClickListener mAppPicked = new View.OnClickListener() {
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment MorphingFragment.
-     */
-    public static MorphingFragment newInstance() {
-        MorphingFragment fragment = new MorphingFragment();
-        return fragment;
-    }
+		@Override
+		public void onClick(View view) {
+			ApplicationInfo ai = (ApplicationInfo) view.getTag();
+			mIcon.setImageDrawable(mPackMan.getApplicationIcon(ai));
+			mName.setText(mPackMan.getApplicationLabel(ai).toString());
+			Utils.fadein(mIcon, 75);
+			Utils.fadein(mName, 100);
+			mAppDialog.dismiss();
+		}
 
-    public MorphingFragment() {
-        // Required empty public constructor
-    }
+	};
+	private IDialogAdapter<ApplicationInfo> mAppAdapter = new IDialogAdapter<ApplicationInfo>() {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-	        // we have no arguments
-        }
-    }
+		@Override
+		public List<ApplicationInfo> getList() {
+			return mPackages;
+		}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+		@Override
+		public int getItemLayout() {
+			return R.layout.dialog_button;
+		}
 
-        // Inflate the layout for this fragment
-	    View root = inflater.inflate(R.layout.fragment_morphing, container, false);
-	    if (root == null) return null;
+		@Override
+		public void setView(int index, View v) {
+			ApplicationInfo ai = getList().get(index);
+			((ImageView) v.findViewById(R.id.dialog_button_icon)).setImageDrawable(mPackMan.getApplicationIcon(ai));
+			((TextView) v.findViewById(R.id.dialog_button_title)).setText(mPackMan.getApplicationLabel(ai));
 
-	    mPickApp = (LinearLayout) root.findViewById(R.id.morph_pick_app);
-	    mPickApp.setOnClickListener(this);
+			v.setTag(ai); // remember the application info in the view
+			v.setOnClickListener(mAppPicked);
+		}
 
-	    mPickIcon = (LinearLayout) root.findViewById(R.id.morph_pick_icon);
-	    mPickIcon.setOnClickListener(this);
+	};
+	private PackageManager mPackMan;
+	private Dialog mAppDialog;
 
-	    mShare = (LinearLayout) root.findViewById(R.id.morph_share);
-	    mShare.setOnClickListener(this);
+	public MorphingFragment() {
+		// Required empty public constructor
+	}
 
-	    mName = (EditText)root.findViewById(R.id.morph_edit_name);
-	    mIcon = (ImageView)root.findViewById(R.id.morph_edit_icon);
+	/**
+	 * Use this factory method to create a new instance of this fragment using the provided parameters.
+	 *
+	 * @return A new instance of fragment MorphingFragment.
+	 */
+	public static MorphingFragment newInstance() {
+		MorphingFragment fragment = new MorphingFragment();
+		return fragment;
+	}
 
-        return root;
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mPackMan = getActivity().getPackageManager();
+		if (getArguments() != null) {
+			// we have no arguments
+		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		// Inflate the layout for this fragment
+		View root = inflater.inflate(R.layout.fragment_morphing, container, false);
+		if (root == null) {
+			return null;
+		}
+
+		LinearLayout pickApp = (LinearLayout) root.findViewById(R.id.morph_pick_app);
+		pickApp.setOnClickListener(this);
+
+		LinearLayout pickIcon = (LinearLayout) root.findViewById(R.id.morph_pick_icon);
+		pickIcon.setOnClickListener(this);
+
+		LinearLayout share = (LinearLayout) root.findViewById(R.id.morph_share);
+		share.setOnClickListener(this);
+
+		mName = (EditText) root.findViewById(R.id.morph_edit_name);
+		mIcon = (ImageView) root.findViewById(R.id.morph_edit_icon);
+
+		return root;
+	}
 
 	/**
 	 * Get the list of applications, sorted on their label.
+	 *
 	 * @param packageManager the package manager to get the info from
 	 * @return the sorted application list
 	 */
@@ -116,43 +145,29 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 	 * Shows the application picker in order to obtain the icon and name of another application
 	 */
 	private void showApplicationPicker() {
-		DialogOptions options = new DialogOptions()
+		// do some checks, as without these we can't continue
+		if (getActivity() == null) {
+			return;
+		}
+		if (getActivity().getPackageManager() == null) {
+			return;
+		}
+
+		// get the installed applications
+		if (mPackages == null) { // only load it if we haven't yet
+			mPackages = getInstalledApplication(mPackMan);
+		}
+
+		// setup the texts and dialog adapter
+		DialogOptions<ApplicationInfo> options = new DialogOptions<ApplicationInfo>()
 				.setTitle(R.string.morph_apppicker_title)
 				.setDescription(R.string.morph_apppicker_description)
 				.setPositiveButtonEnabled(false)
-				.setNegative(R.string.cancel);
+				.setNegative(R.string.cancel)
+				.setDialogAdapter(mAppAdapter);
 
-		if (getActivity() == null) return;
-		if (getActivity().getPackageManager() == null) return;
-
-		final PackageManager packageManager = getActivity().getPackageManager();
-		if (mPackages == null) { // only load it if we haven't yet
-			mPackages = getInstalledApplication(packageManager);
-		}
-
-		for (ApplicationInfo ai : mPackages) {
-			options.addInput(new DialogButton(
-					packageManager.getApplicationIcon(ai),
-					packageManager.getApplicationLabel(ai).toString()));
-		}
-
-		DialogConstructor.show(getActivity(), options, new IDialogResponse() {
-			@Override
-			public void onPositive(ArrayList<String> input) { }
-			@Override
-			public void onNegative() { }
-			@Override
-			public void onCancel() { }
-			@Override
-			public boolean onButton(int i) {
-				ApplicationInfo ai = mPackages.get(i);
-				mIcon.setImageDrawable(packageManager.getApplicationIcon(ai));
-				mName.setText(packageManager.getApplicationLabel(ai).toString());
-				Utils.fadein(mIcon, 75);
-				Utils.fadein(mName, 100);
-				return true;
-			}
-		});
+		// Build the dialog
+		mAppDialog = DialogConstructor.show(getActivity(), options, null);
 	}
 
 	@Override
@@ -163,7 +178,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 				break;
 			case R.id.morph_pick_icon:
 				Intent getContentIntent = FileUtils.createGetContentIntent();
-				Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+				Intent intent = Intent.createChooser(getContentIntent, Utils.str(R.string.morph_select_image));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				break;
@@ -172,6 +187,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 				break;
 		}
 	}
+
 	/**
 	 * Listens for the return of the get content intent. Adds the items if successful
 	 *
@@ -187,8 +203,12 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 
 					Uri selectedImageUri = Uri.parse(data.getDataString());
 
-					if (getActivity() == null) return;
-					if (getActivity().getApplicationContext() == null) return;
+					if (getActivity() == null) {
+						return;
+					}
+					if (getActivity().getApplicationContext() == null) {
+						return;
+					}
 
 					try {
 						Bitmap bitmap = MediaStore.Images.Media.getBitmap(
@@ -196,18 +216,26 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 								selectedImageUri);
 
 						if (bitmap.getHeight() > 256 || bitmap.getWidth() > 256) {
-							bitmap = Utils.cropSquare(bitmap);
-							bitmap = Bitmap.createScaledBitmap(bitmap, 256, 256, true);
+							bitmap = Utils.crop(bitmap, 256, 256);
 						}
+
+						bitmap = Utils.correctOrientation(bitmap, selectedImageUri);
 
 						mIcon.setImageBitmap(bitmap);
 						Utils.fadein(mIcon, 75);
 
-					} catch (FileNotFoundException e) {
+					}
+					catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						Log.e(Utils.tag(this), "Well, crap...", e);
 						e.printStackTrace();
-					} catch (IOException e) {
+					}
+					catch (IOException e) {
+						// TODO Auto-generated catch block
+						Log.e(Utils.tag(this), "Well, crap...", e);
+						e.printStackTrace();
+					}
+					catch (OutOfMemoryError e) {
 						// TODO Auto-generated catch block
 						Log.e(Utils.tag(this), "Well, crap...", e);
 						e.printStackTrace();
@@ -217,13 +245,13 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 		}
 	}
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+	}
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+	@Override
+	public void onDetach() {
+		super.onDetach();
+	}
 }
