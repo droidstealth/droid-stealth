@@ -8,6 +8,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -190,8 +192,13 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 					ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+			root.setPadding(0, 0, 0, Utils.px(16));
 			root.findViewById(R.id.pin_container).setLayoutParams(params);
 		}
+
+
+
+		setHasOptionsMenu(false);
 
 		return root;
 	}
@@ -318,6 +325,17 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+	}
+
+	/**
+	 * Inflates normal Menu.
+	 *
+	 * @param menu     The menu to which the items should be inflated
+	 * @param inflater The inflater which is used to inflate the Menu
+	 */
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.clear();
 	}
 
 	/**
