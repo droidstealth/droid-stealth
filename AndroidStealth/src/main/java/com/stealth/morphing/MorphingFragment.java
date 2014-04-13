@@ -1,54 +1,50 @@
 package com.stealth.morphing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
-import android.net.Uri;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.stealth.android.R;
-import com.stealth.utils.Utils;
+import com.stealth.dialog.DialogButton;
+import com.stealth.dialog.DialogConstructor;
+import com.stealth.dialog.DialogOptions;
+import com.stealth.dialog.IDialogResponse;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MorphingFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link MorphingFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
-public class MorphingFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class MorphingFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+	private List<ApplicationInfo> mPackages;
+	private ImageView mIcon;
+	private EditText mName;
+	private LinearLayout mPickApp;
+	private LinearLayout mPickIcon;
+	private LinearLayout mShare;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MorphingFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MorphingFragment newInstance(String param1, String param2) {
+    public static MorphingFragment newInstance() {
         MorphingFragment fragment = new MorphingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
+
     public MorphingFragment() {
         // Required empty public constructor
     }
@@ -57,54 +53,95 @@ public class MorphingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+	        // we have no arguments
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_morphing, container, false);
+	    View root = inflater.inflate(R.layout.fragment_morphing, container, false);
+	    if (root == null) return null;
+
+	    mPickApp = (LinearLayout) root.findViewById(R.id.morph_pick_app);
+	    mPickApp.setOnClickListener(this);
+
+	    mPickIcon = (LinearLayout) root.findViewById(R.id.morph_pick_icon);
+	    mPickIcon.setOnClickListener(this);
+
+	    mShare = (LinearLayout) root.findViewById(R.id.morph_share);
+	    mShare.setOnClickListener(this);
+
+	    mName = (EditText)root.findViewById(R.id.morph_edit_name);
+	    mIcon = (ImageView)root.findViewById(R.id.morph_edit_icon);
+
+        return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+	/**
+	 * Shows the application picker in order to obtain the icon and name of another application
+	 */
+	private void showApplicationPicker() {
+		DialogOptions options = new DialogOptions()
+				.setTitle(R.string.morph_apppicker_title)
+				.setDescription(R.string.morph_apppicker_description)
+				.setPositiveButtonEnabled(false)
+				.setNegative(R.string.cancel);
+
+		if (getActivity() == null) return;
+		if (getActivity().getPackageManager() == null) return;
+
+		final PackageManager packageManager = getActivity().getPackageManager();
+		if (mPackages == null) { // only load it if we haven't yet
+			mPackages = getActivity().getPackageManager().getInstalledApplications(0);
+		}
+
+		for (ApplicationInfo ai : mPackages) {
+			options.addInput(new DialogButton(
+					packageManager.getApplicationIcon(ai),
+					packageManager.getApplicationLabel(ai).toString()));
+		}
+
+		DialogConstructor.show(getActivity(), options, new IDialogResponse() {
+			@Override
+			public void onPositive(ArrayList<String> input) { }
+			@Override
+			public void onNegative() { }
+			@Override
+			public void onCancel() { }
+			@Override
+			public boolean onButton(int i) {
+				ApplicationInfo ai = mPackages.get(i);
+				mIcon.setImageDrawable(packageManager.getApplicationIcon(ai));
+				mName.setText(packageManager.getApplicationLabel(ai).toString());
+				return true;
+			}
+		});
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.morph_pick_app:
+				showApplicationPicker();
+				break;
+			case R.id.morph_pick_icon:
+				break;
+			case R.id.morph_share:
+				// do morph and share
+				break;
+		}
+	}
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-	        Utils.d("Must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-
 }

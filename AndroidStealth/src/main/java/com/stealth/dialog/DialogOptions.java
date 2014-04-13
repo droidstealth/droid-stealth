@@ -14,19 +14,19 @@ public class DialogOptions {
 	private boolean mReverseColors = false;
 	private boolean mPositiveButtonEnabled = true;
 	private boolean mNegativeButtonEnabled = true;
-	private ArrayList<DialogInput> mInputs;
+	private ArrayList<IDialogElement> mElements;
 
-	public ArrayList<DialogInput> getInputs() {
-		return mInputs;
+	public ArrayList<IDialogElement> getElements() {
+		return mElements;
 	}
 
 	/**
-	 * Set the list of inputs that the dialog can show.
-	 * @param inputs the list of input settings
+	 * Set the list of elements that the dialog can show.
+	 * @param elements the list of input settings
 	 * @return itself, for call chaining
 	 */
-	public DialogOptions setInputs(ArrayList<DialogInput> inputs) {
-		mInputs = inputs;
+	public DialogOptions setElements(ArrayList<IDialogElement> elements) {
+		mElements = elements;
 		return this;
 	}
 
@@ -35,11 +35,11 @@ public class DialogOptions {
 	 * @param input the input settings
 	 * @return itself, for call chaining
 	 */
-	public DialogOptions addInput(DialogInput input) {
-		if (mInputs == null) {
-			mInputs = new ArrayList<DialogInput>();
+	public DialogOptions addInput(IDialogElement input) {
+		if (mElements == null) {
+			mElements = new ArrayList<IDialogElement>();
 		}
-		mInputs.add(input);
+		mElements.add(input);
 		return this;
 	}
 

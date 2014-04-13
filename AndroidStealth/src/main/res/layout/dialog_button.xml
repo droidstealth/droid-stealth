@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/launch_button"
+              android:paddingLeft="@dimen/default_medium_padding"
+              android:paddingRight="@dimen/default_medium_padding"
+              android:paddingTop="@dimen/default_small_padding"
+              android:paddingBottom="@dimen/default_small_padding"
+			  android:layout_marginBottom="4dp"
+			  android:clickable="true">
+
+	<ImageView
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:id="@+id/dialog_button_icon"
+			android:paddingLeft="@dimen/default_medium_padding"
+			android:paddingRight="@dimen/default_medium_padding"
+			android:src="@drawable/ic_drawer_morph"
+			android:layout_gravity="center_vertical"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@color/base"
+			android:layout_gravity="center_vertical"
+			android:id="@+id/dialog_button_title"
+			android:text="Large Text"/>
+</LinearLayout>

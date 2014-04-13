@@ -1,17 +1,17 @@
 package com.stealth.dialog;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,23 +31,52 @@ public class DialogConstructor {
 		dialog.setContentView(R.layout.dialog_base);
 
 		final ArrayList<EditText> editTexts = new ArrayList<EditText>();
-		final ArrayList<DialogInput> inputList = options.getInputs();
+		final ArrayList<IDialogElement> elementList = options.getElements();
 		final LinearLayout scrollWrap = (LinearLayout) dialog.findViewById(R.id.dialog_scroll_wrap);
 		final ScrollView scroll = (ScrollView) dialog.findViewById(R.id.dialog_scroll);
 		final LinearLayout inputsContainer = (LinearLayout) dialog.findViewById(R.id.dialog_inputs);
 
-		if (inputList == null) {
+		LayoutInflater inflater = activity.getLayoutInflater();
+
+		if (elementList == null) {
 			Utils.remove(scrollWrap);
 		} else {
-			for (DialogInput i : inputList) {
-				EditText et = new EditText(activity);
-				et.setTextColor(Utils.color(R.color.base));
-				et.setInputType(i.getInputType());
-				et.setHint(i.getInputHint());
-				et.setText(i.getValue());
-				et.setBackgroundResource(R.drawable.frame_input_states);
-				et.setPadding(Utils.px(8),Utils.px(8),Utils.px(8), Utils.px(4));
-				inputsContainer.addView(et);
+			for (IDialogElement i : elementList) {
+				if (i instanceof DialogInput) {
+
+					//construct input field
+					DialogInput di = (DialogInput) i;
+					EditText et = (EditText) inflater.inflate(R.layout.dialog_input, inputsContainer);
+					if (et == null) continue;
+
+					et.setInputType(di.getInputType());
+					et.setHint(di.getInputHint());
+					et.setText(di.getValue());
+					inputsContainer.addView(et);
+
+				} else if (i instanceof DialogButton) {
+
+					//construct button field
+					final DialogButton db = (DialogButton) i;
+					LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.dialog_button, null);
+					if (ll == null) continue;
+
+					((ImageView)ll.findViewById(R.id.dialog_button_icon)).setImageDrawable(db.getIcon());
+					((TextView)ll.findViewById(R.id.dialog_button_title)).setText(db.getTitle());
+
+					ll.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							boolean result = response.onButton(elementList.indexOf(db));
+							if (result) {
+								dialog.dismiss();
+							}
+						}
+					});
+
+					inputsContainer.addView(ll);
+
+				}
 			}
 		}
 
@@ -65,23 +94,46 @@ public class DialogConstructor {
 		final TextView description = (TextView)dialog.findViewById(R.id.dialog_description);
 		description.setText(options.getDescription());
 
-		final Button negative = (Button)dialog.findViewById(R.id.dialog_negative);
-		negative.setText(options.getNegative());
-
-		final Button positive = (Button)dialog.findViewById(R.id.dialog_positive);
-		positive.setText(options.getPositive());
-
-		if (options.isReverseColors()) {
-			negative.setTextColor(Utils.color(R.color.positive));
-			positive.setTextColor(Utils.color(R.color.negative));
-		}
-
+		Button negative = (Button)dialog.findViewById(R.id.dialog_negative);
 		if (!options.isNegativeButtonEnabled()) {
 			Utils.remove(negative);
+		} else {
+			negative.setText(options.getNegative());
+			if (options.isReverseColors()) {
+				negative.setTextColor(Utils.color(R.color.positive));
+			}
+			negative.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					response.onNegative();
+					dialog.dismiss();
+				}
+			});
 		}
 
+		Button positive = (Button)dialog.findViewById(R.id.dialog_positive);
 		if (!options.isPositiveButtonEnabled()) {
 			Utils.remove(positive);
+		} else {
+			positive.setText(options.getPositive());
+			if (options.isReverseColors()) {
+				positive.setTextColor(Utils.color(R.color.negative));
+			}
+			positive.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if (elementList == null) {
+						response.onPositive(null);
+					} else {
+						ArrayList<String> result = new ArrayList<String>();
+						for (EditText et : editTexts) {
+							result.add(et.getText().toString());
+						}
+						response.onPositive(result);
+					}
+					dialog.dismiss();
+				}
+			});
 		}
 
 		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -90,31 +142,6 @@ public class DialogConstructor {
 				response.onCancel();
 			}
 		});
-
-		negative.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				response.onNegative();
-				dialog.dismiss();
-			}
-		});
-
-		positive.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (inputList == null) {
-					response.onPositive(null);
-				} else {
-					ArrayList<String> result = new ArrayList<String>();
-					for (EditText et : editTexts) {
-						result.add(et.getText().toString());
-					}
-					response.onPositive(result);
-				}
-				dialog.dismiss();
-			}
-		});
-
 		dialog.show();
 	}
 }

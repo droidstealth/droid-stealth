@@ -157,6 +157,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		finishActionMode(mMode);
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		doBindService();
@@ -645,6 +651,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					@Override
 					public void onCancel() {
 						// do nothing
+					}
+
+					@Override
+					public boolean onButton(int i) {
+						return false;
 					}
 				}
 		);

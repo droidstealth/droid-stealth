@@ -9,29 +9,26 @@
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:id="@+id/dialog_title"
-			android:textColor="@color/accent"
 			android:textStyle="bold"
 			android:text="Are you sure?"
-			android:fontFamily="sans-serif-condensed"
 			android:paddingLeft="@dimen/dialog_paddings"
 			android:paddingRight="@dimen/dialog_paddings"
 			android:paddingBottom="@dimen/dialog_paddings"
-			android:paddingTop="@dimen/dialog_paddings"/>
+			android:paddingTop="@dimen/dialog_paddings"
+			style="@style/Title"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:id="@+id/dialog_description"
 			android:text="Do you want to continue?"
-			android:textColor="@color/white"
 			android:paddingLeft="@dimen/dialog_paddings"
 			android:paddingRight="@dimen/dialog_paddings"
-			android:paddingBottom="@dimen/dialog_paddings"/>
+			android:paddingBottom="@dimen/dialog_paddings"
+			style="@style/RegularText"/>
 
 	<LinearLayout android:layout_width="match_parent"
-	              android:layout_height="200dp"
+	              android:layout_height="300dp"
 	              android:layout_marginLeft="@dimen/dialog_paddings"
 	              android:layout_marginRight="@dimen/dialog_paddings"
 	              android:layout_marginBottom="@dimen/dialog_paddings"
