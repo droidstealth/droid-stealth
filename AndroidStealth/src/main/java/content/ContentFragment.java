@@ -102,16 +102,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	};
 
-	public static ContentFragment newInstance(boolean loadEmpty) {
-		ContentFragment contentFragment = new ContentFragment();
-
-		Bundle bundle = new Bundle();
-		bundle.putBoolean("LOAD_EMPTY", loadEmpty);
-		contentFragment.setArguments(bundle);
-
-		return contentFragment;
-	}
-
 	void doBindService() {
 		Utils.d("Trying to bind service");
 		getActivity().getApplicationContext()

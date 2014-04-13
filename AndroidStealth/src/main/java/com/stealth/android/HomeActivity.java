@@ -3,19 +3,25 @@ package com.stealth.android;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.stealth.drawer.NavigationDrawerFragment;
+import com.stealth.morphing.MorphingFragment;
+import com.stealth.settings.GeneralSettingsFragment;
+import com.stealth.settings.LaunchSettingsFragment;
 import com.stealth.visibility.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
+import pin.PinFragment;
 import pin.PinManager;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -30,7 +36,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	 */
 	private CharSequence mTitle;
 	private int mActiveNavigationOption = 0;
-	private ProgressDialog mProgress = null;
+	private boolean mInterfaceConstructed = false;
 
 	private boolean mRequestedActivity;
 
@@ -65,6 +71,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home_loading);
+		mInterfaceConstructed = false;
 
 		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
 		BootManager.boot(this, pin, new IOnResult<Boolean>() {
@@ -120,11 +127,42 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		mNavDrawer = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mNavDrawer.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 		mTitle = getTitle();
+		mInterfaceConstructed = true;
+		showCurrentFragment();
+	}
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.container, new ContentFragment())
-				.commit();
+	/**
+	 * Open the requested fragment
+	 */
+	private void showCurrentFragment() {
+		if (mInterfaceConstructed) {
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			Fragment toOpen = null;
+
+			switch (mActiveNavigationOption) {
+				case NavigationDrawerFragment.POSITION_HOME:
+					toOpen = new ContentFragment();
+					break;
+				case NavigationDrawerFragment.POSITION_MORPH:
+					toOpen = MorphingFragment.newInstance("", "");
+					break;
+				case NavigationDrawerFragment.POSITION_LAUNCH:
+					toOpen = LaunchSettingsFragment.newInstance("", "");
+					break;
+				case NavigationDrawerFragment.POSITION_GENERAL:
+					toOpen = GeneralSettingsFragment.newInstance("", "");
+					break;
+				case NavigationDrawerFragment.POSITION_PIN:
+					toOpen = PinFragment.newInstance();
+					break;
+			}
+
+			if (toOpen != null) {
+				fragmentManager.beginTransaction()
+						.replace(R.id.container, toOpen)
+						.commit();
+			}
+		}
 	}
 
 	@Override
@@ -132,7 +170,12 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		if (mNavDrawer.isDrawerOpen()) {
 			mNavDrawer.closeDrawer();
 		} else {
-			super.onBackPressed();
+			if (mActiveNavigationOption != 0) {
+				mActiveNavigationOption = 0;
+				showCurrentFragment();
+			} else {
+				super.onBackPressed();
+			}
 		}
 	}
 
@@ -144,7 +187,10 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		Utils.setContext(this); // onCreate is called later... so let's call this now :)
-		mActiveNavigationOption = position;
+		if (position != mActiveNavigationOption) {
+			mActiveNavigationOption = position;
+			showCurrentFragment();
+		}
 	}
 
 	public void restoreActionBar() {

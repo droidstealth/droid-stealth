@@ -36,6 +36,12 @@ import com.stealth.utils.Utils;
  */
 public class NavigationDrawerFragment extends Fragment {
 
+	public static final int POSITION_HOME = 0;
+	public static final int POSITION_MORPH = 1;
+	public static final int POSITION_LAUNCH = 2;
+	public static final int POSITION_GENERAL = 3;
+	public static final int POSITION_PIN = 4;
+
     /**
      * Remember the position of the selected item.
      */
@@ -112,11 +118,16 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
 	    ArrayList<NavigationDrawerItem> items = new ArrayList<NavigationDrawerItem>();
-	    items.add(new NavigationDrawerItem(R.string.drawer_home, R.drawable.ic_drawer_home, R.color.drawer_home));
-	    items.add(new NavigationDrawerItem(R.string.drawer_morph, R.drawable.ic_drawer_morph, R.color.drawer_morph));
-	    items.add(new NavigationDrawerItem(R.string.drawer_launch, R.drawable.ic_drawer_launch, R.color.drawer_launch));
-	    items.add(new NavigationDrawerItem(R.string.drawer_general, R.drawable.ic_drawer_general, R.color.drawer_general));
-	    items.add(new NavigationDrawerItem(R.string.drawer_pin, R.drawable.ic_drawer_pin, R.color.drawer_pin));
+	    items.add(POSITION_HOME,
+			    new NavigationDrawerItem(R.string.drawer_home, R.drawable.ic_drawer_home, R.color.drawer_home));
+	    items.add(POSITION_MORPH,
+			    new NavigationDrawerItem(R.string.drawer_morph, R.drawable.ic_drawer_morph, R.color.drawer_morph));
+	    items.add(POSITION_LAUNCH,
+			    new NavigationDrawerItem(R.string.drawer_launch, R.drawable.ic_drawer_launch, R.color.drawer_launch));
+	    items.add(POSITION_GENERAL,
+			    new NavigationDrawerItem(R.string.drawer_general, R.drawable.ic_drawer_general, R.color.drawer_general));
+	    items.add(POSITION_PIN,
+			    new NavigationDrawerItem(R.string.drawer_pin, R.drawable.ic_drawer_pin, R.color.drawer_pin));
 
 	    mAdapter = new NavigationDrawerAdapter(root.getContext(), items);
         mDrawerListView.setAdapter(mAdapter);

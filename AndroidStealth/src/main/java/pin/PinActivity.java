@@ -39,11 +39,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 			}
 
 			// Create a new Fragment to be placed in the activity layout
-			mPinFrag = new PinFragment();
-			Bundle b = new Bundle();
-			b.putInt(PinFragment.ARG_DESCRIPTION_RESOURCE, R.string.pin_description_unlock);
-			b.putString(PinFragment.ARG_PIN, "");
-			mPinFrag.setArguments(b);
+			mPinFrag = PinFragment.newInstance(R.string.pin_title, R.string.pin_description_unlock, "");
 
 			// Add the fragment to the 'fragment_container' FrameLayout
 			getSupportFragmentManager().beginTransaction()
