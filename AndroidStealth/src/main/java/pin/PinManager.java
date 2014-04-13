@@ -22,6 +22,15 @@ public class PinManager {
 	private static PinManager sInstance;
 
 	/**
+	 * Checks if given pin could indeed be used as a pin.
+	 * @param pin the possible pin to check
+	 * @return if the pin is a possible pin
+	 */
+	public static boolean isPossiblePin(String pin) {
+		return PIN_MIN_SIZE <= pin.length() && pin.length() <= PIN_MAX_SIZE;
+	}
+
+	/**
 	 * Get the singleton instance of this class
 	 * @return
 	 */

@@ -197,14 +197,6 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	}
 
 	/**
-	 * Clears the pin that is currently entered.
-	 */
-	public void clearCurrentPin() {
-		mCurrentPin = "";
-		mPin.setText("");
-	}
-
-	/**
 	 * Builds the onPinResult listener that will help with the logics of the pin resets.
 	 * @return the listener
 	 */
@@ -225,7 +217,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 				mCurrentResetStep = 0;
 				mResettingPin = "";
 				showResetText();
-				clearCurrentPin();
+				pinClear();
 			}
 		};
 	}
@@ -238,7 +230,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 */
 	private boolean onResetPinEntry(String pin) {
 
-		clearCurrentPin();
+		pinClear();
 
 		switch (mCurrentResetStep) {
 
@@ -400,7 +392,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 			case R.id.pin_accept:
 				if(mListener != null)
-					if (!mListener.onPinEntry(mCurrentPin)) {
+					if (!PinManager.isPossiblePin(mCurrentPin)
+							|| !mListener.onPinEntry(mCurrentPin)) {
 						shakeNormal();
 					}
 				break;
