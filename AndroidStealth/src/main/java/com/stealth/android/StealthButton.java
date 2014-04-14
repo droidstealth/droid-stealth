@@ -59,7 +59,6 @@ public class StealthButton extends AppWidgetProvider {
 			updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
 		}
 		WidgetManager.setWidgetIDs(appWidgetIds);
-		Utils.d("widget ids: " + Utils.intArrayToString(appWidgetIds));
 	}
 
 
@@ -78,7 +77,7 @@ public class StealthButton extends AppWidgetProvider {
 		Utils.setContext(context);
 
 		Utils.d("Updating widget " + appWidgetId
-				+ " and is widget visible? " + WidgetManager.isWidgetTemporarilyVisible());
+				+ ". Visible? " + WidgetManager.isWidgetTemporarilyVisible());
 
 		boolean found = false;
 		for (int i : WidgetManager.getWidgetIDs()) {
@@ -90,6 +89,7 @@ public class StealthButton extends AppWidgetProvider {
 
 		if (!found) {
 			// NEW WIDGET!!
+			Utils.d("We found a new widget. Updating all and making them visible!");
 			WidgetManager.setWidgetTemporarilyVisible(true);
 			updateMe(context);
 		}
