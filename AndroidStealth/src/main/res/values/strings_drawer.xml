@@ -6,6 +6,6 @@
 	<string name="drawer_morph">App morphing</string>
     <string name="drawer_launch">Launch settings</string>
     <string name="drawer_general">General settings</string>
-	<string name="drawer_pin">Pin settings</string>
+	<string name="drawer_pin">Reset pin</string>
 
 </resources>

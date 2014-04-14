@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import com.stealth.files.FileIndex;
+import com.stealth.launch.LaunchManager;
+import com.stealth.launch.VisibilityManager;
+import com.stealth.launch.WidgetManager;
 import com.stealth.sequencing.IJob;
 import com.stealth.sequencing.JobSequencer;
 import com.stealth.utils.IOnResult;
@@ -54,6 +57,13 @@ public class BootManager {
 		@Override
 		public void doJob(IOnResult<Boolean> onReady) {
 			Utils.setContext(sContext.getApplicationContext());
+
+			if (LaunchManager.isWidgetEnabled()) {
+				VisibilityManager.showWidget(sContext);
+			} else {
+				VisibilityManager.hideWidget(sContext);
+			}
+
 			onReady.onResult(true);
 		}
 	};

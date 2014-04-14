@@ -36,7 +36,7 @@ public class LaunchManager {
 	 */
 	public static boolean isIconDisabled() {
 		initialize();
-		return sIconDisabled;
+		return sIconDisabled && (isWidgetEnabled() || isDialerEnabled());
 	}
 
 	public static void setIconDisabled(boolean iconDisabled) {
@@ -57,6 +57,12 @@ public class LaunchManager {
 		initialize();
 		sWidgetEnabled = widgetEnabled;
 		sPrefs.edit().putBoolean(KEY_WIDGET, sWidgetEnabled).apply();
+
+		if (widgetEnabled) {
+			VisibilityManager.showWidget(Utils.getContext());
+		} else {
+			VisibilityManager.hideWidget(Utils.getContext());
+		}
 	}
 
 	/**

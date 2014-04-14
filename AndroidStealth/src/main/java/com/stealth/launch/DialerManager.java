@@ -33,9 +33,16 @@ public class DialerManager {
 		return sLaunchCode;
 	}
 
-	public static void setLaunchCode(String launchCode) {
+	/**
+	 * This method filters the launch code to only pick valid characters.
+	 * @param launchCode the launch code to set
+	 * @return the correct launchCode
+	 */
+	public static String setLaunchCode(String launchCode) {
 		initialize();
+		launchCode = launchCode.replaceAll("[^\\d#\\*]+", ""); // only numbers and # and *
 		sLaunchCode = launchCode;
 		sPrefs.edit().putString(KEY_LAUNCH_CODE, sLaunchCode).apply();
+		return launchCode;
 	}
 }

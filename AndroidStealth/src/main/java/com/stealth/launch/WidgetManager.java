@@ -22,7 +22,7 @@ public class WidgetManager {
 	private static void initialize() {
 		if (!sInitialized) {
 			sPrefs = Utils.getContext().getSharedPreferences(KEY_PREFS_WIDGET, Context.MODE_PRIVATE);
-			sWidgetTemporarilyVisible = sPrefs.getBoolean(KEY_VISIBILITY, true);
+			sWidgetTemporarilyVisible = sPrefs.getBoolean(KEY_VISIBILITY, false);
 			sTapCountToOpen = sPrefs.getInt(KEY_TAPS, 4);
 			sInitialized = true;
 		}

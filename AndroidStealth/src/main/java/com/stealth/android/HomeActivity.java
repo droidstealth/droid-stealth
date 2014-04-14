@@ -145,7 +145,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 					toOpen = MorphingFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_LAUNCH:
-					toOpen = LaunchSettingsFragment.newInstance("", "");
+					toOpen = LaunchSettingsFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_GENERAL:
 					toOpen = GeneralSettingsFragment.newInstance("", "");

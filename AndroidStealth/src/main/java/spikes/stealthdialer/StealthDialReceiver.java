@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import com.stealth.android.HomeActivity;
+import com.stealth.launch.DialerManager;
+import com.stealth.launch.LaunchManager;
 import com.stealth.utils.Utils;
 
+import pin.PinActivity;
 import pin.PinManager;
 
 /**
@@ -38,7 +41,9 @@ public class StealthDialReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Utils.setContext(context);
 		String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-		if (HomeActivity.launch(context, pin)) {
+		if (LaunchManager.isDialerEnabled()
+				&& DialerManager.getLaunchCode().equals(pin)) {
+			PinActivity.launch(context);
 			setResultData(null);
 		}
 	}

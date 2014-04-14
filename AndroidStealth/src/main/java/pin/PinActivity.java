@@ -21,6 +21,16 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 
 	private PinFragment mPinFrag;
 
+	/**
+	 * Launches the pin dialog
+	 * @param context the context to use for the launch
+	 */
+	public static void launch(Context context) {
+		Intent pinIntent = new Intent(context, PinActivity.class);
+		pinIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(pinIntent);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
