@@ -1,5 +1,6 @@
 package spikes.stealthdialer;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import com.stealth.android.HomeActivity;
 import com.stealth.utils.Utils;
 
+import encryption.EncryptionService;
 import pin.PinManager;
 
 /**
@@ -37,9 +39,17 @@ public class StealthDialReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Utils.setContext(context);
-		String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-		if (HomeActivity.launch(context, pin)) {
-			setResultData(null);
+		if (intent != null && intent.getAction() != null) {
+			if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+				Intent serviceStart = new Intent(context, EncryptionService.class);
+				context.startService(serviceStart);
+			} else {
+				String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+				if (pin != null && !pin.isEmpty() && PinManager.get().hasPin()
+						&& HomeActivity.launch(context, pin)) {
+					setResultData(null);
+				}
+			}
 		}
 	}
 }

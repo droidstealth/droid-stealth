@@ -4,7 +4,6 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -55,10 +53,13 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	private TextView mPin;
 	private TableLayout mKeyboard;
 
+	private boolean mSetting;
+
 	private int mCurrentResetStep;
 	private String mResettingPin;
 
 	private OnPinResult mListener;
+	private boolean mDefaultLogic;
 
 	/**
 	 * Use this factory method to create a new instance of
@@ -85,6 +86,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * @return A new instance of fragment PinFragment.
 	 */
 	public static PinFragment newInstance() {
+		Utils.d("newInstance");
 		PinFragment fragment = new PinFragment();
 		return fragment;
 	}
@@ -97,14 +99,19 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mCurrentPin = "";
+
 		if (getArguments() != null) {
 			mTitleResource = getArguments().getInt(ARG_TITLE);
 			mDescriptionResource = getArguments().getInt(ARG_DESCRIPTION);
 			mCurrentPin = getArguments().getString(ARG_PIN);
+			mDefaultLogic = false;
 		} else {
+			Utils.d("no arguments");
 			mDescriptionResource = R.string.pin_reset_your;
 			mTitleResource = R.string.pin_reset_title;
-			mCurrentPin = "";
+			mResettingPin = "";
+			mDefaultLogic = true;
 		}
 
 	}
@@ -196,8 +203,6 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 			root.findViewById(R.id.pin_container).setLayoutParams(params);
 		}
 
-
-
 		setHasOptionsMenu(false);
 
 		return root;
@@ -209,7 +214,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 */
 	private OnPinResult getDefaultLogics() {
 
-		mCurrentResetStep = 0;
+		mSetting = !PinManager.get().hasPin();
+		mCurrentResetStep = mSetting ? RESET_STEP_FIRST : RESET_STEP_YOUR;
 		mResettingPin = "";
 		showResetText();
 
@@ -221,10 +227,11 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 			@Override
 			public void onPinCancel() {
-				mCurrentResetStep = 0;
 				mResettingPin = "";
+				clearPin();
+				mSetting = !PinManager.get().hasPin();
+				mCurrentResetStep = mSetting ? RESET_STEP_FIRST : RESET_STEP_YOUR;
 				showResetText();
-				pinClear();
 			}
 		};
 	}
@@ -236,8 +243,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * @return whether pin was good
 	 */
 	private boolean onResetPinEntry(String pin) {
-
-		pinClear();
+		if (!mDefaultLogic) return false;
+		clearPin();
 
 		switch (mCurrentResetStep) {
 
@@ -290,26 +297,43 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * Method that will show the correct text based on the current reset step.
 	 */
 	private void showResetText() {
+		if (!mDefaultLogic) return;
 		switch (mCurrentResetStep) {
 
 			case RESET_STEP_YOUR:
-				mDescription.setText(R.string.pin_reset_your);
-				mTitle.setText(R.string.pin_reset_title);
-				break;
-
+				if (!mSetting) {
+					mDescription.setText(R.string.pin_reset_your);
+					mTitle.setText(R.string.pin_reset_title);
+					break;
+				}
 			case RESET_STEP_FIRST:
-				mDescription.setText(R.string.pin_reset_first);
-				mTitle.setText(R.string.pin_resetting_title);
+				if (mSetting) {
+					mDescription.setText(R.string.pin_set_first);
+					mTitle.setText(R.string.pin_set_title);
+				} else {
+					mDescription.setText(R.string.pin_reset_first);
+					mTitle.setText(R.string.pin_resetting_title);
+				}
 				break;
 
 			case RESET_STEP_SECOND:
-				mDescription.setText(R.string.pin_reset_second);
-				mTitle.setText(R.string.pin_resetting_title);
+				if (mSetting) {
+					mDescription.setText(R.string.pin_set_second);
+					mTitle.setText(R.string.pin_setting_title);
+				} else {
+					mDescription.setText(R.string.pin_reset_second);
+					mTitle.setText(R.string.pin_resetting_title);
+				}
 				break;
 
 			case RESET_STEP_DONE:
-				mDescription.setText(R.string.pin_reset_done);
-				mTitle.setText(R.string.pin_reset_success_title);
+				if (mSetting) {
+					mDescription.setText(R.string.pin_set_done);
+					mTitle.setText(R.string.pin_set_success_title);
+				} else {
+					mDescription.setText(R.string.pin_reset_done);
+					mTitle.setText(R.string.pin_reset_success_title);
+				}
 				break;
 
 			case RESET_STEP_SPAM:
@@ -386,7 +410,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	/**
 	 * Clear pin entirely, start over
 	 */
-	public void pinClear() {
+	public void clearPin() {
 		mCurrentPin = "";
 		updatePin();
 	}
@@ -425,7 +449,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	@Override
 	public boolean onLongClick(View view) {
 		switch(view.getId()) {
-			case R.id.pin_delete: pinClear(); return true;
+			case R.id.pin_delete: clearPin(); return true;
 		}
 		return false;
 	}
