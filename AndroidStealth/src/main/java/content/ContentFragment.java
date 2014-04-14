@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.view.menu.MenuBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,7 +54,7 @@ import sharing.SharingUtils;
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
-		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener {
+		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 	private GridView mGridView;
@@ -102,6 +101,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			});
 		}
 	};
+
+	@Override
+	public void onAdapterChanged() {
+		checkSelections();
+	}
 
 	void doBindService() {
 		Utils.d("Trying to bind service");
@@ -208,6 +212,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				getActivity(),
 				FileIndex.get());
 		mAdapter = new ContentAdapter(mContentManager, mGridView);
+		mAdapter.setAdapterChangedListener(this);
 		mContentManager.addContentChangedListener(mAdapter);
 		mGridView.setAdapter(mAdapter);
 
@@ -397,7 +402,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				showMultiSelectionFeedback();
 			}
 			mSingleSelected = position;
-			disableIfNoneChecked();
+			checkSelections();
 		}
 		else {
 			startSingleSelection(position);
@@ -421,7 +426,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		if (isMultiSelecting()) {
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			showMultiSelectionFeedback();
-			disableIfNoneChecked();
+			checkSelections();
 		}
 		else if (isSingleSelecting()) {
 			startMultiSelection(position);
@@ -507,7 +512,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Disables the ActionMode if no more items are checked
 	 */
-	private void disableIfNoneChecked() {
+	private void checkSelections() {
+		for (long id : mGridView.getCheckedItemIds()) {
+			if (id >= mAdapter.getCount()) {
+				mGridView.setItemChecked((int)id, false);
+			}
+		}
 		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
 			mMultiModeListener = null;
 			finishActionMode(mMode);
@@ -600,6 +610,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				if (result) {
 					Utils.toast(R.string.content_success_shred);
 					finishMultiActionMode(actionMode);
+					checkSelections();
 				}
 				else {
 					Utils.toast(R.string.content_fail_shred);
@@ -621,7 +632,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					@Override
 					public void onPositive(ArrayList<String> input) {
 						mContentManager.removeItems(with, shredListener);
-						disableIfNoneChecked();
 					}
 
 					@Override

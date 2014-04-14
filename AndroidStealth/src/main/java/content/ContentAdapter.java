@@ -36,6 +36,15 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private IndexedFolder mLastFolder;
 	private HashSet<IndexedItem> mAnimCheck;
 	private long mLastAnimTime = 0;
+	private IAdapterChangedListener mListener;
+
+	public IAdapterChangedListener getAdapterChangedListener() {
+		return mListener;
+	}
+
+	public void setAdapterChangedListener(IAdapterChangedListener listener) {
+		mListener = listener;
+	}
 
 	/**
 	 * Creates a new ContentAdapter
@@ -271,6 +280,14 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 
 		mContentItems = new ArrayList<IndexedItem>(mContentManager.getFolders(current));
 		mContentItems.addAll(new ArrayList<IndexedItem>(mContentManager.getFiles(current)));
+
+		if (mListener != null) {
+			mListener.onAdapterChanged();
+		}
+	}
+
+	public interface IAdapterChangedListener {
+		void onAdapterChanged();
 	}
 }
 
