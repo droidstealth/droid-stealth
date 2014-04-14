@@ -21,8 +21,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -683,7 +681,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					mActionManager.actionRestore(selectedItems, null);
 					break;
 				case R.id.action_open:
-					mActionManager.actionOpen(selectedItems.get(0), null);
+					mActionManager.actionOpen(selectedItems.get(0), null, getActivity());
 					break;
 				case R.id.action_shred:
 					shredAll(selectedItems);

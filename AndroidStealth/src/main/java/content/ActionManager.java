@@ -2,13 +2,12 @@ package content;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.view.ActionMode;
-import com.stealth.android.R;
-import com.stealth.dialog.DialogConstructor;
-import com.stealth.dialog.DialogOptions;
-import com.stealth.dialog.IDialogResponse;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.IOnResult;
@@ -48,8 +47,27 @@ public class ActionManager implements IActionManager {
 	}
 
 	@Override
-	public void actionOpen(IndexedItem with, IOnResult<Boolean> listener) {
+	public void actionOpen(IndexedItem with, IOnResult<Boolean> listener, Context context) {
+		if(!(with instanceof IndexedFile)){
+			return;
+		}
 
+		IndexedFile file = (IndexedFile)with;
+		Uri uri = Uri.fromFile(file.getUnlockedFile());
+
+		MimeTypeMap myMime = MimeTypeMap.getSingleton();
+
+		Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
+
+		String mimeType = myMime.getMimeTypeFromExtension(file.getExtension().substring(1));
+		newIntent.setDataAndType(uri,mimeType);
+		newIntent.setFlags(newIntent.FLAG_ACTIVITY_NEW_TASK);
+
+		try {
+			context.startActivity(newIntent);
+		} catch (android.content.ActivityNotFoundException e) {
+			Toast.makeText(context, "No handler for file " + file.getUnlockedFilename(), 4000).show();
+		}
 	}
 
 	@Override
