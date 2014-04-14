@@ -3,6 +3,7 @@ package com.stealth.files;
 import android.graphics.Bitmap;
 import android.util.Log;
 import com.stealth.utils.Utils;
+import encryption.EncryptionService;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -171,21 +172,21 @@ public class IndexedFile extends IndexedItem {
 	 * @return true if file is currently locked
 	 */
 	public boolean isLocked() {
-		return !getUnlockedFile().exists() && getLockedFile().exists();
+		return !isProcessing() && !getUnlockedFile().exists() && getLockedFile().exists();
 	}
 
 	/**
 	 * @return true if file is currently unlocked
 	 */
 	public boolean isUnlocked() {
-		return getUnlockedFile().exists() && !getLockedFile().exists();
+		return !isProcessing() && getUnlockedFile().exists() && !getLockedFile().exists();
 	}
 
 	/**
 	 * @return true if file is currently being processed
 	 */
 	public boolean isProcessing() {
-		return getUnlockedFile().exists() && getLockedFile().exists();
+		return EncryptionService.inQueue(this);
 	}
 
 	/**

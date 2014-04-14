@@ -1,13 +1,168 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.stealth.settings.LaunchSettingsFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			tools:context="com.stealth.morphing.MorphingFragment"
+			android:background="@color/background"
+			android:orientation="vertical"
+			android:paddingTop="@dimen/default_large_padding"
+			android:paddingLeft="@dimen/default_large_padding"
+			android:paddingRight="@dimen/default_large_padding"
+			android:paddingBottom="@dimen/default_huge_padding">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+		<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/default_medium_padding">
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:src="@drawable/ic_drawer_launch"
+					android:layout_marginRight="@dimen/default_medium_padding"/>
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/launch_title"
+					android:layout_gravity="center_vertical"
+					style="@style/Title"/>
+		</LinearLayout>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_huge_padding"/>
 
-</FrameLayout>
+		<!-- APPLICATION ICON -->
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_icon"
+				android:layout_gravity="center_vertical"
+				android:layout_marginBottom="@dimen/default_small_padding"
+				style="@style/Title"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_icon_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_icon_disable"
+				android:id="@+id/launch_icon_disable"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginBottom="@dimen/default_huge_padding"/>
+
+		<!-- WIDGET -->
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_widget"
+				android:layout_gravity="center_vertical"
+				android:layout_marginBottom="@dimen/default_small_padding"
+				style="@style/Title"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_widget_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_widget_use"
+				android:id="@+id/launch_widget_use"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_widget_visible_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_widget_visible"
+				android:id="@+id/launch_widget_visible"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginBottom="@dimen/default_huge_padding"/>
+
+		<!-- DIALER -->
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_dialer"
+				android:layout_gravity="center_vertical"
+				android:layout_marginBottom="@dimen/default_small_padding"
+				style="@style/Title"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_dialer_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_dialer_use"
+				android:id="@+id/launch_dialer_use"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/SubTitle"
+				android:text="@string/launch_dialer_code"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+		<EditText
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/launch_dialer_code"
+				android:background="@drawable/frame_input_states"
+				android:layout_gravity="center_vertical"
+				android:hint="@string/launch_dialer_hint"
+				android:text=""
+				android:maxLines="1"
+				android:maxLength="10"
+				android:inputType="phone"
+				style="@style/EditText"
+				android:layout_marginBottom="@dimen/default_huge_padding"/>
+
+		<!-- WARNING -->
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/launch_disclaimer"
+				android:layout_gravity="center_vertical"
+				android:layout_marginBottom="@dimen/default_small_padding"
+				style="@style/Title"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/launch_disclaimer_description"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_huge_padding"/>
+	</LinearLayout>
+</ScrollView>

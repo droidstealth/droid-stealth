@@ -229,7 +229,9 @@ public class ContentManager implements IContentManager {
 	 */
 	private void notifyListenersNow() {
 		for (ContentChangedListener listener : mListeners) {
-			listener.contentChanged();
+			if (listener != null) {
+				listener.contentChanged();
+			}
 		}
 	}
 }

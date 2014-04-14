@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.ContentResolver;
@@ -96,8 +97,7 @@ public class Utils {
 	}
 
 	/**
-	 * @return the context so you can easily access for instance the resources of this app, show notifications or
-	 * access
+	 * @return the context so you can easily access for instance the resources of this app, show notifications or access
 	 * the device's sensors.
 	 */
 	public static Context getContext() {
@@ -202,6 +202,42 @@ public class Utils {
 	public static int dp(int px) {
 		DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
 		return (int) ((px / displayMetrics.density) + 0.5);
+	}
+
+	/**
+	 * Array of integers to string
+	 *
+	 * @param ints
+	 * @return
+	 */
+	public static String intArrayToString(int[] ints) {
+		String result = "";
+		for (int i = 0; i < ints.length; i++) {
+			if (i > 0) {
+				result += ",";
+			}
+			result += ints[i];
+		}
+		return result;
+	}
+
+	/**
+	 * Gets the array of integers from a string
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static int[] intArrayFromString(String str) {
+		if (str.isEmpty()) {
+			return new int[0];
+		}
+		String[] split = str.split(",");
+		int[] result = new int[split.length];
+
+		for (int i = 0; i < split.length; i++) {
+			result[i] = Integer.parseInt(split[i]);
+		}
+		return result;
 	}
 
 	/**
@@ -561,8 +597,7 @@ public class Utils {
 	}
 
 	/**
-	 * Deletes a non-media file if it is a file included in the mediastore. Using this method also removes the file
-	 * from
+	 * Deletes a non-media file if it is a file included in the mediastore. Using this method also removes the file from
 	 * the mediastore database and doesn't just delete the file itself. (method executes on your current thread)
 	 *
 	 * @param f the file to remove

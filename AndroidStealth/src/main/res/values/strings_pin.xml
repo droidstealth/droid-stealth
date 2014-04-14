@@ -2,6 +2,8 @@
 <resources>
 	<string name="title_activity_pin">PinActivity</string>
 
+	<string name="pin_not_set_toast">Please set a pin before managing your private stuff!</string>
+
 	<string name="pin_title">Your pin</string>
 	<string name="pin_description_unlock">Please enter your pin</string>
 	<string name="pin_description_unlocked">Welcome, mister Bond.</string>
@@ -10,6 +12,14 @@
 	<string name="pin_resetting_title">Resetting pin</string>
 	<string name="pin_practice_title">Practicing pin</string>
 	<string name="pin_reset_success_title">Great success!</string>
+
+	<string name="pin_set_title">You have no pin yet</string>
+	<string name="pin_setting_title">Setting pin</string>
+	<string name="pin_set_success_title">Great success!</string>
+	<string name="pin_set_first">Please enter your desired pin. New pin must be at least 3 characters long and at most 20.</string>
+	<string name="pin_set_second">Great! Please re-enter your new pin so you won\'t forget.</string>
+	<string name="pin_set_done">Go to your vault to manage your private stuff!
+		Or, you can practice some more by entering your new pin:</string>
 
 	<string name="pin_reset_your">Please provide your current pin in order to change it.</string>
 	<string name="pin_reset_first">Great! Now enter your desired new pin. New pin must be at least 3 characters long and at most 20.</string>

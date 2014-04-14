@@ -15,8 +15,8 @@ public class PinManager {
 	private static final String PIN_PREFS = "pin";
 	private static final String PIN_FAKE = "FAKE_PIN";
 	private static final String PIN_REAL = "REAL_PIN";
-	private static final String PIN_FAKE_DEFAULT = "#666";
-	private static final String PIN_REAL_DEFAULT = "#555";
+	private static final String PIN_FAKE_DEFAULT = "";
+	private static final String PIN_REAL_DEFAULT = "";
 	public static final int PIN_MAX_SIZE = 20;
 	public static final int PIN_MIN_SIZE = 3;
 	private static PinManager sInstance;
@@ -53,6 +53,14 @@ public class PinManager {
 		mSharedPrefs = Utils.getContext().getSharedPreferences(PIN_PREFS, Activity.MODE_PRIVATE);
 		mRealPin = mSharedPrefs.getString(PIN_REAL, PIN_REAL_DEFAULT);
 		mFakePin = mSharedPrefs.getString(PIN_FAKE, PIN_FAKE_DEFAULT);
+	}
+
+	/**
+	 * Check if the user has set a pin at all
+	 * @return if user has set a pin
+	 */
+	public boolean hasPin() {
+		return !mRealPin.equals("");
 	}
 
 	/**

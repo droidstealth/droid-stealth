@@ -54,10 +54,9 @@ public class ActionManager implements IActionManager {
 		IndexedFile file = (IndexedFile)with;
 		Uri uri = Uri.fromFile(file.getUnlockedFile());
 
-		MimeTypeMap myMime = MimeTypeMap.getSingleton();
-
 		Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
 
+		MimeTypeMap myMime = MimeTypeMap.getSingleton();
 		String mimeType = myMime.getMimeTypeFromExtension(file.getExtension().substring(1));
 		newIntent.setDataAndType(uri,mimeType);
 		newIntent.setFlags(newIntent.FLAG_ACTIVITY_NEW_TASK);
@@ -111,7 +110,8 @@ public class ActionManager implements IActionManager {
 			intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_file));
 
 			MimeTypeMap map = MimeTypeMap.getSingleton();
-			intent.setType(map.getMimeTypeFromExtension(file.getExtension()));
+			String mimeType = map.getMimeTypeFromExtension(file.getExtension().substring(1));
+			intent.setType(mimeType);
 
 			Uri uri = Uri.fromFile(file.getUnlockedFile());
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -128,16 +128,35 @@ public class ActionManager implements IActionManager {
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
 			intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_files));
-			intent.setType("*/*");
+
 
 			ArrayList<Uri> files = new ArrayList<Uri>();
 
+			ArrayList<String> mimes = new ArrayList<String>();
+			MimeTypeMap myMime = MimeTypeMap.getSingleton();
+
 			for (IndexedItem item : with) {
 				if (item instanceof IndexedFile) {
-					Uri uri = Uri.fromFile(((IndexedFile) item).getUnlockedFile());
+					IndexedFile file = (IndexedFile) item;
+					Uri uri = Uri.fromFile(file.getUnlockedFile());
+					String mimeType = myMime.getMimeTypeFromExtension(file.getExtension().substring(1));
+					if(!mimes.contains(mimeType))
+						mimes.add(mimeType);
 					files.add(uri);
 				}
 			}
+
+			StringBuilder sb = new StringBuilder();
+			for (String mime : mimes){
+				sb.append(mime);
+				sb.append(',');
+			}
+
+			sb.deleteCharAt(sb.length()-1);
+
+			String mimeType = sb.toString();
+			Utils.d("Mimetype: " + mimeType);
+			intent.setType(mimeType);
 
 			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
 

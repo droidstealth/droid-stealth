@@ -1,23 +1,15 @@
 package content;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
-import com.stealth.android.BuildConfig;
 import com.stealth.utils.Utils;
 
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		Utils.fadein(this, mItemID * 20);
-	}
+	private static final int[] CheckedStateSet = { android.R.attr.state_checked };
+	private boolean mChecked = false;
 
 	public CheckableLinearLayout(Context context) {
 		super(context);
@@ -27,23 +19,17 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 		super(context, attrs);
 	}
 
-	private static final int[] CheckedStateSet = {android.R.attr.state_checked};
-
-	private boolean mChecked = false;
-	private int mItemID = 0;
-
-	public int getItemID() {
-		return mItemID;
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
 	}
 
-	public void setItemID(int mItemID) {
-		this.mItemID = mItemID;
-	}
-
+	@Override
 	public boolean isChecked() {
 		return mChecked;
 	}
 
+	@Override
 	public void setChecked(boolean b) {
 		if (b != mChecked) {
 			mChecked = b;
@@ -51,6 +37,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 		}
 	}
 
+	@Override
 	public void toggle() {
 		setChecked(!mChecked);
 	}

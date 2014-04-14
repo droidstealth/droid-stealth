@@ -1,9 +1,7 @@
 package com.stealth.android;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +15,7 @@ import com.stealth.drawer.NavigationDrawerFragment;
 import com.stealth.morphing.MorphingFragment;
 import com.stealth.settings.GeneralSettingsFragment;
 import com.stealth.settings.LaunchSettingsFragment;
-import com.stealth.visibility.VisibilityManager;
+import com.stealth.launch.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
@@ -48,7 +46,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	 * @return whether activity could launch
 	 */
 	public static boolean launch(Context context, String pin) {
-		if (!PinManager.get().isPin(pin)) {
+		if (!PinManager.get().isPin(pin) && PinManager.get().hasPin()) {
 			return false;
 		}
 
@@ -128,6 +126,13 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		mNavDrawer.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 		mTitle = getTitle();
 		mInterfaceConstructed = true;
+
+		// start with pin activity if you have none
+		if (!PinManager.get().hasPin()) {
+			Utils.toast(R.string.pin_not_set_toast);
+			mActiveNavigationOption = NavigationDrawerFragment.POSITION_PIN;
+		}
+
 		showCurrentFragment();
 	}
 
@@ -138,6 +143,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		if (mInterfaceConstructed) {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			Fragment toOpen = null;
+			Utils.d("mActiveNavigationOption = " + mActiveNavigationOption);
 
 			switch (mActiveNavigationOption) {
 				case NavigationDrawerFragment.POSITION_HOME:
@@ -147,7 +153,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 					toOpen = MorphingFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_LAUNCH:
-					toOpen = LaunchSettingsFragment.newInstance("", "");
+					toOpen = LaunchSettingsFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_GENERAL:
 					toOpen = GeneralSettingsFragment.newInstance("", "");
