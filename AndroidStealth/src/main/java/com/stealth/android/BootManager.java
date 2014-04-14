@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import com.stealth.files.FileIndex;
+import com.stealth.launch.LaunchManager;
+import com.stealth.launch.VisibilityManager;
 import com.stealth.sequencing.IJob;
 import com.stealth.sequencing.JobSequencer;
 import com.stealth.utils.IOnResult;
@@ -11,8 +13,8 @@ import com.stealth.utils.Utils;
 import pin.PinManager;
 
 /**
- * This class ensures everything is created as it should and all resources are ready and available to use
- * Created by OlivierHokke on 06-Apr-14.
+ * This class ensures everything is created as it should and all resources are ready and available to use Created by
+ * OlivierHokke on 06-Apr-14.
  */
 public class BootManager {
 
@@ -24,9 +26,8 @@ public class BootManager {
 	private static ArrayList<IOnResult<Boolean>> mBootCallbacks = new ArrayList<IOnResult<Boolean>>();
 
 	/**
-	 * Method used to fail the boot: remember that the app has failed, and run
-	 * the callback on the main thread so the called of the boot can sadly continue with
-	 * failing.
+	 * Method used to fail the boot: remember that the app has failed, and run the callback on the main thread so the
+	 * called of the boot can sadly continue with failing.
 	 */
 	private static final Runnable sFail = new Runnable() {
 		@Override
@@ -36,9 +37,8 @@ public class BootManager {
 	};
 
 	/**
-	 * Method used to finalize the boot: remember that app has booted, and run
-	 * the callback on the main thread so the called of the boot can happily continue with
-	 * its tasks.
+	 * Method used to finalize the boot: remember that app has booted, and run the callback on the main thread so the
+	 * called of the boot can happily continue with its tasks.
 	 */
 	private static final Runnable sSuccess = new Runnable() {
 		@Override
@@ -54,6 +54,14 @@ public class BootManager {
 		@Override
 		public void doJob(IOnResult<Boolean> onReady) {
 			Utils.setContext(sContext.getApplicationContext());
+
+			if (LaunchManager.isWidgetEnabled()) {
+				VisibilityManager.showWidget(sContext);
+			}
+			else {
+				VisibilityManager.hideWidget(sContext);
+			}
+
 			onReady.onResult(true);
 		}
 	};
@@ -80,6 +88,7 @@ public class BootManager {
 
 	/**
 	 * Notify the bootmanager that we booted.
+	 *
 	 * @param result the state or result of the boot. Did it succeed?
 	 */
 	private static void booted(final boolean result) {
@@ -89,7 +98,8 @@ public class BootManager {
 
 		if (result) {
 			Utils.d("Booted!");
-		} else {
+		}
+		else {
 			Utils.d("Boot failed...");
 		}
 
@@ -108,13 +118,15 @@ public class BootManager {
 
 	/**
 	 * Adds a callback to the list of callbacks. It will be called when booting is ready.
+	 *
 	 * @param callback the callback to add
 	 */
-	public static void addBootCallback(IOnResult<Boolean> callback){
+	public static void addBootCallback(IOnResult<Boolean> callback) {
 		if (sBooted) {
 			Utils.d("We already booted!");
 			callback.onResult(sBootResult);
-		} else if (callback != null) {
+		}
+		else if (callback != null) {
 			Utils.d("Added boot callback to callback list.");
 			mBootCallbacks.add(callback);
 		}
@@ -122,11 +134,12 @@ public class BootManager {
 
 	/**
 	 * Boots up everything that is needed to let the application function properly.
-	 * @param context the application context that will be used for booting
-	 * @param pin the pin that should be checked
+	 *
+	 * @param context  the application context that will be used for booting
+	 * @param pin      the pin that should be checked
 	 * @param callback the method that will be called when booting is ready.
 	 */
-	public static void boot(Context context, String pin, IOnResult<Boolean> callback){
+	public static void boot(Context context, String pin, IOnResult<Boolean> callback) {
 
 		addBootCallback(callback);
 
@@ -158,25 +171,29 @@ public class BootManager {
 
 	/**
 	 * Boots up everything that is needed to let the application function properly.
-	 * @param context the application context that will be used for booting
+	 *
+	 * @param context  the application context that will be used for booting
 	 * @param callback the method that will be called when booting is ready.
 	 */
-	public static void boot(Context context, IOnResult<Boolean> callback){
+	public static void boot(Context context, IOnResult<Boolean> callback) {
 		boot(context, null, callback);
 	}
 
 	/**
 	 * Checks if the pin is valid
-	 * @param pin the pin to check
+	 *
+	 * @param pin      the pin to check
 	 * @param callback the method to notify the result
 	 */
 	private static void checkPin(String pin, IOnResult<Boolean> callback) {
 		if (BuildConfig.DEBUG || pin == null) {
 			callback.onResult(true);
-		} else if (PinManager.get().isPin(pin)) {
+		}
+		else if (PinManager.get().isPin(pin)) {
 			Utils.d("Pin was correct");
 			callback.onResult(true);
-		} else {
+		}
+		else {
 			Utils.d("Incorrect pin");
 			callback.onResult(false);
 		}
@@ -184,6 +201,7 @@ public class BootManager {
 
 	/**
 	 * Creates the file index
+	 *
 	 * @param callback the method to notify the result
 	 */
 	private static void createFileIndex(final IOnResult<Boolean> callback) {
@@ -193,7 +211,8 @@ public class BootManager {
 				if (result != null) { // STEP 3
 					Utils.d("Created file index");
 					callback.onResult(true);
-				} else { // STEP 2
+				}
+				else { // STEP 2
 					Utils.d("Failed to create file index");
 					callback.onResult(false);
 				}
