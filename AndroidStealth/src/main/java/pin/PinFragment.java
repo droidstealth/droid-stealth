@@ -22,13 +22,9 @@ import com.stealth.utils.Utils;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PinFragment.OnPinResult} interface
- * to handle interaction events.
- * Use the {@link PinFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
+ * A simple {@link android.support.v4.app.Fragment} subclass. Activities that contain this fragment must implement the
+ * {@link PinFragment.OnPinResult} interface to handle interaction events. Use the {@link PinFragment#newInstance}
+ * factory method to create an instance of this fragment.
  */
 public class PinFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 	// the fragment initialization parameters
@@ -62,12 +58,11 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	private boolean mDefaultLogic;
 
 	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
+	 * Use this factory method to create a new instance of this fragment using the provided parameters.
 	 *
-	 * @param pinTitle The title to show
+	 * @param pinTitle       The title to show
 	 * @param pinDescription The text resource to show.
-	 * @param pin the pin
+	 * @param pin            the pin
 	 * @return A new instance of fragment PinFragment.
 	 */
 	public static PinFragment newInstance(int pinTitle, int pinDescription, String pin) {
@@ -81,8 +76,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	}
 
 	/**
-	 * Creates a new instance of the pin fragment but lets it use its default logics:
-	 * pin resets, and if pin does not yet exist, pin creation
+	 * Creates a new instance of the pin fragment but lets it use its default logics: pin resets, and if pin does not
+	 * yet exist, pin creation
+	 *
 	 * @return A new instance of fragment PinFragment.
 	 */
 	public static PinFragment newInstance() {
@@ -106,7 +102,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 			mDescriptionResource = getArguments().getInt(ARG_DESCRIPTION);
 			mCurrentPin = getArguments().getString(ARG_PIN);
 			mDefaultLogic = false;
-		} else {
+		}
+		else {
 			Utils.d("no arguments");
 			mDescriptionResource = R.string.pin_reset_your;
 			mTitleResource = R.string.pin_reset_title;
@@ -132,7 +129,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	                         Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		View root = inflater.inflate(R.layout.fragment_pin, container, false);
 
@@ -143,13 +140,13 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 		long animStep = 20;
 		long animNow = 100;
 
-		mTitle = (TextView)root.findViewById(R.id.pin_title);
+		mTitle = (TextView) root.findViewById(R.id.pin_title);
 		mTitle.setText(mTitleResource);
-		mDescription = (TextView)root.findViewById(R.id.pin_description);
+		mDescription = (TextView) root.findViewById(R.id.pin_description);
 		mDescription.setText(mDescriptionResource);
-		mPin = (TextView)root.findViewById(R.id.pin_entry);
+		mPin = (TextView) root.findViewById(R.id.pin_entry);
 		mPin.setText(mCurrentPin);
-		mKeyboard = (TableLayout)root.findViewById(R.id.pin_keyboard);
+		mKeyboard = (TableLayout) root.findViewById(R.id.pin_keyboard);
 
 		root.findViewById(R.id.pin_0_container).setOnClickListener(this);
 		root.findViewById(R.id.pin_1_container).setOnClickListener(this);
@@ -169,23 +166,40 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 		root.findViewById(R.id.pin_delete).setOnClickListener(this);
 		root.findViewById(R.id.pin_delete).setOnLongClickListener(this);
 
-		Utils.fadein(mTitle, animNow); animNow += animStep;
-		Utils.fadein(mDescription, animNow); animNow += animStep;
-		Utils.fadein(mPin, animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_1_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_2_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_3_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_4_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_5_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_6_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_7_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_8_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_9_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_asterisk_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_0_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_hashtag_container), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_cancel), animNow); animNow += animStep;
-		Utils.fadein(root.findViewById(R.id.pin_accept), animNow); animNow += animStep;
+		Utils.fadein(mTitle, animNow);
+		animNow += animStep;
+		Utils.fadein(mDescription, animNow);
+		animNow += animStep;
+		Utils.fadein(mPin, animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_1_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_2_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_3_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_4_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_5_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_6_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_7_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_8_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_9_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_asterisk_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_0_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_hashtag_container), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_cancel), animNow);
+		animNow += animStep;
+		Utils.fadein(root.findViewById(R.id.pin_accept), animNow);
+		animNow += animStep;
 		Utils.fadein(root.findViewById(R.id.pin_delete), animNow);
 
 		mSmallShake = AnimationUtils.loadAnimation(root.getContext(), R.anim.shake_small);
@@ -193,7 +207,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 		if (getActivity() instanceof OnPinResult) {
 			mListener = (OnPinResult) getActivity();
-		} else {
+		}
+		else {
 			mListener = getDefaultLogics();
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 					ViewGroup.LayoutParams.MATCH_PARENT,
@@ -210,6 +225,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 	/**
 	 * Builds the onPinResult listener that will help with the logics of the pin resets.
+	 *
 	 * @return the listener
 	 */
 	private OnPinResult getDefaultLogics() {
@@ -237,13 +253,15 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	}
 
 	/**
-	 * This method does all the thinking and state management for the pin reset.
-	 * It is called when a pin is entered.
+	 * This method does all the thinking and state management for the pin reset. It is called when a pin is entered.
+	 *
 	 * @param pin the pin that was entered
 	 * @return whether pin was good
 	 */
 	private boolean onResetPinEntry(String pin) {
-		if (!mDefaultLogic) return false;
+		if (!mDefaultLogic) {
+			return false;
+		}
 		clearPin();
 
 		switch (mCurrentResetStep) {
@@ -253,7 +271,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 					mCurrentResetStep++;
 					showResetText();
 					return true;
-				} else {
+				}
+				else {
 					return false;
 				}
 
@@ -269,7 +288,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 					mCurrentResetStep++;
 					showResetText();
 					return true;
-				} else {
+				}
+				else {
 					return false;
 				}
 
@@ -278,7 +298,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 					mCurrentResetStep++;
 					showResetText();
 					return true;
-				} else {
+				}
+				else {
 					return false;
 				}
 
@@ -286,7 +307,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 				if (PinManager.get().isRealPin(pin)) {
 					showResetText();
 					return true;
-				} else {
+				}
+				else {
 					return false;
 				}
 		}
@@ -297,7 +319,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * Method that will show the correct text based on the current reset step.
 	 */
 	private void showResetText() {
-		if (!mDefaultLogic) return;
+		if (!mDefaultLogic) {
+			return;
+		}
 		switch (mCurrentResetStep) {
 
 			case RESET_STEP_YOUR:
@@ -310,7 +334,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 				if (mSetting) {
 					mDescription.setText(R.string.pin_set_first);
 					mTitle.setText(R.string.pin_set_title);
-				} else {
+				}
+				else {
 					mDescription.setText(R.string.pin_reset_first);
 					mTitle.setText(R.string.pin_resetting_title);
 				}
@@ -320,7 +345,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 				if (mSetting) {
 					mDescription.setText(R.string.pin_set_second);
 					mTitle.setText(R.string.pin_setting_title);
-				} else {
+				}
+				else {
 					mDescription.setText(R.string.pin_reset_second);
 					mTitle.setText(R.string.pin_resetting_title);
 				}
@@ -330,7 +356,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 				if (mSetting) {
 					mDescription.setText(R.string.pin_set_done);
 					mTitle.setText(R.string.pin_set_success_title);
-				} else {
+				}
+				else {
 					mDescription.setText(R.string.pin_reset_done);
 					mTitle.setText(R.string.pin_reset_success_title);
 				}
@@ -368,6 +395,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	public void shakeSmall() {
 		getView().startAnimation(mSmallShake);
 	}
+
 	/**
 	 * Shakes this fragment to indicate an error.
 	 */
@@ -382,18 +410,20 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	}
 
 	public void updatePin() {
-		((TextView)getView().findViewById(R.id.pin_entry)).setText(mCurrentPin);
+		((TextView) getView().findViewById(R.id.pin_entry)).setText(mCurrentPin);
 	}
 
 	/**
 	 * Adds given char to the pin
+	 *
 	 * @param character
 	 */
 	public void pinAdd(String character) {
 		if (mCurrentPin.length() < PinManager.PIN_MAX_SIZE) {
 			mCurrentPin += character;
 			updatePin();
-		} else {
+		}
+		else {
 			shakeSmall();
 		}
 	}
@@ -402,7 +432,9 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 * Remove a character from the pin
 	 */
 	public void pinPop() {
-		if (mCurrentPin.length() == 0) return;
+		if (mCurrentPin.length() == 0) {
+			return;
+		}
 		mCurrentPin = mCurrentPin.substring(0, mCurrentPin.length() - 1);
 		updatePin();
 	}
@@ -417,39 +449,69 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 	@Override
 	public void onClick(View view) {
-		switch(view.getId()) {
-			case R.id.pin_0_container: pinAdd("0"); break;
-			case R.id.pin_1_container: pinAdd("1"); break;
-			case R.id.pin_2_container: pinAdd("2"); break;
-			case R.id.pin_3_container: pinAdd("3"); break;
-			case R.id.pin_4_container: pinAdd("4"); break;
-			case R.id.pin_5_container: pinAdd("5"); break;
-			case R.id.pin_6_container: pinAdd("6"); break;
-			case R.id.pin_7_container: pinAdd("7"); break;
-			case R.id.pin_8_container: pinAdd("8"); break;
-			case R.id.pin_9_container: pinAdd("9"); break;
-			case R.id.pin_asterisk_container: pinAdd("*"); break;
-			case R.id.pin_hashtag_container: pinAdd("#"); break;
-			case R.id.pin_delete: pinPop(); break;
+		switch (view.getId()) {
+			case R.id.pin_0_container:
+				pinAdd("0");
+				break;
+			case R.id.pin_1_container:
+				pinAdd("1");
+				break;
+			case R.id.pin_2_container:
+				pinAdd("2");
+				break;
+			case R.id.pin_3_container:
+				pinAdd("3");
+				break;
+			case R.id.pin_4_container:
+				pinAdd("4");
+				break;
+			case R.id.pin_5_container:
+				pinAdd("5");
+				break;
+			case R.id.pin_6_container:
+				pinAdd("6");
+				break;
+			case R.id.pin_7_container:
+				pinAdd("7");
+				break;
+			case R.id.pin_8_container:
+				pinAdd("8");
+				break;
+			case R.id.pin_9_container:
+				pinAdd("9");
+				break;
+			case R.id.pin_asterisk_container:
+				pinAdd("*");
+				break;
+			case R.id.pin_hashtag_container:
+				pinAdd("#");
+				break;
+			case R.id.pin_delete:
+				pinPop();
+				break;
 
 			case R.id.pin_accept:
-				if(mListener != null)
+				if (mListener != null) {
 					if (!PinManager.isPossiblePin(mCurrentPin)
 							|| !mListener.onPinEntry(mCurrentPin)) {
 						shakeNormal();
 					}
+				}
 				break;
 			case R.id.pin_cancel:
-				if(mListener != null)
+				if (mListener != null) {
 					mListener.onPinCancel();
+				}
 				break;
 		}
 	}
 
 	@Override
 	public boolean onLongClick(View view) {
-		switch(view.getId()) {
-			case R.id.pin_delete: clearPin(); return true;
+		switch (view.getId()) {
+			case R.id.pin_delete:
+				clearPin();
+				return true;
 		}
 		return false;
 	}
@@ -459,6 +521,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	 */
 	public interface OnPinResult {
 		public boolean onPinEntry(String pin);
+
 		public void onPinCancel();
 	}
 
