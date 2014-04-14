@@ -54,7 +54,7 @@ import sharing.SharingUtils;
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
-		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener {
+		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
 	private GridView mGridView;
@@ -100,6 +100,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	};
 
+	@Override
+	public void onAdapterChanged() {
+		checkSelections();
+	}
+
 	void doBindService() {
 		Utils.d("Trying to bind service");
 		EncryptionService.addUpdateListener(ContentFragment.this);
@@ -129,15 +134,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mContentManager = ContentManagerFactory.getInstance(
-				getActivity(),
-				FileIndex.get());
-
 		Utils.d("Created content fragment");
 
 		mMode = null;
-		mAdapter = new ContentAdapter(mContentManager);
-		mContentManager.addContentChangedListener(mAdapter);
 
 		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
 				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
@@ -212,6 +211,14 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		//		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
+
+
+		mContentManager = ContentManagerFactory.getInstance(
+				getActivity(),
+				FileIndex.get());
+		mAdapter = new ContentAdapter(mContentManager, mGridView);
+		mAdapter.setAdapterChangedListener(this);
+		mContentManager.addContentChangedListener(mAdapter);
 		mGridView.setAdapter(mAdapter);
 
 		return content;
@@ -372,22 +379,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Handles the selection UI.
 	 */
 	public void handleSelection() {
-		for (CheckableLinearLayout view : mAdapter.getViews()) {
-			if (view != null) {
-				int id = view.getItemID();
-				// keep this debug line commented, just in case we need to do these checks again
-				// Utils.debug("do you even goat bro? ItemChecked? " + mGridView.isItemChecked(id) + " Activated? " +
-				// view.isActivated() + "; Checked? " + view.isChecked() + "; Enabled? " + view.isEnabled() + ";
-				// InLayout? " + view.isInLayout() + "; Selected? " + view.isSelected() + "; Shown? " + view.isShown
-				// ());
-				if (mGridView.isItemChecked(id)) {
-					view.findViewById(R.id.file_select).setBackgroundResource(R.drawable.frame_selected);
-				}
-				else {
-					view.findViewById(R.id.file_select).setBackgroundResource(0);
-				}
-			}
-		}
+		mAdapter.handleSelections();
 	}
 
 	/**
@@ -415,7 +407,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				showMultiSelectionFeedback();
 			}
 			mSingleSelected = position;
-			disableIfNoneChecked();
+			checkSelections();
 		}
 		else {
 			startSingleSelection(position);
@@ -439,7 +431,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		if (isMultiSelecting()) {
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			showMultiSelectionFeedback();
-			disableIfNoneChecked();
+			checkSelections();
 		}
 		else if (isSingleSelecting()) {
 			startMultiSelection(position);
@@ -525,7 +517,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Disables the ActionMode if no more items are checked
 	 */
-	private void disableIfNoneChecked() {
+	private void checkSelections() {
+		for (long id : mGridView.getCheckedItemIds()) {
+			if (id >= mAdapter.getCount()) {
+				mGridView.setItemChecked((int)id, false);
+			}
+		}
 		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
 			mMultiModeListener = null;
 			finishActionMode(mMode);
@@ -618,6 +615,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				if (result) {
 					Utils.toast(R.string.content_success_shred);
 					finishMultiActionMode(actionMode);
+					checkSelections();
 				}
 				else {
 					Utils.toast(R.string.content_fail_shred);
@@ -639,7 +637,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					@Override
 					public void onPositive() {
 						mContentManager.removeItems(with, shredListener);
-						disableIfNoneChecked();
 					}
 
 					@Override
@@ -702,6 +699,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private class ContentShareMultiModeListener implements android.support.v7.view.ActionMode.Callback {
 
 		private ContentActionMode mContentMode;
+		private MenuInflater mInflater;
 		private Menu mMenu;
 
 		/**
@@ -713,7 +711,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		 */
 		@Override
 		public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
-			mMenu = menu;
+			mMenu = actionMode.getMenu();
+			mInflater = actionMode.getMenuInflater();
 			inflate(mContentMode);
 			return true;
 		}
@@ -732,26 +731,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			mContentMode = mode;
 			mMenu.clear();
-			MenuInflater inflater = getActivity().getMenuInflater();
 
 			switch (mode) {
 				case MULTI_LOCKED:
-					inflater.inflate(R.menu.content_action_multi_locked, mMenu);
+					mInflater.inflate(R.menu.content_action_multi_locked, mMenu);
 					break;
 				case MULTI_UNLOCKED:
-					inflater.inflate(R.menu.content_action_multi_unlocked, mMenu);
+					mInflater.inflate(R.menu.content_action_multi_unlocked, mMenu);
 					break;
 				case MULTI_MIXED:
-					inflater.inflate(R.menu.content_action_multi_mixed, mMenu);
+					mInflater.inflate(R.menu.content_action_multi_mixed, mMenu);
 					break;
 				case PROCESSING:
-					inflater.inflate(R.menu.content_action_processing, mMenu);
+					mInflater.inflate(R.menu.content_action_processing, mMenu);
 					break;
 				case SINGLE_LOCKED:
-					inflater.inflate(R.menu.content_action_single_locked, mMenu);
+					mInflater.inflate(R.menu.content_action_single_locked, mMenu);
 					break;
 				case SINGLE_UNLOCKED:
-					inflater.inflate(R.menu.content_action_single_unlocked, mMenu);
+					mInflater.inflate(R.menu.content_action_single_unlocked, mMenu);
 					break;
 			}
 		}
