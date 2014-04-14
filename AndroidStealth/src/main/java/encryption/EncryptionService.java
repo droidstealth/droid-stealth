@@ -38,8 +38,8 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	private static ArrayList<WeakReference<IUpdateListener>> sListeners
 			= new ArrayList<WeakReference<IUpdateListener>>();
 
-	private HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
-	private HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
+	private static HashMap<String, CryptoTask> mToEncrypt = new HashMap<String, CryptoTask>();
+	private static HashMap<String, CryptoTask> mToDecrypt = new HashMap<String, CryptoTask>();
 	private IBinder mBinder;
 	private ExecutorService mCryptoExecutor;
 
@@ -58,6 +58,33 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				handleUpdate(false);
 			}
 		});
+	}
+
+	/**
+	 * Check if file is a queue to be processed (or being processed)
+	 * @param file the file to check
+	 * @return if file is in a queue
+	 */
+	public static boolean inQueue(IndexedFile file) {
+		return inEncryptionQueue(file) || inDecryptionQueue(file);
+	}
+
+	/**
+	 * Check if file is the decryption queue to be processed (or being processed)
+	 * @param file the file to check
+	 * @return if file is in decryption queue
+	 */
+	public static boolean inDecryptionQueue(IndexedFile file) {
+		return mToDecrypt.containsKey(file.getUID());
+	}
+
+	/**
+	 * Check if file is in the encryption queue to be processed (or being processed)
+	 * @param file the file to check
+	 * @return if file is in encryption queue
+	 */
+	public static boolean inEncryptionQueue(IndexedFile file) {
+		return mToEncrypt.containsKey(file.getUID());
 	}
 
 	private void createExecutor() {
