@@ -140,8 +140,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 		mMode = null;
 
-		mActionManager = new ActionManager(mContentManager);
-
 		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
 				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
 			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
@@ -220,6 +218,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
+
+		mActionManager = new ActionManager(mContentManager);
 		mAdapter = new ContentAdapter(mContentManager, mGridView);
 		mAdapter.setAdapterChangedListener(this);
 		mContentManager.addContentChangedListener(mAdapter);
