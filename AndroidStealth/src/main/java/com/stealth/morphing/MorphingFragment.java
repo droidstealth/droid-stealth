@@ -1,5 +1,6 @@
 package com.stealth.morphing;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -178,6 +180,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 				break;
 			case R.id.morph_pick_icon:
 				Intent getContentIntent = FileUtils.createGetContentIntent();
+				getContentIntent.setType("image/*");
 				Intent intent = Intent.createChooser(getContentIntent, Utils.str(R.string.morph_select_image));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(intent, REQUEST_CHOOSER);
@@ -201,7 +204,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 			case REQUEST_CHOOSER:
 				if (resultCode == Activity.RESULT_OK) {
 
-					Uri selectedImageUri = Uri.parse(data.getDataString());
+					Uri selectedImageUri = data.getData();
 
 					if (getActivity() == null) {
 						return;
@@ -210,39 +213,71 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 						return;
 					}
 
-					try {
-						Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-								getActivity().getApplicationContext().getContentResolver(),
-								selectedImageUri);
+					Bitmap bitmap = loadCroppedBitmapFromUri(selectedImageUri, 256);
 
-						if (bitmap.getHeight() > 256 || bitmap.getWidth() > 256) {
-							bitmap = Utils.crop(bitmap, 256, 256);
-						}
+					if(bitmap == null) {
+						//TODO notify user of failure!
+						return;
+					}
 
-						bitmap = Utils.correctOrientation(bitmap, selectedImageUri);
+					bitmap = Utils.correctOrientation(bitmap, selectedImageUri);
 
-						mIcon.setImageBitmap(bitmap);
-						Utils.fadein(mIcon, 75);
-
-					}
-					catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						Log.e(Utils.tag(this), "Well, crap...", e);
-						e.printStackTrace();
-					}
-					catch (IOException e) {
-						// TODO Auto-generated catch block
-						Log.e(Utils.tag(this), "Well, crap...", e);
-						e.printStackTrace();
-					}
-					catch (OutOfMemoryError e) {
-						// TODO Auto-generated catch block
-						Log.e(Utils.tag(this), "Well, crap...", e);
-						e.printStackTrace();
-					}
+					mIcon.setImageBitmap(bitmap);
+					Utils.fadein(mIcon, 75);
 				}
 				break;
 		}
+	}
+
+	/**
+	 * Loads a Bitmap from the given URI and scales and crops it to the given size
+	 * @param uri The URI to load the Bitmap from
+	 * @param size The size the final Bitmap should be
+	 * @return
+	 */
+	private Bitmap loadCroppedBitmapFromUri(Uri uri, int size){
+		File bitmapFile = FileUtils.getFile(getActivity(), uri);
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(bitmapFile.getPath(), options);
+
+		options.inSampleSize = calculateSampleSize(options, size, size);
+		options.inJustDecodeBounds = false;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(bitmapFile.getPath(), options);
+
+		if(bitmap == null){
+			Utils.d("Bitmap loading failed!");
+			return null;
+		}
+
+		if (bitmap.getHeight() > size || bitmap.getWidth() > size) {
+			bitmap = Utils.crop(bitmap, size, size);
+		}
+
+		return bitmap;
+	}
+
+	/**
+	 * Helper function to determine the minimum required sample size for a bitmap based on the passed options
+	 * @param options The options from which width and height of the original image are extracted
+	 * @param reqHeight height in pixel the resulting image should be
+	 * @param reqWidth width in pixels the resulting image should be
+	 * @return the sample size required to get an image at least the size of reqHeight and reqWidth
+	 */
+	private static int calculateSampleSize(BitmapFactory.Options options, int reqHeight, int reqWidth){
+		float cropRatio = (float) reqHeight / (float) reqWidth;
+		float baseRatio = (float) options.outHeight / (float) options.outWidth;
+		float scale, x = 0f, y = 0f;
+
+		if (baseRatio > cropRatio) {
+			scale = (float) reqWidth / (float) options.outWidth;
+		}
+		else {
+			scale = (float) reqHeight / (float) options.outHeight;
+		}
+
+		return (int) Math.ceil(scale);
 	}
 
 	@Override
