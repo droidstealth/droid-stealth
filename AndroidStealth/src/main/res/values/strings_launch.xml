@@ -24,8 +24,9 @@
 	</string>
 	<string name="launch_widget_use">Use widget for launch</string>
 	<string name="launch_widget_visible_description">
-		If you can\'t find the widget anymore, you can show it by enabling
-	the checkbox below. Tap the widget on your home screen in order to hide it again.
+		If you can\'t find the widget anymore, you could add another one as this would make them all temporarily
+		visible until you tap on one. Or, you can show them by enabling the checkbox below. Tap the widget on your
+		home screen in order to hide it again.
 	</string>
 	<string name="launch_widget_visible">Make widgets temporarily visible</string>
 	<string name="launch_icon">Icon Visibility</string>
