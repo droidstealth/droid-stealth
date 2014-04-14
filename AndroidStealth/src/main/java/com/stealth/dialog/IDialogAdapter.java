@@ -1,6 +1,7 @@
 package com.stealth.dialog;
 
 import java.util.List;
+
 import android.view.View;
 
 /**
@@ -19,8 +20,9 @@ public interface IDialogAdapter<T> {
 
 	/**
 	 * Fill up the given view with the given element of the list
+	 *
 	 * @param index the index of the element to use
-	 * @param v the view
+	 * @param v     the view
 	 */
 	void setView(int index, View v);
 }
