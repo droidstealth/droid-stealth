@@ -39,7 +39,7 @@ public class VisibilityManager {
 	 * @param context the context to use for this operation
 	 */
 	public static void hideWidget(Context context) {
-		hideClass(context, StealthButton.class, 0);
+		hideClass(context, StealthButton.class, PackageManager.DONT_KILL_APP);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class VisibilityManager {
 	 * @param context the context to use for this operation
 	 */
 	public static void showWidget(Context context) {
-		showClass(context, StealthButton.class, 0);
+		showClass(context, StealthButton.class, PackageManager.DONT_KILL_APP);
 	}
 
 	/**

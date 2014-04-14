@@ -34,7 +34,7 @@
 		hide the application icon from the app drawer of your device. However, it will still be visible in the
 		\'installed application\' list of your Android Settings. A solution could be to hide this application in plain
 		sight. Go to the morphing tab for more information.
-		\n\nThis method will only be enabled if at least one of the below launch methods is enabled.
+		\n\nNOTE: This method will only be enabled if at least one of the below launch methods is enabled.
 	</string>
 	<string name="launch_icon_disable">Hide application icon</string>
 	<string name="launch_disclaimer">WARNING</string>

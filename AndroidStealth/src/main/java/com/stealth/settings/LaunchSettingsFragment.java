@@ -113,7 +113,10 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				StealthButton.updateMe(getActivity().getApplicationContext());
 				break;
 			case R.id.launch_icon_disable:
-				LaunchManager.setIconDisabled(b);
+				boolean result = LaunchManager.setIconDisabled(b);
+				if (result != b) {
+					mHideIcon.setChecked(result);
+				}
 				break;
 
 		}

@@ -39,10 +39,16 @@ public class LaunchManager {
 		return sIconDisabled && (isWidgetEnabled() || isDialerEnabled());
 	}
 
-	public static void setIconDisabled(boolean iconDisabled) {
+	/**
+	 * @param iconDisabled if icon should be disabled
+	 * @return whether it was indeed disabled
+	 */
+	public static boolean setIconDisabled(boolean iconDisabled) {
 		initialize();
-		sIconDisabled = iconDisabled;
+		boolean result = iconDisabled && (isWidgetEnabled() || isDialerEnabled());
+		sIconDisabled = result;
 		sPrefs.edit().putBoolean(KEY_ICON, sIconDisabled).apply();
+		return result;
 	}
 
 	/**
