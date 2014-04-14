@@ -12,18 +12,21 @@ public class WidgetManager {
 	private static final String KEY_PREFS_WIDGET = "invisibleWidget";
 	private static final String KEY_VISIBILITY = "widgetTemporarilyVisible";
 	private static final String KEY_TAPS = "widgetTaps";
+	private static final String KEY_IDS = "widgetIDS";
 
 	private static boolean sInitialized;
 	private static SharedPreferences sPrefs;
 
 	private static boolean sWidgetTemporarilyVisible;
 	private static int sTapCountToOpen;
+	private static int[] sWidgetIDs;
 
 	private static void initialize() {
 		if (!sInitialized) {
 			sPrefs = Utils.getContext().getSharedPreferences(KEY_PREFS_WIDGET, Context.MODE_PRIVATE);
 			sWidgetTemporarilyVisible = sPrefs.getBoolean(KEY_VISIBILITY, false);
 			sTapCountToOpen = sPrefs.getInt(KEY_TAPS, 4);
+			sWidgetIDs = Utils.intArrayFromString(sPrefs.getString(KEY_IDS, ""));
 			sInitialized = true;
 		}
 	}
@@ -40,6 +43,22 @@ public class WidgetManager {
 		initialize();
 		sWidgetTemporarilyVisible = widgetTemporarilyVisible;
 		sPrefs.edit().putBoolean(KEY_VISIBILITY, sWidgetTemporarilyVisible).apply();
+	}
+
+	/**
+	 * @return how many widget the user has (afawk)
+	 */
+	public static int[] getWidgetIDs() {
+		return sWidgetIDs;
+	}
+
+	/**
+	 * @param widgetIDs set the amount of widgets the user has
+	 */
+	public static void setWidgetIDs(int[] widgetIDs) {
+		initialize();
+		sWidgetIDs = widgetIDs;
+		sPrefs.edit().putString(KEY_IDS, Utils.intArrayToString(sWidgetIDs)).apply();
 	}
 
 	/**
