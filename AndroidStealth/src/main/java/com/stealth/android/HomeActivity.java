@@ -46,7 +46,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	 * @return whether activity could launch
 	 */
 	public static boolean launch(Context context, String pin) {
-		if (!PinManager.get().isPin(pin)) {
+		if (!PinManager.get().isPin(pin) && PinManager.get().hasPin()) {
 			return false;
 		}
 
@@ -126,6 +126,13 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		mNavDrawer.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 		mTitle = getTitle();
 		mInterfaceConstructed = true;
+
+		// start with pin activity if you have none
+		if (!PinManager.get().hasPin()) {
+			Utils.toast(R.string.pin_not_set_toast);
+			mActiveNavigationOption = NavigationDrawerFragment.POSITION_PIN;
+		}
+
 		showCurrentFragment();
 	}
 
@@ -136,6 +143,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		if (mInterfaceConstructed) {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			Fragment toOpen = null;
+			Utils.d("mActiveNavigationOption = " + mActiveNavigationOption);
 
 			switch (mActiveNavigationOption) {
 				case NavigationDrawerFragment.POSITION_HOME:

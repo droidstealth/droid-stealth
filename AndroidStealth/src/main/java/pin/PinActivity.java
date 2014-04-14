@@ -1,18 +1,9 @@
 package pin;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
-
+import android.support.v4.app.FragmentActivity;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;
@@ -37,6 +28,13 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 		setContentView(R.layout.activity_pin);
 		Utils.setContext(getApplicationContext());
 
+		if (!PinManager.get().hasPin()) {
+			// no pin yet set. Just launch
+			HomeActivity.launch(getApplicationContext(), "");
+			finish();
+			return;
+		}
+
 		// Check that the activity is using the layout version with
 		// the fragment_container FrameLayout
 		if (findViewById(R.id.container) != null) {
@@ -59,7 +57,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 
 	@Override
 	public boolean onPinEntry(String pin) {
-		mPinFrag.pinClear();
+		mPinFrag.clearPin();
 		if (HomeActivity.launch(getApplicationContext(), pin)) {
 			finish();
 			return true;

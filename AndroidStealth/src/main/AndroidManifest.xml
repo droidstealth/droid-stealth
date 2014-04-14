@@ -9,10 +9,11 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.NFC" />
 	<uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 	<application
 		android:allowBackup="true"
-		android:icon="@drawable/ic_stealth_launcher"
+		android:icon="@drawable/ic_drawer_home"
 		android:label="@string/morphable_app_name"
 		android:theme="@style/AppTheme" >
 		<activity
@@ -23,8 +24,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:excludeFromRecents="true" >
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 		<activity
@@ -46,7 +46,7 @@
 			android:exported="true" >
 			<intent-filter android:priority="1" >
 				<action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</receiver>
@@ -74,10 +74,12 @@
 		</activity>
 		<activity
 			android:name="pin.PinActivity"
-			android:label="@string/title_activity_pin"
-			android:theme="@style/AppTheme.Dialog" >
+			android:label="@string/morphable_app_name"
+			android:theme="@style/AppTheme.Dialog"
+			android:excludeFromRecents="true" >
 			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT" />
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
