@@ -1,8 +1,9 @@
 package pin;
 
-import android.support.v4.app.FragmentActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-
+import android.support.v4.app.FragmentActivity;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;

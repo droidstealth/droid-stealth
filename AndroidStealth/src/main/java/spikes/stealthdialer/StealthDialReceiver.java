@@ -1,27 +1,19 @@
 package spikes.stealthdialer;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-
-import android.content.pm.PackageManager;
-
-import com.stealth.android.HomeActivity;
 import com.stealth.launch.DialerManager;
 import com.stealth.launch.LaunchManager;
 import com.stealth.utils.Utils;
-
-import pin.PinActivity;
 import encryption.EncryptionService;
-import pin.PinManager;
+import pin.PinActivity;
 
 /**
  * Creates BroadcastReceiver that listens for Intent.ACTION_NEW_OUTGOING_CALL When it receives such an intent it checks
  * the number dialed to see if it starts with #555 If this is the case it intercepts the call and cuts it off. Before
- * starting a specified activity.
- * This needs to have priority 1 if it needs to intercept the actual call from being made.
+ * starting a specified activity. This needs to have priority 1 if it needs to intercept the actual call from being
+ * made.
  *
  * @author Joris Z. van den Oever Created on 2/26/14.
  */

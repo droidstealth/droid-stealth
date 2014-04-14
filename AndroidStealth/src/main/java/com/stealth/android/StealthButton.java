@@ -130,7 +130,7 @@ public class StealthButton extends AppWidgetProvider {
 				updateMe(context);
 			}
 
-			long now = System.currentTimeMillis()
+			long now = System.currentTimeMillis();
 			long diff = now - mLastTime;
 
 			if (diff < TOUCH_INTERVAL) {
