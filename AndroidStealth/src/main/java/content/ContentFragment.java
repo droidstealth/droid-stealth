@@ -64,9 +64,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentAdapter mAdapter;
 	private EncryptionManager mEncryptionManager;
 	private EncryptionService mEncryptionService;
-
-	private File mTempImageFile;
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -82,6 +79,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			Utils.d("Encryption manager is disconnected..?");
 		}
 	};
+	private File mTempImageFile;
 	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
 	/**
@@ -157,6 +155,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		finishActionMode(mMode);
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		doBindService();
@@ -172,7 +176,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void onEncryptionServiceUpdate() {
 		if (getActivity() != null) {
 			mUpdateList.onResult(true);
-		} else {
+		}
+		else {
 			Utils.d("Calling the service IUpdateListener but its activity does not exist anymore. " +
 					"We should have stopped listening.. why didn't we?");
 		}
@@ -632,7 +637,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				options,
 				new IDialogResponse() {
 					@Override
-					public void onPositive(ArrayList<String> input) {
+					public void onPositive() {
 						mContentManager.removeItems(with, shredListener);
 						disableIfNoneChecked();
 					}
@@ -648,10 +653,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					}
 				}
 		);
-	}
-
-	public enum ContentActionMode {
-		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
 
 	/**
@@ -673,10 +674,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Finishes the action mode on the UI thread
+	 *
 	 * @param actionMode the action mode the finish
 	 */
 	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) return;
+		if (actionMode == null) {
+			return;
+		}
 		if (getSelectedItems().size() > 1) {
 			Utils.runOnMain(new Runnable() {
 				@Override
@@ -685,6 +689,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				}
 			});
 		}
+	}
+
+	public enum ContentActionMode {
+		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
 
 	/**
