@@ -8,16 +8,15 @@ import com.stealth.android.HomeActivity;
 import com.stealth.android.StealthButton;
 
 /**
- * This class manages the hidden/visible state of the application
- * Created by OlivierHokke on 06-Apr-14.
+ * This class manages the hidden/visible state of the application Created by OlivierHokke on 06-Apr-14.
  */
 public class VisibilityManager {
 
 	/**
-	 * This method hides the application from the application drawer of the user.
-	 * But only if the settings demand it, as the user can decide if the icon should be hidden
-	 * in the application drawer.
-	 * Also prevents app from being launched using intents
+	 * This method hides the application from the application drawer of the user. But only if the settings demand it, as
+	 * the user can decide if the icon should be hidden in the application drawer. Also prevents app from being launched
+	 * using intents
+	 *
 	 * @param context the context to use for this operation
 	 */
 	public static void hideApplication(Context context) {
@@ -27,15 +26,18 @@ public class VisibilityManager {
 	}
 
 	/**
-	 * This method makes the application visible in the application drawer of the user.
-	 * Also makes this application launchable with an intent.
+	 * This method makes the application visible in the application drawer of the user. Also makes this application
+	 * launchable with an intent.
+	 *
 	 * @param context the context to use for this operation
 	 */
 	public static void showApplication(Context context) {
 		showClass(context, HomeActivity.class, PackageManager.DONT_KILL_APP);
 	}
+
 	/**
 	 * Hides the widget
+	 *
 	 * @param context the context to use for this operation
 	 */
 	public static void hideWidget(Context context) {
@@ -44,6 +46,7 @@ public class VisibilityManager {
 
 	/**
 	 * Shows the widget
+	 *
 	 * @param context the context to use for this operation
 	 */
 	public static void showWidget(Context context) {
@@ -52,8 +55,9 @@ public class VisibilityManager {
 
 	/**
 	 * This method hides the given class
+	 *
 	 * @param context the context to use for this operation
-	 * @param toHide the class to hide
+	 * @param toHide  the class to hide
 	 */
 	public static void hideClass(Context context, Class<?> toHide, int flag) {
 		PackageManager pm = context.getPackageManager();
@@ -67,8 +71,9 @@ public class VisibilityManager {
 
 	/**
 	 * This method makes the class visible
+	 *
 	 * @param context the context to use for this operation
-	 * @param toShow the class to show
+	 * @param toShow  the class to show
 	 */
 	public static void showClass(Context context, Class<?> toShow, int flag) {
 		PackageManager pm = context.getPackageManager();

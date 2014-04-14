@@ -5,8 +5,7 @@ import android.content.SharedPreferences;
 import com.stealth.utils.Utils;
 
 /**
- * Manages the launch settings for this application
- * Created by OlivierHokke on 14-Apr-14.
+ * Manages the launch settings for this application Created by OlivierHokke on 14-Apr-14.
  */
 public class LaunchManager {
 	private static final String KEY_PREFS_LAUNCH = "launch";
@@ -66,7 +65,8 @@ public class LaunchManager {
 
 		if (widgetEnabled) {
 			VisibilityManager.showWidget(Utils.getContext());
-		} else {
+		}
+		else {
 			VisibilityManager.hideWidget(Utils.getContext());
 		}
 	}

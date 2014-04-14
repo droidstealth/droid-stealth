@@ -7,11 +7,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
-
 import com.stealth.launch.LaunchManager;
 import com.stealth.launch.WidgetManager;
 import com.stealth.utils.Utils;
-
 import pin.PinActivity;
 
 /**
@@ -24,6 +22,7 @@ public class StealthButton extends AppWidgetProvider {
 
 	/**
 	 * Update all the instances of this widget
+	 *
 	 * @param context using what context
 	 */
 	public static void updateMe(Context context) {
@@ -32,14 +31,15 @@ public class StealthButton extends AppWidgetProvider {
 		Intent intent = new Intent(context, StealthButton.class);
 		intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
 
-		int [] ids = getWidgetIDs(context);
+		int[] ids = getWidgetIDs(context);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		context.sendBroadcast(intent);
 	}
 
 	/**
-	 * Gets the widget ids. Also keeps track of changes in widget count.
-	 * If it increases, then they will show themselves.
+	 * Gets the widget ids. Also keeps track of changes in widget count. If it increases, then they will show
+	 * themselves.
+	 *
 	 * @param context using what context
 	 * @return the widget ids
 	 */
@@ -55,7 +55,7 @@ public class StealthButton extends AppWidgetProvider {
 		// just update all
 		appWidgetIds = getWidgetIDs(context);
 		final int N = appWidgetIds.length;
-		for (int i=0; i<N; i++) {
+		for (int i = 0; i < N; i++) {
 			updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
 		}
 		WidgetManager.setWidgetIDs(appWidgetIds);
@@ -73,7 +73,7 @@ public class StealthButton extends AppWidgetProvider {
 	}
 
 	static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-			int appWidgetId) {
+	                            int appWidgetId) {
 		Utils.setContext(context);
 
 		Utils.d("Updating widget " + appWidgetId
@@ -98,7 +98,8 @@ public class StealthButton extends AppWidgetProvider {
 		RemoteViews views;
 		if (WidgetManager.isWidgetTemporarilyVisible()) {
 			views = new RemoteViews(context.getPackageName(), R.layout.stealth_button_visible);
-		} else {
+		}
+		else {
 			views = new RemoteViews(context.getPackageName(), R.layout.stealth_button);
 		}
 		Intent intent = new Intent(context, StealthButton.class);
@@ -117,7 +118,9 @@ public class StealthButton extends AppWidgetProvider {
 		super.onReceive(context, intent);
 		Utils.setContext(context);
 
-		if (!LaunchManager.isWidgetEnabled()) return;
+		if (!LaunchManager.isWidgetEnabled()) {
+			return;
+		}
 
 		if (intent.getAction() != null && intent.getAction().equals(ACTION_BUTTON_PRESS)) {
 
@@ -127,12 +130,13 @@ public class StealthButton extends AppWidgetProvider {
 				updateMe(context);
 			}
 
-			long now = System.currentTimeMillis();
+			long now = System.currentTimeMillis()
 			long diff = now - mLastTime;
 
 			if (diff < TOUCH_INTERVAL) {
 				mClicks++;
-			} else {
+			}
+			else {
 				mClicks = 0;
 			}
 

@@ -97,8 +97,7 @@ public class Utils {
 	}
 
 	/**
-	 * @return the context so you can easily access for instance the resources of this app, show notifications or
-	 * access
+	 * @return the context so you can easily access for instance the resources of this app, show notifications or access
 	 * the device's sensors.
 	 */
 	public static Context getContext() {
@@ -207,6 +206,7 @@ public class Utils {
 
 	/**
 	 * Array of integers to string
+	 *
 	 * @param ints
 	 * @return
 	 */
@@ -223,11 +223,14 @@ public class Utils {
 
 	/**
 	 * Gets the array of integers from a string
+	 *
 	 * @param str
 	 * @return
 	 */
 	public static int[] intArrayFromString(String str) {
-		if (str.isEmpty()) return new int[0];
+		if (str.isEmpty()) {
+			return new int[0];
+		}
 		String[] split = str.split(",");
 		int[] result = new int[split.length];
 
@@ -594,8 +597,7 @@ public class Utils {
 	}
 
 	/**
-	 * Deletes a non-media file if it is a file included in the mediastore. Using this method also removes the file
-	 * from
+	 * Deletes a non-media file if it is a file included in the mediastore. Using this method also removes the file from
 	 * the mediastore database and doesn't just delete the file itself. (method executes on your current thread)
 	 *
 	 * @param f the file to remove
