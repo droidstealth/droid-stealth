@@ -1,7 +1,10 @@
 package content;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +20,6 @@ import com.stealth.files.IndexedItem;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Simple class to display previews of the files. For now it just instantiates ImageView with an icon Created by Alex on
@@ -53,7 +50,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	 *
 	 * @param manager the content manager used to retrieve the actual content
 	 */
-	public ContentAdapter(IContentManager manager, GridView gridView){
+	public ContentAdapter(IContentManager manager, GridView gridView) {
 		mViewToPositions = new HashMap<View, Integer>();
 		mItemToView = new HashMap<IndexedItem, View>();
 		mAnimCheck = new HashSet<IndexedItem>();
@@ -106,14 +103,13 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	 */
 	public void handleSelections() {
 		for (View view : getViews()) {
-			if (view != null) {
-				handleSelection(view);
-			}
+			handleSelection(view);
 		}
 	}
 
 	/**
 	 * Handles the selection UI of given view
+	 *
 	 * @param view the view to handle its selection of
 	 */
 	public void handleSelection(View view) {
@@ -129,8 +125,9 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	}
 
 	/**
-	 * Handle the fade-in animation based on the time of the last animation. This ensures
-	 * animations timeslots of 20, but immediate animation when last filled slot already passed
+	 * Handle the fade-in animation based on the time of the last animation. This ensures animations timeslots of 20,
+	 * but immediate animation when last filled slot already passed
+	 *
 	 * @param v the view to animate
 	 */
 	private void fadeIn(View v) {
@@ -145,11 +142,11 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		if (view == null){
+		if (view == null) {
 			view = LayoutInflater.from(Utils.getContext()).inflate(R.layout.item_content, null);
-		}
-		if (view == null){
-			return null;
+			if (view == null) {
+				return null;
+			}
 		}
 
 		IndexedItem item = getItem(i);
@@ -177,6 +174,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 
 	/**
 	 * Sets the thumbnail of given file, but only if there is a view for it at the moment
+	 *
 	 * @param file the file to display the thumbnail of
 	 */
 	private void displayThumbnail(IndexedFile file) {
@@ -184,13 +182,16 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		// some other item already... so let's also check if the information is still up to date
 		View v = mItemToView.get(file);
 		int i = mViewToPositions.get(v);
-		if (mContentItems.get(i) != file) return; // information was out of date
+		if (mContentItems.get(i) != file) {
+			return; // information was out of date
+		}
 
 		if (file.getThumbnail() != null) {
 			ImageView thumbImage = (ImageView) v.findViewById(R.id.file_preview);
 			thumbImage.setImageBitmap(file.getThumbnail());
 			thumbImage.invalidate();
-		} else {
+		}
+		else {
 			Utils.d("We failed to get the bitmap :(");
 		}
 	}
