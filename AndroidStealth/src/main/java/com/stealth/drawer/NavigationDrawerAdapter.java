@@ -7,15 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;
 
 /**
- * The content adapter for the listview in the navigation drawer
- * Created by OlivierHokke on 12-Apr-14.
+ * The content adapter for the listview in the navigation drawer Created by OlivierHokke on 12-Apr-14.
  */
 public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> {
 

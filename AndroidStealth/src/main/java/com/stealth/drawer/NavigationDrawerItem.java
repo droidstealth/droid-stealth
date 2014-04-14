@@ -1,8 +1,7 @@
 package com.stealth.drawer;
 
 /**
- * The items that the navigation drawer will contain
- * Created by OlivierHokke on 12-Apr-14.
+ * The items that the navigation drawer will contain Created by OlivierHokke on 12-Apr-14.
  */
 public class NavigationDrawerItem {
 	private int mName;

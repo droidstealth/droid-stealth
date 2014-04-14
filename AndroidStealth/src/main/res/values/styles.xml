@@ -10,6 +10,31 @@
 		<item name="actionBarStyle">@style/MyActionBar</item>
 	</style>
 
+	<style name="Title">
+		<item name="android:fontFamily">sans-serif-condensed</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+		<item name="android:textColor">@color/accent</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="EditText">
+		<item name="android:background">@drawable/frame_input_states</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:textColor">@color/base</item>
+		<item name="android:paddingLeft">@dimen/default_medium_padding</item>
+		<item name="android:paddingRight">@dimen/default_medium_padding</item>
+		<item name="android:paddingTop">@dimen/default_small_padding</item>
+		<item name="android:paddingBottom">@dimen/default_small_padding</item>
+
+	</style>
+
+	<style name="RegularText">
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:textColor">@color/base</item>
+		<item name="android:textStyle">normal</item>
+	</style>
+
 	<!-- ActionBar styles -->
 	<style name="MyActionBar"
 		parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">

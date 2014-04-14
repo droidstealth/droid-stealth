@@ -4,13 +4,13 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-			  android:background="@drawable/drawer_item">
+			  android:background="@drawable/launch_button">
 
 	<View
 			android:layout_width="4dp"
 			android:layout_height="match_parent"
 			android:background="@color/locked"
-			android:id="@+id/drawer_item_color"  />
+			android:id="@+id/drawer_item_color"/>
 	<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text="Home"
-			android:textColor="#fff"
+			android:textColor="@color/base"
 			android:id="@+id/drawer_item_name"
 			android:layout_gravity="center_vertical"
 			android:paddingTop="12dp"
