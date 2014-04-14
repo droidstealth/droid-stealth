@@ -1,11 +1,9 @@
 package content;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
-import com.stealth.files.DirectoryManager;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -15,8 +13,6 @@ import com.stealth.utils.IOnResult;
 import encryption.IContentManager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -133,15 +129,15 @@ public class ContentManager implements IContentManager {
 
 	@Override
 	public void removeAllContent(final IOnResult<Boolean> callback) {
-		removeItem(mIndex.getRoot(), callback);
+		removeItem(mIndex.getRoot(), callback, true);
 	}
 
 	@Override
-	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback) {
+	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback, final boolean removeUnlocked) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				boolean removed = removeItemNow(item);
+				boolean removed = removeItemNow(item, removeUnlocked);
 				if (removed) {
 					notifyContentChangedListeners();
 				}
@@ -153,7 +149,8 @@ public class ContentManager implements IContentManager {
 	}
 
 	@Override
-	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback) {
+	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback,
+			final boolean removeUnlocked) {
 		// make copy in case it changes while we are executing in another thread
 		final IndexedItem[] items = itemCollection.toArray(
 				(IndexedItem[]) java.lang.reflect.Array.newInstance(IndexedItem.class, itemCollection.size()));
@@ -163,7 +160,7 @@ public class ContentManager implements IContentManager {
 				int failures = 0;
 				boolean singleSuccess = false;
 				for (IndexedItem item : items) {
-					if (removeItemNow(item)) {
+					if (removeItemNow(item, removeUnlocked)) {
 						singleSuccess |= true;
 					}
 					else {
@@ -189,23 +186,26 @@ public class ContentManager implements IContentManager {
 	 * including its thumbnail and encrypted version
 	 *
 	 * @param item the item to remove
+	 * @param removeUnlocked
 	 * @return whether it completely succeeded
 	 */
-	public boolean removeItemNow(IndexedItem item)
+	public boolean removeItemNow(IndexedItem item, boolean removeUnlocked)
 	{
 		boolean success = true;
 		if (item instanceof IndexedFolder)
 		{
 			IndexedFolder folder = (IndexedFolder) item;
-			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f);
-			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f);
+			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f, removeUnlocked);
+			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f, removeUnlocked);
 			mIndex.removeFolder(folder);
 		}
 		else
 		{
 			IndexedFile file = (IndexedFile) item;
 			success &= Utils.delete(file.getLockedFile());
-			success &= Utils.delete(file.getUnlockedFile());
+			if(removeUnlocked) {
+				success &= Utils.delete(file.getUnlockedFile());
+			}
 			success &= Utils.delete(file.getThumbFile());
 			mIndex.removeFile(file);
 		}

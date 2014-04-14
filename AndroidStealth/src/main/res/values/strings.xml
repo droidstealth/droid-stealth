@@ -47,5 +47,9 @@
 	<string name="hello_world">Hello world!</string>
 	<string name="appwidget_text">EXAMPLE</string>
 	<string name="add_widget">Add widget</string>
+	<string name="share_file">Share File</string>
+	<string name="share_files">Share Files</string>
+	<string name="multi_share_not_found">No app found to share multiple files with</string>
+	<string name="share_not_found">No app found to share this file with</string>
 
 </resources>
