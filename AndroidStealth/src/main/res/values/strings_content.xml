@@ -8,4 +8,5 @@
     <string name="content_success_add">Added selected file successfully.</string>
     <string name="content_fail_shred">Could not shred selected file(s) due to unknown reasons.</string>
     <string name="content_success_shred">Shredded selected file(s) successfully.</string>
+
 </resources>

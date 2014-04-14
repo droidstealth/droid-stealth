@@ -1,9 +1,7 @@
 package com.stealth.android;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +15,7 @@ import com.stealth.drawer.NavigationDrawerFragment;
 import com.stealth.morphing.MorphingFragment;
 import com.stealth.settings.GeneralSettingsFragment;
 import com.stealth.settings.LaunchSettingsFragment;
-import com.stealth.visibility.VisibilityManager;
+import com.stealth.launch.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import content.ContentFragment;
@@ -155,7 +153,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 					toOpen = MorphingFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_LAUNCH:
-					toOpen = LaunchSettingsFragment.newInstance("", "");
+					toOpen = LaunchSettingsFragment.newInstance();
 					break;
 				case NavigationDrawerFragment.POSITION_GENERAL:
 					toOpen = GeneralSettingsFragment.newInstance("", "");

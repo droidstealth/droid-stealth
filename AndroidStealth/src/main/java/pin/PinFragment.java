@@ -137,7 +137,7 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 			return root;
 		}
 
-		long animStep = 20;
+		long animStep = 10;
 		long animNow = 100;
 
 		mTitle = (TextView) root.findViewById(R.id.pin_title);

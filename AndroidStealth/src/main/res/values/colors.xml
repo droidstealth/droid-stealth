@@ -8,7 +8,7 @@
 	<color name="base">#ffff</color>
 	<color name="subtle">#ff808080</color>
 	<color name="background">#ff232323</color>
-	<color name="transparent">#00000000</color>
+	<color name="transparent">#11ffffff</color>
 
 	<color name="locked">@color/positive</color>
 	<color name="unlocked">@color/negative</color>

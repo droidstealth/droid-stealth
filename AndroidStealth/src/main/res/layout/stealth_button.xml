@@ -6,8 +6,7 @@
 	<ImageButton
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:src="@drawable/ic_menu_lock"
-		android:id="@+id/toggleButton"
+		android:id="@+id/stealth_image"
 		android:background="@color/transparent"
 		android:layout_centerVertical="true"
 		android:layout_centerHorizontal="true"

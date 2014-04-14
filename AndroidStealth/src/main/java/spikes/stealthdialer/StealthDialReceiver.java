@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import com.stealth.android.HomeActivity;
+import com.stealth.launch.DialerManager;
+import com.stealth.launch.LaunchManager;
 import com.stealth.utils.Utils;
 
+import pin.PinActivity;
 import encryption.EncryptionService;
 import pin.PinManager;
 
@@ -44,8 +47,9 @@ public class StealthDialReceiver extends BroadcastReceiver {
 			}
 			else {
 				String pin = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-				if (pin != null && !pin.isEmpty() && PinManager.get().hasPin()
-						&& HomeActivity.launch(context, pin)) {
+				if (LaunchManager.isDialerEnabled()
+						&& DialerManager.getLaunchCode().equals(pin)) {
+					PinActivity.launch(context);
 					setResultData(null);
 				}
 			}
