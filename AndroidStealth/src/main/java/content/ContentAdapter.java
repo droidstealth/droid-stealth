@@ -1,12 +1,14 @@
 package content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-
 import com.stealth.android.R;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -15,12 +17,9 @@ import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Simple class to display previews of the files. For now it just instantiates ImageView with an icon
- * Created by Alex on 3/6/14.
+ * Simple class to display previews of the files. For now it just instantiates ImageView with an icon Created by Alex on
+ * 3/6/14.
  */
 public class ContentAdapter extends BaseAdapter implements IContentManager.ContentChangedListener {
 	private IContentManager mContentManager;
@@ -30,9 +29,10 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 
 	/**
 	 * Creates a new ContentAdapter
+	 *
 	 * @param manager the content manager used to retrieve the actual content
 	 */
-	public ContentAdapter(IContentManager manager){
+	public ContentAdapter(IContentManager manager) {
 		mViews = new ArrayList<CheckableLinearLayout>();
 		mContentManager = manager;
 		setContent();
@@ -85,7 +85,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	public View getView(int i, View view, ViewGroup viewGroup) {
 		IndexedItem item = getItem(i);
 
-		if(view == null){
+		if (view == null) {
 			view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_content, null);
 		}
 
@@ -101,7 +101,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		// style the view accordingly
 		if (item instanceof IndexedFolder) {
 			styleFolderView((IndexedFolder) item, view);
-		} else {
+		}
+		else {
 			styleFileView((IndexedFile) item, view);
 		}
 
@@ -130,7 +131,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 				if (result) {
 					Utils.d("We have a bitmap to show!");
 					notifyDataSetChanged();
-				} else {
+				}
+				else {
 					Utils.d("We failed to get the bitmap :(");
 				}
 			}
@@ -143,7 +145,8 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 					Utils.d("A file has been modified! Getting new thumbnail.");
 					file.resetModificationChecker();
 					ThumbnailManager.createThumbnail(file, notifyChanges);
-				} else {
+				}
+				else {
 					ThumbnailManager.retrieveThumbnail(file, notifyChanges);
 				}
 			}
@@ -158,12 +161,14 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			statusImage.setImageResource(R.drawable.ic_status_unlocked);
 			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));
 			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
-		} else if (file.isLocked()) {
+		}
+		else if (file.isLocked()) {
 			statusImage.clearAnimation();
 			statusImage.setImageResource(R.drawable.ic_status_locked);
 			statusImageBG.setBackgroundColor(Utils.color(R.color.locked));
 			statusBar.setBackgroundColor(Utils.color(R.color.locked));
-		} else {
+		}
+		else {
 			statusImage.setImageResource(R.drawable.ic_status_processing);
 			statusImageBG.setBackgroundColor(Utils.color(R.color.processing));
 			statusBar.setBackgroundColor(Utils.color(R.color.processing));
@@ -185,7 +190,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	/**
 	 * Retrieves the content from the manager
 	 */
-	private void setContent(){
+	private void setContent() {
 		IndexedFolder current = mContentManager.getCurrentFolder();
 
 		if (mLastFolder != current && mContentItems != null) {

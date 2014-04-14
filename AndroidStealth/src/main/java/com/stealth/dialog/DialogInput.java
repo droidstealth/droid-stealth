@@ -1,8 +1,7 @@
 package com.stealth.dialog;
 
 /**
- * Allows one to add input fields to a dialog
- * Created by OlivierHokke on 11-Apr-14.
+ * Allows one to add input fields to a dialog Created by OlivierHokke on 11-Apr-14.
  */
 public class DialogInput {
 	private int mInputHint;
@@ -15,8 +14,8 @@ public class DialogInput {
 	}
 
 	/**
-	 * Set the string resource that will hint the user of what to fill
-	 * in when the input field is empty.
+	 * Set the string resource that will hint the user of what to fill in when the input field is empty.
+	 *
 	 * @param inputHint string resource
 	 * @return itself for call chaining
 	 */
@@ -31,6 +30,7 @@ public class DialogInput {
 
 	/**
 	 * Set the start value of the input field
+	 *
 	 * @param value string resource
 	 * @return itself for call chaining
 	 */
@@ -45,6 +45,7 @@ public class DialogInput {
 
 	/**
 	 * Set the input type so android knows what can be filled in this input field. For instance just numbers?
+	 *
 	 * @param inputType InputType to let the keyboard change its layout accordingly
 	 * @return itself for call chaining
 	 */
@@ -59,6 +60,7 @@ public class DialogInput {
 
 	/**
 	 * Set the max length of the input field
+	 *
 	 * @param maxLength max character count in input field
 	 * @return itself for call chaining
 	 */

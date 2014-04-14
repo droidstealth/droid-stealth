@@ -7,34 +7,31 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			tools:context="pin.PinFragment"
-			android:background="@color/content_list_background"
+			android:background="@color/background"
 			android:orientation="vertical"
 			android:id="@+id/pin_container">
 
 			<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:textColor="#33aacc"
+					android:textColor="@color/accent"
 					android:text="Your pin"
 					android:layout_marginLeft="10dp"
 					android:layout_marginRight="10dp"
 					android:layout_marginTop="20dp"
 					android:gravity="center"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:fontFamily="sans-serif-condensed"
-					android:textStyle="bold"
-					android:id="@+id/pin_title"/>
+					android:id="@+id/pin_title"
+					style="@style/Title"/>
 			<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:textColor="#33aacc"
 					android:text="Hello, please enter your pin, because I am sad and I want your pin"
 					android:layout_marginLeft="40dp"
 					android:layout_marginRight="40dp"
 					android:layout_marginBottom="10dp"
 					android:gravity="center"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:id="@+id/pin_description"/>
+					android:id="@+id/pin_description"
+					style="@style/RegularText"/>
 			<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -53,7 +50,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/pin_keyboard"
-				android:background="@color/content_list_background">
+				android:background="@color/background">
 
 			<TableRow
 				android:layout_width="fill_parent"

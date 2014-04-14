@@ -2,7 +2,7 @@
 	    xmlns:tools="http://schemas.android.com/tools"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:background="@color/content_list_background"
+	    android:background="@color/background"
 	    tools:context="com.stealth.drawer.NavigationDrawerFragment"
 		android:orientation="vertical"
 		android:clickable="true">
@@ -19,7 +19,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textStyle="bold"
 			android:text="@string/true_app_name"
-			android:textColor="@color/drawer_extra_details"
+			android:textColor="@color/subtle"
 			android:id="@+id/drawer_name"
 			android:paddingTop="16dp"
 			android:paddingLeft="16dp"/>
@@ -28,7 +28,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:text="@string/drawer_version"
-			android:textColor="@color/drawer_extra_details"
+			android:textColor="@color/subtle"
 			android:id="@+id/drawer_version"
 			android:paddingLeft="16dp"/>
 </LinearLayout>
