@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+	<string name="launch_toast_icon_on">Icon is now hidden!</string>
+	<string name="launch_toast_icon_off">Icon is now shown!</string>
+	<string name="launch_toast_icon_fail">First select an alternate launch method!</string>
+	<string name="launch_toast_widget_on">Widget is now available!</string>
+	<string name="launch_toast_widget_off">Widget is disabled!</string>
+	<string name="launch_toast_widget_visible_on">Widgets are now temporarily shown!</string>
+	<string name="launch_toast_widget_visible_off">Widgets are now hidden!</string>
+	<string name="launch_toast_dialer_on">Dialer launch enabled!</string>
+	<string name="launch_toast_dialer_off">Dialer launch method disabled!</string>
+	<string name="launch_toast_launch_save">Launch code saved!</string>
+
 	<string name="launch_title">@string/drawer_launch</string>
 	<string name="launch_description">
 		On this page you can define how you want to launch and hide this application. Perhaps
