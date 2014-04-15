@@ -129,15 +129,15 @@ public class ContentManager implements IContentManager {
 
 	@Override
 	public void removeAllContent(final IOnResult<Boolean> callback) {
-		removeItem(mIndex.getRoot(), callback, true);
+		removeItem(mIndex.getRoot(), callback);
 	}
 
 	@Override
-	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback, final boolean removeUnlocked) {
+	public void removeItem(final IndexedItem item, final IOnResult<Boolean> callback) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				boolean removed = removeItemNow(item, removeUnlocked);
+				boolean removed = removeItemNow(item);
 				if (removed) {
 					notifyContentChangedListeners();
 				}
@@ -149,8 +149,7 @@ public class ContentManager implements IContentManager {
 	}
 
 	@Override
-	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback,
-			final boolean removeUnlocked) {
+	public void removeItems(Collection<IndexedItem> itemCollection, final IOnResult<Boolean> callback) {
 		// make copy in case it changes while we are executing in another thread
 		final IndexedItem[] items = itemCollection.toArray(
 				(IndexedItem[]) java.lang.reflect.Array.newInstance(IndexedItem.class, itemCollection.size()));
@@ -160,7 +159,7 @@ public class ContentManager implements IContentManager {
 				int failures = 0;
 				boolean singleSuccess = false;
 				for (IndexedItem item : items) {
-					if (removeItemNow(item, removeUnlocked)) {
+					if (removeItemNow(item)) {
 						singleSuccess |= true;
 					}
 					else {
@@ -186,26 +185,23 @@ public class ContentManager implements IContentManager {
 	 * including its thumbnail and encrypted version
 	 *
 	 * @param item the item to remove
-	 * @param removeUnlocked
 	 * @return whether it completely succeeded
 	 */
-	public boolean removeItemNow(IndexedItem item, boolean removeUnlocked)
+	public boolean removeItemNow(IndexedItem item)
 	{
 		boolean success = true;
 		if (item instanceof IndexedFolder)
 		{
 			IndexedFolder folder = (IndexedFolder) item;
-			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f, removeUnlocked);
-			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f, removeUnlocked);
+			for (IndexedFolder f : folder.getFolders()) success &= removeItemNow(f);
+			for (IndexedFile f : folder.getFiles()) success &= removeItemNow(f);
 			mIndex.removeFolder(folder);
 		}
 		else
 		{
 			IndexedFile file = (IndexedFile) item;
 			success &= Utils.delete(file.getLockedFile());
-			if(removeUnlocked) {
-				success &= Utils.delete(file.getUnlockedFile());
-			}
+			success &= Utils.delete(file.getUnlockedFile());
 			success &= Utils.delete(file.getThumbFile());
 			mIndex.removeFile(file);
 		}

@@ -51,5 +51,8 @@
 	<string name="share_files">Share Files</string>
 	<string name="multi_share_not_found">No app found to share multiple files with</string>
 	<string name="share_not_found">No app found to share this file with</string>
+	<string name="action_restored_items">Succesfully restored file(s)</string>
+	<string name="action_partial_restore">Failed to restore some file(s)!</string>
+	<string name="action_no_restore">Failed to restore items!</string>
 
 </resources>

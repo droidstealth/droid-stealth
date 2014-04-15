@@ -47,6 +47,7 @@ import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
 import encryption.EncryptionService;
 import encryption.IContentManager;
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import sharing.SharingUtils;
 
 /**
@@ -56,6 +57,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CAMERA_REQUEST = 1888;
+	private static final int REQUEST_DIRECTORY = 0547;
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
 	private ContentShareMultiModeListener mMultiModeListener;
@@ -306,6 +308,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 						}
 					});
 
+				}
+				break;
+			case REQUEST_DIRECTORY:
+				if(resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED){
+					File exportDir = new File(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+					//TODO retrieve selected items
 				}
 				break;
 		}
@@ -687,20 +695,38 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					mActionManager.actionShare(getActivity(), selectedItems, null);
 					break;
 				case R.id.action_restore:
-					mActionManager.actionRestore(selectedItems, null);
+					restoreItems(selectedItems);
 					break;
 				case R.id.action_open:
-					mActionManager.actionOpen(getActivity(), selectedItems.get(0), null);
+					mActionManager.actionOpen((HomeActivity)getActivity(), selectedItems.get(0), null);
 					break;
 				case R.id.action_shred:
-					shredAll(selectedItems);
+					shredItems(selectedItems);
 					break;
 			}
 
 			return true;
 		}
 
-		private void shredAll(final ArrayList<IndexedItem> with){
+		/**
+		 * Asks the user for an export folder
+		 * @param with
+		 */
+		private void restoreItems(final ArrayList<IndexedItem> with){
+			Intent chooserIntent = new Intent(getActivity(), DirectoryChooserActivity.class);
+			// Optional: Allow users to create a new directory with a fixed name.
+			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME,
+					"DirChooserSample");
+
+			// REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+			startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+		}
+
+		/**
+		 * Asks user for confirmation to remove these items
+		 * @param with
+		 */
+		private void shredItems(final ArrayList<IndexedItem> with){
 			final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
 				@Override
 				public void onResult(Boolean result) {

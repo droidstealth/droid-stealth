@@ -53,17 +53,15 @@ public interface IContentManager {
 	 * Removes an item from the storage
 	 *  @param item     the item that should be removed
 	 * @param callback the callback that notifies if the item was removed successfully
-	 * @param removeUnlocked
 	 */
-	public void removeItem(IndexedItem item, IOnResult<Boolean> callback, boolean removeUnlocked);
+	public void removeItem(IndexedItem item, IOnResult<Boolean> callback);
 
 	/**
 	 * Removes a collection of items from storage
 	 *  @param itemCollection The collection of items to be removed
 	 * @param callback       the callback that notifies if the items were removed successfully
-	 * @param removeUnlocked
 	 */
-	public void removeItems(Collection<IndexedItem> itemCollection, IOnResult<Boolean> callback, boolean removeUnlocked);
+	public void removeItems(Collection<IndexedItem> itemCollection, IOnResult<Boolean> callback);
 
 	/**
 	 * Adds a listener to the list

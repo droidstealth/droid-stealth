@@ -83,6 +83,8 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+
 		<receiver android:name="com.stealth.android.StealthButton" >
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
