@@ -42,6 +42,12 @@ public class StealthSettingActivity extends PreferenceActivity {
         setupActionBar();
     }
 
+	@Override
+	protected void onStop() {
+		super.onStop();
+		this.finish();
+	}
+
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */

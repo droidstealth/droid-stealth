@@ -215,6 +215,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_settings:
+				setRequestedActivity(true);
 				Intent settingsIntent = new Intent(this, StealthSettingActivity.class);
 				startActivity(settingsIntent);
 				return true;
