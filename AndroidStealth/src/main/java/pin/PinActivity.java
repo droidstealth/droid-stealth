@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.launch.VisibilityManager;
 import com.stealth.utils.Utils;
 
 public class PinActivity extends FragmentActivity implements PinFragment.OnPinResult {
@@ -17,10 +18,15 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 	 * @param context the context to use for the launch
 	 */
 	public static void launch(Context context) {
+		// application may be hidden, so show for now
+		VisibilityManager.showApplication(context);
+
 		Intent pinIntent = new Intent(context, PinActivity.class);
 		pinIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(pinIntent);
 	}
+
+	private boolean mLaunchingMainApplication = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 		if (!PinManager.get().hasPin()) {
 			// no pin yet set. Just launch
 			HomeActivity.launch(getApplicationContext(), "");
+			mLaunchingMainApplication = true;
 			finish();
 			return;
 		}
@@ -56,9 +63,18 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 	}
 
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (!mLaunchingMainApplication) {
+			VisibilityManager.hideApplication(this);
+		}
+	}
+
+	@Override
 	public boolean onPinEntry(String pin) {
 		mPinFrag.clearPin();
 		if (HomeActivity.launch(getApplicationContext(), pin)) {
+			mLaunchingMainApplication = true;
 			finish();
 			return true;
 		}

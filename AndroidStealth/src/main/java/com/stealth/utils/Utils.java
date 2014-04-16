@@ -26,12 +26,18 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
+import com.stealth.android.R;
 import com.stealth.files.DirectoryManager;
 import encryption.ConcealCrypto;
 
@@ -48,6 +54,7 @@ public class Utils {
 	private static boolean sFakePin;
 	private static WeakReference<Context> sContext;
 	private static ConcealCrypto sCrypto;
+	private static Toast sToast;
 
 	/**
 	 * @return was the entered pin fake?
@@ -276,14 +283,34 @@ public class Utils {
 	 *
 	 * @param message_resource the string resource to show in a toast
 	 */
-	public static void toast(int message_resource) {
+	public static void toast(final int message_resource) {
 		final String message = str(message_resource);
 		d("[TOAST] " + message, 1);
 		runOnMain(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getContext(), message,
-						Toast.LENGTH_SHORT).show();
+				if (sToast != null) {
+					sToast.cancel();
+				}
+				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
+						Context.LAYOUT_INFLATER_SERVICE);
+				View layout = inflater.inflate(R.layout.toast, null);
+				if (layout == null) {
+					return;
+				}
+
+				TextView text = (TextView) layout.findViewById(R.id.toast_text);
+				text.setText(Utils.str(message_resource));
+
+				Random r = new Random(System.nanoTime());
+				int offsetx = r.nextInt(10) - 5;
+				int offsety = r.nextInt(10) - 5;
+
+				sToast = new Toast(getContext());
+				sToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, Utils.px(offsetx), Utils.px(70 + offsety));
+				sToast.setDuration(Toast.LENGTH_SHORT);
+				sToast.setView(layout);
+				sToast.show();
 			}
 		});
 	}
