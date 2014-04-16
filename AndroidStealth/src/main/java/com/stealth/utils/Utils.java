@@ -295,7 +295,9 @@ public class Utils {
 				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
 				View layout = inflater.inflate(R.layout.toast, null);
-				if (layout == null) return;
+				if (layout == null) {
+					return;
+				}
 
 				TextView text = (TextView) layout.findViewById(R.id.toast_text);
 				text.setText(Utils.str(message_resource));
@@ -305,7 +307,7 @@ public class Utils {
 				int offsety = r.nextInt(10) - 5;
 
 				sToast = new Toast(getContext());
-				sToast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP, Utils.px(offsetx), Utils.px(70 + offsety));
+				sToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, Utils.px(offsetx), Utils.px(70 + offsety));
 				sToast.setDuration(Toast.LENGTH_SHORT);
 				sToast.setView(layout);
 				sToast.show();
