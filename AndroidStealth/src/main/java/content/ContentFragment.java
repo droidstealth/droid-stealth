@@ -313,7 +313,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			case REQUEST_DIRECTORY:
 				if(resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED){
 					File exportDir = new File(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
-					//TODO retrieve selected items
+                    mActionManager.actionRestore(getSelectedItems(), null, exportDir);
 				}
 				break;
 		}
@@ -692,7 +692,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					mActionManager.actionUnlock(selectedItems, null);
 					break;
 				case R.id.action_share:
-					mActionManager.actionShare(getActivity(), selectedItems, null);
+					mActionManager.actionShare((HomeActivity)getActivity(), selectedItems, null);
 					break;
 				case R.id.action_restore:
 					restoreItems(selectedItems);
@@ -719,6 +719,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					"DirChooserSample");
 
 			// REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+            ((HomeActivity)getActivity()).setRequestedActivity(true);
 			startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
 		}
 
@@ -785,6 +786,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			if (actionMode == mMode) {
 				mMode = null;
+                mActionManager.setActionMode(null);
 			}
 		}
 	}

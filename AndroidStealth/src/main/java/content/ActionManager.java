@@ -37,21 +37,40 @@ public class ActionManager implements IActionManager {
 		mContentManager = contentManager;
 	}
 
+    /**
+     * Sets the EncryptionManager used to control item encryption
+     * @param encryptionManager
+     */
 	@Override
 	public void setEncryptionManager(EncryptionManager encryptionManager) {
 		mEncryptionManager = encryptionManager;
 	}
 
+    /**
+     * Passes the actionMode to this object to finalize when actions are completed
+     * @param actionMode
+     */
 	@Override
 	public void setActionMode(ActionMode actionMode) {
 		mActionMode = actionMode;
 	}
 
+    /**
+     * Removes all given items from the application index
+     * @param with The items to remove
+     * @param listener a listener which is called with a result when the task has been completed
+     */
 	@Override
 	public void actionShred(ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		mContentManager.removeItems(with, getWrapper(listener, 0));
 	}
 
+    /**
+     * Opens the selected file through an intent based on the file's mimetype
+     * @param activity activity used to launch the intent
+     * @param with the item to open
+     * @param listener a listener which is called with a result when the task has been completed
+     */
 	@Override
 	public void actionOpen(HomeActivity activity, IndexedItem with, IOnResult<Boolean> listener) {
 		if (!(with instanceof IndexedFile)) {
@@ -76,20 +95,23 @@ public class ActionManager implements IActionManager {
 			Toast.makeText(activity, "No handler for file " + file.getUnlockedFilename(), 4000).show();
 		}
 
+        finishActionMode();
+
 		if (listener != null) {
 			listener.onResult(true);
 		}
 	}
 
+    /**
+     * Locks the given files
+     * @param with Files to lock
+     * @param listener a listener which is called with a result when the task has been completed
+     */
 	@Override
 	public void actionLock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called lock when encryption service not bound!");
-		}
-
-		if (with == null) {
-			Utils.d("We got an empty list to process. Can't deal with this.");
-			return;
+            return;
 		}
 
 		for (IndexedItem item : with) {
@@ -103,15 +125,27 @@ public class ActionManager implements IActionManager {
 		mEncryptionManager.encryptItems(with, getWrapper(listener, 0));
 	}
 
+    /**
+     * Unlocks the given files
+     * @param with Files to unlock
+     * @param listener a listener which is called with a result when the task has been completed
+     */
 	@Override
 	public void actionUnlock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called unlock when encryption service not bound!");
+            return;
 		}
 
-		mEncryptionManager.decryptItems(with, getWrapper(listener, 0));
+        mEncryptionManager.decryptItems(with, getWrapper(listener, 0));
 	}
 
+    /**
+     * Shares the content with an intent
+     * @param context The context needed to launch the intent
+     * @param with The item(s) to share
+     * @param listener a listener which is called with a result when the task has been completed
+     */
 	@Override
 	public void actionShare(Context context, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		if (with.size() == 1 && with.get(0) instanceof IndexedFile) {
@@ -238,7 +272,7 @@ public class ActionManager implements IActionManager {
 		}
 		else if (item instanceof IndexedFile) {
 			IndexedFile file = (IndexedFile) item;
-			File original = new File(exportDir, file.getName());
+			File original = new File(exportDir, file.getName() + "." + file.getExtension());
 			File unlocked = file.getUnlockedFile();
 
 			if(!unlocked.exists()){
