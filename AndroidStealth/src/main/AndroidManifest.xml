@@ -1,98 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.stealth.android" >
+    package="com.stealth.android" >
 
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.NFC" />
-	<uses-permission android:name="android.permission.CALL_PHONE" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    * <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-	<application
-		android:allowBackup="true"
-		android:icon="@drawable/ic_drawer_home"
-		android:label="@string/morphable_app_name"
-		android:theme="@style/AppTheme" >
-		<activity
-			android:name="com.stealth.android.HomeActivity"
-			android:label="@string/morphable_app_name"
-			android:launchMode="singleTop"
-			android:uiOptions="splitActionBarWhenNarrow"
-			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:excludeFromRecents="true" >
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="com.stealth.android.StealthSettingActivity"
-			android:label="@string/title_activity_stealth_setting"
-			android:parentActivityName="com.stealth.android.HomeActivity" >
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="HomeActivity" />
-		</activity>
 
-		<service
-			android:name="sharing.APSharing.HttpServerService"
-			android:label="@string/http_service" />
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_drawer_home"
+        android:label="@string/morphable_app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.stealth.android.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:excludeFromRecents="true"
+            android:label="@string/morphable_app_name"
+            android:launchMode="singleTop"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.stealth.android.StealthSettingActivity"
+            android:label="@string/title_activity_stealth_setting"
+            android:parentActivityName="com.stealth.android.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="HomeActivity" />
+        </activity>
 
-		<receiver
-			android:name="spikes.stealthdialer.StealthDialReceiver"
-			android:enabled="true"
-			android:exported="true" >
-			<intent-filter android:priority="1" >
-				<action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-				<action android:name="android.intent.action.BOOT_COMPLETED" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</receiver>
+        <service
+            android:name="sharing.APSharing.HttpServerService"
+            android:label="@string/http_service" />
 
-		<service android:name="encryption.EncryptionService"
-				android:exported="false">
-			<intent-filter>
-				<action android:name="encryption.EncryptionService.TAP_TO_LOCK" />
-			</intent-filter>
-		</service>
-		<activity
-			android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-			android:enabled="@bool/use_activity"
-			android:exported="true"
-			android:icon="@drawable/ic_chooser"
-			android:label="@string/choose_file" >
-			<intent-filter>
-				<action android:name="android.intent.action.GET_CONTENT" />
+        <receiver
+            android:name="spikes.stealthdialer.StealthDialReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter android:priority="1" >
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
 
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.OPENABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
-				<data android:mimeType="*/*" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="pin.PinActivity"
-			android:label="@string/morphable_app_name"
-			android:theme="@style/AppTheme.Dialog"
-			android:excludeFromRecents="true" >
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
+        <service
+            android:name="encryption.EncryptionService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="encryption.EncryptionService.TAP_TO_LOCK" />
+            </intent-filter>
+        </service>
 
-		<receiver android:name="com.stealth.android.StealthButton" >
-			<intent-filter>
-				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-				<action android:name="com.stealth.android.StealthButton.ACTION_BUTTON_PRESS" />
-			</intent-filter>
+        <activity
+            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:enabled="@bool/use_activity"
+            android:exported="true"
+            android:icon="@drawable/ic_chooser"
+            android:label="@string/choose_file" >
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
-			<meta-data
-				android:name="android.appwidget.provider"
-				android:resource="@xml/stealth_button_info" />
-		</receiver>
-	</application>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="pin.PinActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/morphable_app_name"
+            android:theme="@style/AppTheme.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name="com.stealth.android.StealthButton" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.stealth.android.StealthButton.ACTION_BUTTON_PRESS" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stealth_button_info" />
+        </receiver>
+
+        <activity
+            android:name="com.stealth.android.RecorderActivity"
+            android:label="@string/title_activity_recorder" >
+        </activity>
+    </application>
 
 </manifest>
