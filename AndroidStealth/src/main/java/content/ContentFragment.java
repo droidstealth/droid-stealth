@@ -235,43 +235,43 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-            case R.id.content_add:
-                Intent getContentIntent = FileUtils.createGetContentIntent();
-                Intent intent = Intent.createChooser(getContentIntent, "Select a file");
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
-                startActivityForResult(intent, REQUEST_CHOOSER);
-                return true;
-            case R.id.content_image_capture:
-                mTempResultFile = Utils.getRandomCacheFile(".jpg");
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
-                startActivityForResult(cameraIntent, CONTENT_REQUEST);
-                return true;
-            case R.id.content_video_capture:
-                mTempResultFile = Utils.getRandomCacheFile(".jpg");
-                Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
-                startActivityForResult(videoIntent, CONTENT_REQUEST);
-                return true;
-            case R.id.content_audio_capture:
-                mTempResultFile = Utils.getRandomCacheFile(".3gp");
-                ((HomeActivity) getActivity()).setRequestedActivity(true);
+			case R.id.content_add:
+				Intent getContentIntent = FileUtils.createGetContentIntent();
+				Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(intent, REQUEST_CHOOSER);
+				return true;
+			case R.id.content_image_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".jpg");
+				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(cameraIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_video_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".jpg");
+				Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+				videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(videoIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_audio_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".3gp");
+				((HomeActivity) getActivity()).setRequestedActivity(true);
 
-                Intent audioIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-                if (audioIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(audioIntent, CONTENT_REQUEST);
-                } else {
-                    audioIntent = new Intent(getActivity(), RecorderActivity.class);
-                    audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-                    startActivityForResult(audioIntent, CONTENT_REQUEST);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+				Intent audioIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+				audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				if (audioIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+					startActivityForResult(audioIntent, CONTENT_REQUEST);
+				} else {
+					audioIntent = new Intent(getActivity(), RecorderActivity.class);
+					audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+					startActivityForResult(audioIntent, CONTENT_REQUEST);
+				}
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**
@@ -286,7 +286,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		switch (requestCode) {
 			case CONTENT_REQUEST:
 			case REQUEST_CHOOSER:
-
 				if (resultCode == Activity.RESULT_OK) {
 
 					File dataFile = null;
@@ -324,7 +323,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							}
 						}
 					});
-
 				}
 				break;
 		}
@@ -593,13 +591,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 
 		mEncryptionManager.encryptItems(with, new IOnResult<Boolean>() {
-            @Override
-            public void onResult(Boolean result) {
-                if (result) {
-                    finishMultiActionMode(actionMode);
-                }
-            }
-        });
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					finishMultiActionMode(actionMode);
+				}
+			}
+		});
 	}
 
 	/**
@@ -611,17 +609,17 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
 		if (!mIsBound) {
 			Log.e(this.getClass().toString() + ".onActionItemClicked",
-                    "encryptionService was not bound");
+					"encryptionService was not bound");
 		}
 
 		mEncryptionManager.decryptItems(with, new IOnResult<Boolean>() {
-            @Override
-            public void onResult(Boolean result) {
-                if (result) {
-                    finishMultiActionMode(actionMode);
-                }
-            }
-        });
+			@Override
+			public void onResult(Boolean result) {
+				if (result) {
+					finishMultiActionMode(actionMode);
+				}
+			}
+		});
 	}
 
 	/**
@@ -654,25 +652,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				.setReverseColors(true);
 
 		DialogConstructor.show(
-                getActivity(),
-                options,
-                new IDialogResponse() {
-                    @Override
-                    public void onPositive() {
-                        mContentManager.removeItems(with, shredListener);
-                    }
+				getActivity(),
+				options,
+				new IDialogResponse() {
+					@Override
+					public void onPositive() {
+						mContentManager.removeItems(with, shredListener);
+					}
 
-                    @Override
-                    public void onNegative() {
-                        // do nothing
-                    }
+					@Override
+					public void onNegative() {
+						// do nothing
+					}
 
-                    @Override
-                    public void onCancel() {
-                        // do nothing
-                    }
-                }
-        );
+					@Override
+					public void onCancel() {
+						// do nothing
+					}
+				}
+		);
 	}
 
 	/**
@@ -685,11 +683,11 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			return;
 		}
 		Utils.runOnMain(new Runnable() {
-            @Override
-            public void run() {
-                actionMode.finish();
-            }
-        });
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
 	}
 
 	/**

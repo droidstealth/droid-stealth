@@ -36,8 +36,8 @@ import java.util.Date;
 public class RecorderActivity extends ActionBarActivity {
 	private static final String SOUND_DIR = "Sounds";
 	private static final int MAX_AMPLITUDE = 32767;
-    private static int SAMPLING_INTERVAL = 100;
-    private static int ANIMATION_STEP_SIZE = 20;
+	private static int SAMPLING_INTERVAL = 100;
+	private static int ANIMATION_STEP_SIZE = 20;
 
 	private Uri mOutputUri = null;
 
@@ -53,7 +53,7 @@ public class RecorderActivity extends ActionBarActivity {
 	private ProgressBar mVolumeLevel;
 
 	private Handler mHandler;
-    private VolumeAnimationTask mAnimationTask;
+	private VolumeAnimationTask mAnimationTask;
 
 	Runnable mVolumeChecker = new Runnable() {
 		@Override
@@ -105,7 +105,7 @@ public class RecorderActivity extends ActionBarActivity {
 			mPlayer = null;
 		}
 
-        removeRecording();
+		removeRecording();
 	}
 
 	/**
@@ -159,9 +159,9 @@ public class RecorderActivity extends ActionBarActivity {
 		});
 	}
 
-    /**
-     * Sets the new volume level in the progress bar
-     */
+	/**
+	 * Sets the new volume level in the progress bar
+	 */
 	private void displayVolumeLevel() {
 		if (mRecorder != null) {
 			/*
@@ -169,13 +169,13 @@ public class RecorderActivity extends ActionBarActivity {
 			 * bar goes up to 100. This way we get a decent approximation of the possible range.
 			 */
 			int level = (int) (mRecorder.getMaxAmplitude() / (double) MAX_AMPLITUDE * 100);
-            mVolumeLevel.setProgress(level);
+			mVolumeLevel.setProgress(level);
 
-            if(mAnimationTask != null){
-                mAnimationTask.cancel(true);
-            }
-            mAnimationTask = new VolumeAnimationTask(level);
-            mAnimationTask.execute();
+			if(mAnimationTask != null){
+				mAnimationTask.cancel(true);
+			}
+			mAnimationTask = new VolumeAnimationTask(level);
+			mAnimationTask.execute();
 
 		}
 	}
@@ -284,7 +284,7 @@ public class RecorderActivity extends ActionBarActivity {
 		}
 
 		mRecorder.start();
-        mVolumeChecker.run();
+		mVolumeChecker.run();
 	}
 
 	/**
@@ -296,11 +296,11 @@ public class RecorderActivity extends ActionBarActivity {
 			mRecorder.release();
 			mRecorder = null;
 
-            mHandler.removeCallbacks(mVolumeChecker);
-            if (mAnimationTask != null) {
-                mAnimationTask.cancel(true);
-            }
-            mVolumeLevel.setProgress(0);
+			mHandler.removeCallbacks(mVolumeChecker);
+			if (mAnimationTask != null) {
+				mAnimationTask.cancel(true);
+			}
+			mVolumeLevel.setProgress(0);
 		}
 	}
 
@@ -321,44 +321,44 @@ public class RecorderActivity extends ActionBarActivity {
 		finish();
 	}
 
-    /**
-     * Helper class for smoother progress interpolation
-     */
-    private class VolumeAnimationTask extends AsyncTask<Void, Void, Void> {
-        private int mStepNumber;
-        private long mSleepTime;
-        private float mStepDir;
+	/**
+	 * Helper class for smoother progress interpolation
+	 */
+	private class VolumeAnimationTask extends AsyncTask<Void, Void, Void> {
+		private int mStepNumber;
+		private long mSleepTime;
+		private float mStepDir;
 
-        public VolumeAnimationTask(int newVolume){
-            int startVolume = mVolumeLevel.getProgress();
-            mStepDir = Math.signum(newVolume - startVolume);
-            mStepNumber = (int)((newVolume - startVolume) / (float) ANIMATION_STEP_SIZE);
-            mSleepTime = mStepNumber / SAMPLING_INTERVAL;
-        }
+		public VolumeAnimationTask(int newVolume){
+			int startVolume = mVolumeLevel.getProgress();
+			mStepDir = Math.signum(newVolume - startVolume);
+			mStepNumber = (int)((newVolume - startVolume) / (float) ANIMATION_STEP_SIZE);
+			mSleepTime = mStepNumber / SAMPLING_INTERVAL;
+		}
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            for(int i = 0; i < mStepNumber; i++){
-                if(isCancelled()) {
-                    break;
-                }
+		@Override
+		protected Void doInBackground(Void... voids) {
+			for(int i = 0; i < mStepNumber; i++){
+				if(isCancelled()) {
+					break;
+				}
 
-                publishProgress();
+				publishProgress();
 
-                try {
-                    Thread.sleep(mSleepTime);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
+				try {
+					Thread.sleep(mSleepTime);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            int currentProgress = mVolumeLevel.getProgress();
-            mVolumeLevel.setProgress(currentProgress + (int)(mStepDir * ANIMATION_STEP_SIZE));
-        }
-    }
+		@Override
+		protected void onProgressUpdate(Void... values) {
+			int currentProgress = mVolumeLevel.getProgress();
+			mVolumeLevel.setProgress(currentProgress + (int)(mStepDir * ANIMATION_STEP_SIZE));
+		}
+	}
 }
