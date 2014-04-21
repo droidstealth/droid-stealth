@@ -3,21 +3,16 @@ package spikes.morphing;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.OutputStream;
 import java.io.StringReader;
 
+import com.stealth.utils.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,19 +20,21 @@ import org.xml.sax.SAXException;
 /**
  * Solution of decompressing by: http://stackoverflow.com/a/4761689
  * Created by Alex on 2-4-2014.
+ * Modified by Joris on 21-4-2014
  */
 public class ManifestTransformer {
 	private static int endDocTag = 0x00100101;
 	private static int startTag = 0x00100102;
 	private static int endTag = 0x00100103;
 
-	public static Document decompressXML(File manifest) throws
+	public static Document decompressXML(File manifest, String label) throws
 			IOException,
 			ParserConfigurationException,
 			SAXException {
 		InputStream input = new FileInputStream(manifest);
 		byte[] xml = new byte[input.available()];
 		input.read(xml);
+		input.close();
 
 		StringBuilder finalXML = new StringBuilder();
 
@@ -80,6 +77,11 @@ public class ManifestTransformer {
 							sitOff, stOff, attrValueSi) : "resourceID 0x"
 							+ Integer.toHexString(attrResId);
 					sb.append(" " + attrName + "=\"" + attrValue + "\"");
+
+					Utils.d("Tag: " + name + " attr: " + attrName + " value: " + attrValue);
+					if (name.equals("application") && attrName.equals("label") ) {
+						insertXmlString(label, xml, sitOff, stOff, attrValueSi);
+					}
 				}
 				finalXML.append("<" + name + sb + ">");
 
@@ -95,7 +97,9 @@ public class ManifestTransformer {
 			}
 		}
 
-
+		OutputStream output = new FileOutputStream(manifest);
+		output.write(xml);
+		output.close();
 		return parseManifest(finalXML.toString());
 	}
 
@@ -118,6 +122,28 @@ public class ManifestTransformer {
 		return new String(chars); // Hack, just use 8 byte chars
 	} // end of compXmlStringAt
 
+	private static void insertXmlString(String input, byte[] xml, int sitOff, int stOff, int strInd) {
+		if (strInd < 0)
+			return;
+		int strOff = stOff + LEW(xml, sitOff + strInd * 4);
+		insertXmlString(input, xml, strOff);
+	}
+
+	//Makes use of compXmlStringAt's code to find the right location in the byte array and insert the new value.
+	private static void insertXmlString(String input, byte[] arr, int strOff) {
+		int strLen = arr[strOff + 1] << 8 & 0xff00 | arr[strOff] & 0xff;
+		if (input.length() < strLen) {
+			int add = strLen - input.length();
+			for (int j = 0; j < add; j++) {
+				input += " ";
+			}
+		}
+		byte[] inputChars = input.getBytes();
+		for (int ii = 0; ii < strLen; ii++) {
+			arr[strOff + 2 + ii * 2] = inputChars[ii];
+		}
+	} // end of compXmlStringAt
+
 	// LEW -- Return value of a Little Endian 32 bit word from the byte array
 	// at offset off.
 	private static int LEW(byte[] arr, int off) {
@@ -131,14 +157,5 @@ public class ManifestTransformer {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(new InputSource(new StringReader(manifest)));
 		return doc;
-	}
-
-	public static void compressManifest(Document manifest, File outputFile) throws TransformerException {
-		TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(manifest);
-		StreamResult result = new StreamResult(outputFile);
-		transformer.transform(source, result);
 	}
 }

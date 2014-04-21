@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.utils.Utils;
+import kellinwood.security.zipsigner.ProgressEvent;
+import kellinwood.security.zipsigner.ProgressListener;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -104,8 +107,8 @@ public class AppMorph {
 		    setProgressStep(ProgressStep.Extracting);
 		    File jarDir = extractApk();
 
-		    //setProgressStep(ProgressStep.SettingLabel);
-		    //String iconResName = setManifestLabel(jarDir, label);
+		    setProgressStep(ProgressStep.SettingLabel);
+		    String iconResName = setManifestLabel(jarDir, label);
 
 		    setProgressStep(ProgressStep.SettingIcons);
 		    setIcons(jarDir, icon, "ic_stealth_launcher");
@@ -175,17 +178,14 @@ public class AppMorph {
 		File manifest = new File(jarDir, "AndroidManifest.xml");
 		if(!manifest.exists())
 			return null;
-		Document manifestDoc = ManifestTransformer.decompressXML(manifest);
+		Document manifestDoc = ManifestTransformer.decompressXML(manifest, label);
 		Element application = (Element)manifestDoc.getElementsByTagName("application").item(0);
-		application.setAttribute("android:label", label);
 
 		String icon = application.getAttribute("android:icon");
 
 		if(icon.startsWith(drawableName))
 			icon = icon.substring(drawableName.length());
 
-		manifest.delete();
-		ManifestTransformer.compressManifest(manifestDoc, manifest);
 		return icon;
 	}
 
