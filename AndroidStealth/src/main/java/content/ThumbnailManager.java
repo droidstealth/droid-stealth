@@ -3,6 +3,7 @@ package content;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,8 +18,17 @@ import com.stealth.utils.Utils;
  */
 public class ThumbnailManager {
 
-	private static ArrayList<IndexedFile> mRetrievingThumbs = new ArrayList<IndexedFile>();
-	private static ArrayList<IndexedFile> mCreatingThumbs = new ArrayList<IndexedFile>();
+	private static HashSet<IndexedFile> mRetrievingThumbs = new HashSet<IndexedFile>();
+	private static HashSet<IndexedFile> mCreatingThumbs = new HashSet<IndexedFile>();
+
+	/**
+	 * Is the manager currently creating a thumbnail for the given file?
+	 * @param item the file to check
+	 * @return if thumbnail is being created
+	 */
+	public static boolean isCreating(IndexedFile item) {
+		return mCreatingThumbs.contains(item);
+	}
 
 	/**
 	 * Creates the thumbnail for an item, encrypts it and saves it in the thumbnail folder

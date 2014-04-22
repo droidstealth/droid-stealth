@@ -3,6 +3,7 @@ package com.stealth.files;
 import android.graphics.Bitmap;
 import android.util.Log;
 import com.stealth.utils.Utils;
+import content.ThumbnailManager;
 import encryption.EncryptionService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -186,7 +187,7 @@ public class IndexedFile extends IndexedItem {
 	 * @return true if file is currently being processed
 	 */
 	public boolean isProcessing() {
-		return EncryptionService.inQueue(this);
+		return ThumbnailManager.isCreating(this) || EncryptionService.inQueue(this);
 	}
 
 	/**

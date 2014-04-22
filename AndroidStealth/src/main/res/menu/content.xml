@@ -3,27 +3,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:stealth="http://schemas.android.com/apk/res-auto">
 	<item
-		android:id="@+id/content_add"
-		android:icon="@drawable/ic_menu_add"
-		android:title="@string/action_add"
-		stealth:showAsAction="always"
-		android:showAsAction="always"/>
+			android:id="@+id/content_add"
+			android:icon="@drawable/ic_menu_add"
+			android:title="@string/action_add"
+			stealth:showAsAction="always"
+			android:showAsAction="always"/>
 	<item
-		android:id="@+id/content_audio_capture"
-		android:icon="@drawable/ic_menu_record"
-		android:title="@string/action_add"
-		stealth:showAsAction="always"
-		android:showAsAction="always"/>
+			android:id="@+id/content_image_capture"
+			android:icon="@drawable/ic_menu_image"
+			android:title="@string/action_add"
+			stealth:showAsAction="always"
+			android:showAsAction="always"/>
 	<item
-		android:id="@+id/content_video_capture"
-		android:icon="@drawable/ic_menu_video"
-		android:title="@string/action_add"
-		stealth:showAsAction="always"
-		android:showAsAction="always"/>
+			android:id="@+id/content_video_capture"
+			android:icon="@drawable/ic_menu_video"
+			android:title="@string/action_add"
+			stealth:showAsAction="always"
+			android:showAsAction="always"/>
 	<item
-		android:id="@+id/content_image_capture"
-		android:icon="@drawable/ic_menu_image"
-		android:title="@string/action_add"
-		stealth:showAsAction="always"
-		android:showAsAction="always"/>
+			android:id="@+id/content_audio_capture"
+			android:icon="@drawable/ic_menu_audio"
+			android:title="@string/action_add"
+			stealth:showAsAction="always"
+			android:showAsAction="always"/>
 </menu>
