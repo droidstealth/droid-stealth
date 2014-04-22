@@ -2,6 +2,7 @@ package com.stealth.files;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.utils.Utils;
 import content.ThumbnailManager;
 import encryption.EncryptionService;
@@ -188,6 +189,13 @@ public class IndexedFile extends IndexedItem {
 	 */
 	public boolean isProcessing() {
 		return ThumbnailManager.isCreating(this) || EncryptionService.inQueue(this);
+	}
+
+	/**
+	 * @return true if file can have a thumbnail generated
+	 */
+	public boolean isThumbnailable() {
+		return FileUtils.isImageOrVideo(FileUtils.getMimeType(getUnlockedFile()));
 	}
 
 	/**

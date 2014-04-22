@@ -259,15 +259,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				mTempResultFile = Utils.getRandomCacheFile(".3gp");
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 
-				Intent audioIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+				Intent audioIntent = new Intent(getActivity(), RecorderActivity.class);
 				audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-				if (audioIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-					startActivityForResult(audioIntent, CONTENT_REQUEST);
-				} else {
-					audioIntent = new Intent(getActivity(), RecorderActivity.class);
-					audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
-					startActivityForResult(audioIntent, CONTENT_REQUEST);
-				}
+				startActivityForResult(audioIntent, CONTENT_REQUEST);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -296,13 +290,18 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 						dataFile = mTempResultFile;
 					}
 					else {
+						Uri uri = data.getData();
 						//In this case, we can find file in Uri path
-						dataFile = FileUtils.getFile(getActivity(), data.getData());
+						dataFile = FileUtils.getFile(getActivity(), uri);
 					}
 
 					//Something failed somewhere
-					if (dataFile == null || !dataFile.exists()) {
+					if (dataFile == null) {
 						Utils.d("Empty result was found!");
+						return;
+					}
+					if (!dataFile.exists()) {
+						Utils.d("File with result does not exist...!");
 						return;
 					}
 

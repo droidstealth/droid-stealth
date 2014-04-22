@@ -42,6 +42,14 @@ public class ThumbnailManager {
 			return;
 		}
 
+		final IOnResult<Boolean> onResult = new IOnResult<Boolean>() {
+			@Override
+			public void onResult(Boolean result) {
+				mCreatingThumbs.remove(item);
+				callback.onResult(result);
+			}
+		};
+
 		mCreatingThumbs.add(item);
 
 		new Thread(new Runnable() {
@@ -49,11 +57,18 @@ public class ThumbnailManager {
 			public void run() {
 				boolean result = false;
 
+				if (!item.isThumbnailable()) {
+					onResult.onResult(false);
+					return;
+				}
+
 				try {
 
 					// generate thumbnail
 					Bitmap thumb = FileUtils.getThumbnail(Utils.getContext(), item.getUnlockedFile());
+
 					if (thumb == null) {
+						onResult.onResult(false);
 						return;
 					}
 
@@ -79,8 +94,7 @@ public class ThumbnailManager {
 
 				}
 
-				mCreatingThumbs.remove(item);
-				Utils.runCallbackOnMain(callback, result);
+				onResult.onResult(result);
 			}
 		}).start();
 	}

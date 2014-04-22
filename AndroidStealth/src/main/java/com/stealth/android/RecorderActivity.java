@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,8 +105,6 @@ public class RecorderActivity extends ActionBarActivity {
 			mPlayer.release();
 			mPlayer = null;
 		}
-
-		removeRecording();
 	}
 
 	/**
@@ -263,6 +262,7 @@ public class RecorderActivity extends ActionBarActivity {
 	 */
 	private void stopPlaying() {
 		if (mPlayer != null) {
+			mPlayer.stop();
 			mPlayer.release();
 			mPlayer = null;
 			mPlayButton.setImageResource(R.drawable.play);
