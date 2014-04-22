@@ -21,6 +21,6 @@ public interface IActionManager {
 	public void actionOpen(HomeActivity activity, IndexedItem with, IOnResult<Boolean> listener);
 	public void actionLock(ArrayList<IndexedItem> with, IOnResult<Boolean> listener);
 	public void actionUnlock(ArrayList<IndexedItem> with, IOnResult<Boolean> listener);
-	public void actionShare(Context context, ArrayList<IndexedItem> with, IOnResult<Boolean> listener);
+	public void actionShare(HomeActivity activity, ArrayList<IndexedItem> with, IOnResult<Boolean> listener);
 	public void actionRestore(ArrayList<IndexedItem> with, IOnResult<Boolean> listener, File exportDir);
 }

@@ -8,7 +8,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.view.ActionMode;
@@ -142,18 +141,18 @@ public class ActionManager implements IActionManager {
 
     /**
      * Shares the content with an intent
-     * @param context The context needed to launch the intent
+     * @param activity The context needed to launch the intent
      * @param with The item(s) to share
      * @param listener a listener which is called with a result when the task has been completed
      */
 	@Override
-	public void actionShare(Context context, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
+	public void actionShare(HomeActivity activity, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		if (with.size() == 1 && with.get(0) instanceof IndexedFile) {
 			IndexedFile file = (IndexedFile) with.get(0);
 
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_SEND);
-			intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_file));
+			intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_file));
 
 			MimeTypeMap map = MimeTypeMap.getSingleton();
 			String mimeType = map.getMimeTypeFromExtension(file.getExtension().substring(1));
@@ -162,8 +161,10 @@ public class ActionManager implements IActionManager {
 			Uri uri = Uri.fromFile(file.getUnlockedFile());
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
 
+			activity.setRequestedActivity(true);
+
 			try {
-				context.startActivity(intent);
+				activity.startActivity(intent);
 			}
 			catch (ActivityNotFoundException e) {
 				Utils.toast(R.string.share_not_found);
@@ -174,7 +175,7 @@ public class ActionManager implements IActionManager {
 		else {
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-			intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_files));
+			intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_files));
 
 			ArrayList<Uri> files = new ArrayList<Uri>();
 
@@ -208,7 +209,7 @@ public class ActionManager implements IActionManager {
 			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
 
 			try {
-				context.startActivity(intent);
+				activity.startActivity(intent);
 			}
 			catch (ActivityNotFoundException e) {
 				Utils.toast(R.string.multi_share_not_found);

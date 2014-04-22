@@ -38,10 +38,12 @@ import com.stealth.android.R;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
+import com.stealth.files.DirectoryManager;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.files.UnlockObserver;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
@@ -65,6 +67,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentAdapter mAdapter;
 	private EncryptionService mEncryptionService;
 	private IActionManager mActionManager;
+	private UnlockObserver mObserver;
 
 	private File mTempImageFile;
 
@@ -226,6 +229,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mAdapter.setAdapterChangedListener(this);
 		mContentManager.addContentChangedListener(mAdapter);
 		mGridView.setAdapter(mAdapter);
+
+		mObserver = new UnlockObserver(DirectoryManager.unlocked().getPath());
+		mObserver.addListener(mAdapter);
 
 		return content;
 	}
