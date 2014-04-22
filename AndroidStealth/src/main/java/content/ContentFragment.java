@@ -249,7 +249,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				startActivityForResult(cameraIntent, CONTENT_REQUEST);
 				return true;
 			case R.id.content_video_capture:
-				mTempResultFile = Utils.getRandomCacheFile(".jpg");
+				mTempResultFile = Utils.getRandomCacheFile(".mp4");
 				Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 				videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
