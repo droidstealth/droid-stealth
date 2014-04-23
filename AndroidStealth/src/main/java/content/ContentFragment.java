@@ -219,7 +219,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
 
-
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
@@ -317,9 +316,9 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				}
 				break;
 			case REQUEST_DIRECTORY:
-				if(resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED){
+				if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
 					File exportDir = new File(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
-                    mActionManager.actionRestore(getSelectedItems(), null, exportDir);
+					mActionManager.actionRestore(getSelectedItems(), null, exportDir);
 				}
 				break;
 		}
@@ -538,7 +537,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private void checkSelections() {
 		for (long id : mGridView.getCheckedItemIds()) {
 			if (id >= mAdapter.getCount()) {
-				mGridView.setItemChecked((int)id, false);
+				mGridView.setItemChecked((int) id, false);
 			}
 		}
 		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
@@ -698,13 +697,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					mActionManager.actionUnlock(selectedItems, null);
 					break;
 				case R.id.action_share:
-					mActionManager.actionShare((HomeActivity)getActivity(), selectedItems, null);
+					mActionManager.actionShare((HomeActivity) getActivity(), selectedItems, null);
 					break;
 				case R.id.action_restore:
 					restoreItems(selectedItems);
 					break;
 				case R.id.action_open:
-					mActionManager.actionOpen((HomeActivity)getActivity(), selectedItems.get(0), null);
+					mActionManager.actionOpen((HomeActivity) getActivity(), selectedItems.get(0), null);
 					break;
 				case R.id.action_shred:
 					shredItems(selectedItems);
@@ -716,24 +715,26 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 		/**
 		 * Asks the user for an export folder
+		 *
 		 * @param with
 		 */
-		private void restoreItems(final ArrayList<IndexedItem> with){
+		private void restoreItems(final ArrayList<IndexedItem> with) {
 			Intent chooserIntent = new Intent(getActivity(), DirectoryChooserActivity.class);
 			// Optional: Allow users to create a new directory with a fixed name.
 			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME,
 					"DirChooserSample");
 
 			// REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
-            ((HomeActivity)getActivity()).setRequestedActivity(true);
+			((HomeActivity) getActivity()).setRequestedActivity(true);
 			startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
 		}
 
 		/**
 		 * Asks user for confirmation to remove these items
+		 *
 		 * @param with
 		 */
-		private void shredItems(final ArrayList<IndexedItem> with){
+		private void shredItems(final ArrayList<IndexedItem> with) {
 			final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
 				@Override
 				public void onResult(Boolean result) {
@@ -792,7 +793,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			if (actionMode == mMode) {
 				mMode = null;
-                mActionManager.setActionMode(null);
+				mActionManager.setActionMode(null);
 			}
 		}
 	}
