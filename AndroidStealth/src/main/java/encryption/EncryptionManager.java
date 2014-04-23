@@ -109,7 +109,6 @@ public class EncryptionManager {
 
 			// check if we actually need to do anything?
 			if (mode == ConcealCrypto.CryptoMode.DECRYPT && unlocked.exists()) return true;
-			if (mode == ConcealCrypto.CryptoMode.ENCRYPT && locked.exists()) return true;
 
 			mService.addCryptoTask(file, mode, callback);
 			return true;
