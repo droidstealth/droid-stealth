@@ -28,6 +28,7 @@
 			android:id="@+id/drawer_item_name"
 			android:layout_gravity="center_vertical"
 			android:paddingTop="12dp"
-			android:paddingBottom="12dp"/>
+			android:paddingBottom="12dp"
+			android:tag="@string/font_light_condensed"/>
 
 </LinearLayout>

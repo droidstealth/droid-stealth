@@ -91,7 +91,8 @@
 			<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:tag="@string/font_light_condensed"
+					android:textSize="@dimen/text_medium"
 					android:text="@string/morph_pick_app"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
@@ -121,7 +122,8 @@
 			<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:tag="@string/font_light_condensed"
+					android:textSize="@dimen/text_medium"
 					android:text="@string/morph_pick_icon"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
@@ -151,7 +153,8 @@
 			<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:tag="@string/font_light_condensed"
+					android:textSize="@dimen/text_medium"
 					android:text="@string/morph_share"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"

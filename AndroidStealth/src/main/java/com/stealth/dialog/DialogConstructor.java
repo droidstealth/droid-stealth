@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.stealth.android.R;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 /**
@@ -26,6 +27,8 @@ public class DialogConstructor {
 		final Dialog dialog = new Dialog(activity);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.dialog_base);
+
+		FontManager.handleFontTags((ViewGroup) dialog.findViewById(R.id.dialog_container));
 
 		final ArrayList<EditText> editTexts = new ArrayList<EditText>();
 		final IDialogAdapter<?> adapter = options.getDialogAdapter();

@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.stealth.android.R;
 import com.stealth.android.StealthButton;
+import com.stealth.font.FontManager;
 import com.stealth.launch.DialerManager;
 import com.stealth.launch.LaunchManager;
 import com.stealth.launch.WidgetManager;
@@ -107,6 +109,8 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		});
 
 		mIgnoreToasts = false;
+
+		FontManager.handleFontTags((ViewGroup) root);
 
 		return root;
 	}

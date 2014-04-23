@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.stealth.android.R;
 import com.stealth.android.StealthSettingActivity;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 /**
@@ -132,6 +133,9 @@ public class NavigationDrawerFragment extends Fragment {
 		mAdapter = new NavigationDrawerAdapter(root.getContext(), items);
 		mDrawerListView.setAdapter(mAdapter);
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
+		FontManager.handleFontTags(root);
+
 		return root;
 	}
 

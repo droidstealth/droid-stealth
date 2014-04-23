@@ -16,19 +16,21 @@
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="@dimen/text_large"
 			android:textStyle="bold"
 			android:text="@string/true_app_name"
 			android:textColor="@color/subtle"
 			android:id="@+id/drawer_name"
 			android:paddingTop="16dp"
-			android:paddingLeft="16dp"/>
+			android:paddingLeft="16dp"
+			android:tag="@string/font_bold_condensed"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textSize="@dimen/text_regular"
 			android:text="@string/drawer_version"
 			android:textColor="@color/subtle"
 			android:id="@+id/drawer_version"
-			android:paddingLeft="16dp"/>
+			android:paddingLeft="16dp"
+			android:tag="@string/font_light_condensed"/>
 </LinearLayout>

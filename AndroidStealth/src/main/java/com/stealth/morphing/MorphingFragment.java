@@ -31,6 +31,7 @@ import com.stealth.android.R;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogAdapter;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 /**
@@ -127,6 +128,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 
 		mName = (EditText) root.findViewById(R.id.morph_edit_name);
 		mIcon = (ImageView) root.findViewById(R.id.morph_edit_icon);
+
+		FontManager.handleFontTags((ViewGroup) root);
 
 		return root;
 	}

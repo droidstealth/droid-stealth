@@ -21,7 +21,7 @@
 			android:layout_height="40dp"
 			android:background="#ffff00"
 			android:gravity="center"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textSize="@dimen/text_regular"
 			android:text="Tip: share with NFC by holding devices back to back"
 			android:id="@+id/textView" android:layout_alignParentBottom="true"
 			android:layout_alignParentEnd="true" />
