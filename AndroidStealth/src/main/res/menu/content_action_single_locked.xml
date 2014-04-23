@@ -4,13 +4,13 @@
 	<item
 			android:id="@+id/action_unlock"
 			android:icon="@drawable/ic_menu_unlock"
-			android:showAsAction="ifRoom"
+			android:showAsAction="always"
 			android:title="@string/action_unlock_show"
 			/>
 	<item
 			android:id="@+id/action_shred"
 			android:icon="@drawable/ic_menu_shred"
-			android:showAsAction="ifRoom"
+			android:showAsAction="always"
 			android:title="@string/action_shred"
 			/>
 </menu>
