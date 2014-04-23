@@ -10,28 +10,28 @@
  */
 package com.stealth.android;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.media.MediaRecorder;
-import android.media.MediaPlayer;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-
-import com.ipaulpro.afilechooser.utils.FileUtils;
-import com.stealth.utils.Utils;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.utils.Utils;
 
 
 public class RecorderActivity extends ActionBarActivity {
@@ -66,8 +66,6 @@ public class RecorderActivity extends ActionBarActivity {
 
 	/**
 	 * Sets up the activity view and loads the uri to write the recording to
-	 *
-	 * @param savedInstanceState
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +117,8 @@ public class RecorderActivity extends ActionBarActivity {
 					image.setImageResource(R.drawable.ic_cab_done_holo_dark);
 
 					startRecording();
-				} else {
+				}
+				else {
 					ImageView image = (ImageView) view;
 					image.setImageResource(R.drawable.record);
 
@@ -151,7 +150,8 @@ public class RecorderActivity extends ActionBarActivity {
 			public void onClick(View view) {
 				if (mPlayer != null) {
 					stopPlaying();
-				} else {
+				}
+				else {
 					startPlaying();
 				}
 			}
@@ -170,7 +170,7 @@ public class RecorderActivity extends ActionBarActivity {
 			int level = (int) (mRecorder.getMaxAmplitude() / (double) MAX_AMPLITUDE * 100);
 			mVolumeLevel.setProgress(level);
 
-			if(mAnimationTask != null){
+			if (mAnimationTask != null) {
 				mAnimationTask.cancel(true);
 			}
 			mAnimationTask = new VolumeAnimationTask(level);
@@ -206,25 +206,26 @@ public class RecorderActivity extends ActionBarActivity {
 		if (mOutputUri != null) {
 			File recording = FileUtils.getFile(this, mOutputUri);
 			if (recording != null && recording.exists()) {
+				//noinspection ResultOfMethodCallIgnored
 				recording.delete();
 			}
 		}
 	}
 
 	/**
-	 * Returns the preferred output uri for the recording. Checks the intent first for an output
-	 * file that has been set. If none has been set, it checks availability of the Sounds folder.
-	 * If neither are available, the cache of this application is used.
-	 *
-	 * @return
+	 * @return the preferred output uri for the recording. Checks the intent first for an output file that has been set.
+	 * If none has been set, it checks availability of the Sounds folder. If neither are available, the cache of this
+	 * application is used.
 	 */
 	private Uri getOutputUri() {
 		Uri outputUri = getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
 
 		if (outputUri == null) {
 			File outDir = new File(Environment.getExternalStorageDirectory(), SOUND_DIR);
-			if (!outDir.exists())
+			if (!outDir.exists()) {
+				//noinspection ResultOfMethodCallIgnored
 				outDir.mkdir();
+			}
 			else if (!outDir.isDirectory()) {
 				outDir = getExternalCacheDir();
 			}
@@ -253,7 +254,9 @@ public class RecorderActivity extends ActionBarActivity {
 			});
 			mPlayer.start();
 			mPlayButton.setImageResource(R.drawable.pause);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
+			Utils.d("Exception in playing media: "+e.toString());
 		}
 	}
 
@@ -280,7 +283,11 @@ public class RecorderActivity extends ActionBarActivity {
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		try {
 			mRecorder.prepare();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
+			Utils.d("Error writing file: "+e.toString());
+			Toast.makeText(getApplicationContext(), "An error occured at recorder preparations.", Toast.LENGTH_LONG)
+					.show();
 		}
 
 		mRecorder.start();
@@ -315,7 +322,8 @@ public class RecorderActivity extends ActionBarActivity {
 
 		if (getParent() == null) {
 			setResult(Activity.RESULT_OK, data);
-		} else {
+		}
+		else {
 			getParent().setResult(Activity.RESULT_OK, data);
 		}
 		finish();
@@ -329,17 +337,17 @@ public class RecorderActivity extends ActionBarActivity {
 		private long mSleepTime;
 		private float mStepDir;
 
-		public VolumeAnimationTask(int newVolume){
+		public VolumeAnimationTask(int newVolume) {
 			int startVolume = mVolumeLevel.getProgress();
 			mStepDir = Math.signum(newVolume - startVolume);
-			mStepNumber = (int)((newVolume - startVolume) / (float) ANIMATION_STEP_SIZE);
+			mStepNumber = (int) ((newVolume - startVolume) / (float) ANIMATION_STEP_SIZE);
 			mSleepTime = mStepNumber / SAMPLING_INTERVAL;
 		}
 
 		@Override
 		protected Void doInBackground(Void... voids) {
-			for(int i = 0; i < mStepNumber; i++){
-				if(isCancelled()) {
+			for (int i = 0; i < mStepNumber; i++) {
+				if (isCancelled()) {
 					break;
 				}
 
@@ -347,7 +355,8 @@ public class RecorderActivity extends ActionBarActivity {
 
 				try {
 					Thread.sleep(mSleepTime);
-				} catch (InterruptedException e) {
+				}
+				catch (InterruptedException e) {
 					break;
 				}
 			}
@@ -358,7 +367,7 @@ public class RecorderActivity extends ActionBarActivity {
 		@Override
 		protected void onProgressUpdate(Void... values) {
 			int currentProgress = mVolumeLevel.getProgress();
-			mVolumeLevel.setProgress(currentProgress + (int)(mStepDir * ANIMATION_STEP_SIZE));
+			mVolumeLevel.setProgress(currentProgress + (int) (mStepDir * ANIMATION_STEP_SIZE));
 		}
 	}
 }
