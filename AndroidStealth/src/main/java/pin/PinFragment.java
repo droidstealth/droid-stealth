@@ -117,14 +117,14 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	public void onResume() {
 		super.onResume();
 		// force portrait, as the pin layout otherwise fails. It should be completely visible
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		//getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 		// let the sensor now define the orientation
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+		//getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 	}
 
 	@Override

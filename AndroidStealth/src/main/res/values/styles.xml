@@ -46,7 +46,6 @@
 		<item name="android:fontFamily">sans-serif-condensed</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
 		<item name="android:textColor">@color/accent</item>
-		<item name="android:paddingLeft">@dimen/default_medium_padding</item>
 		<item name="android:textStyle">italic</item>
 	</style>
 

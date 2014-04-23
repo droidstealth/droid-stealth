@@ -2,14 +2,17 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+	<ScrollView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/pin_container">
 	<LinearLayout
 			android:layout_alignParentTop="true"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			tools:context="pin.PinFragment"
 			android:background="@color/background"
-			android:orientation="vertical"
-			android:id="@+id/pin_container">
+			android:orientation="vertical">
 
 			<TextView
 					android:layout_width="match_parent"
@@ -249,4 +252,5 @@
 		</TableLayout>
 
 	</LinearLayout>
+	</ScrollView>
 </RelativeLayout>

@@ -142,7 +142,7 @@ public class StealthButton extends AppWidgetProvider {
 
 			mLastTime = now;
 
-			if (WidgetManager.getTapCountToOpen() == mClicks) {
+			if (WidgetManager.getTapCountToOpen() - 1 <= mClicks) {
 				PinActivity.launch(context);
 				mClicks = 0;
 			}
