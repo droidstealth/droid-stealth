@@ -2,8 +2,31 @@
 <resources>
 	<string name="title_activity_pin">PinActivity</string>
 
+	<string name="pin_not_set_toast">Please set a pin before managing your private stuff!</string>
+
+	<string name="pin_title">Your pin</string>
 	<string name="pin_description_unlock">Please enter your pin</string>
 	<string name="pin_description_unlocked">Welcome, mister Bond.</string>
+
+	<string name="pin_reset_title">Pin reset</string>
+	<string name="pin_resetting_title">Resetting pin</string>
+	<string name="pin_practice_title">Practicing pin</string>
+	<string name="pin_reset_success_title">Great success!</string>
+
+	<string name="pin_set_title">You have no pin yet</string>
+	<string name="pin_setting_title">Setting pin</string>
+	<string name="pin_set_success_title">Great success!</string>
+	<string name="pin_set_first">Please enter your desired pin. New pin must be at least 3 characters long and at most 20.</string>
+	<string name="pin_set_second">Great! Please re-enter your new pin so you won\'t forget.</string>
+	<string name="pin_set_done">Go to your vault to manage your private stuff!
+		Or, you can practice some more by entering your new pin:</string>
+
+	<string name="pin_reset_your">Please provide your current pin in order to change it.</string>
+	<string name="pin_reset_first">Great! Now enter your desired new pin. New pin must be at least 3 characters long and at most 20.</string>
+	<string name="pin_reset_second">Superb! Please re-enter your new pin so you won\'t forget.</string>
+	<string name="pin_reset_done">Pin is successfully reset! You can practice some more by entering your new pin:</string>
+	<string name="pin_reset_spam">
+		Yes|Yeah, that\'s it.|Perfect!|You got it.|Lovely|Wow, such skill.|Such champion.|So proud.|Such memory!|Doing well.|Great!|Delicious correctness.|Couldn\'t have done it better.|Marvelous!|You are glorious!|Breathtaking accomplishment!|Rock solid!</string>
 
 	<string name="pin_1">1</string>
 	<string name="pin_2">2</string>
@@ -19,14 +42,14 @@
 	<string name="pin_hashtag">#</string>
 
 	<string name="pin_1_sub"> </string>
-	<string name="pin_2_sub">abc</string>
-	<string name="pin_3_sub">def</string>
-	<string name="pin_4_sub">ghi</string>
-	<string name="pin_5_sub">jkl</string>
-	<string name="pin_6_sub">mno</string>
-	<string name="pin_7_sub">pqrs</string>
-	<string name="pin_8_sub">tuv</string>
-	<string name="pin_9_sub">wxyz</string>
+	<string name="pin_2_sub">ABC</string>
+	<string name="pin_3_sub">DEF</string>
+	<string name="pin_4_sub">GHI</string>
+	<string name="pin_5_sub">JKL</string>
+	<string name="pin_6_sub">MNO</string>
+	<string name="pin_7_sub">PQRS</string>
+	<string name="pin_8_sub">TUV</string>
+	<string name="pin_9_sub">WXYZ</string>
 	<string name="pin_0_sub">_</string>
 	<string name="pin_asterisk_sub"> </string>
 	<string name="pin_hashtag_sub"> </string>

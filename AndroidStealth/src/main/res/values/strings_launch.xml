@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="launch_toast_icon_on">Icon is now hidden!</string>
+	<string name="launch_toast_icon_off">Icon is now shown!</string>
+	<string name="launch_toast_icon_fail">First select an alternate launch method!</string>
+	<string name="launch_toast_widget_on">Widget is now available!</string>
+	<string name="launch_toast_widget_off">Widget is disabled!</string>
+	<string name="launch_toast_widget_visible_on">Widgets are now temporarily shown!</string>
+	<string name="launch_toast_widget_visible_off">Widgets are now hidden!</string>
+	<string name="launch_toast_dialer_on">Dialer launch enabled!</string>
+	<string name="launch_toast_dialer_off">Dialer launch method disabled!</string>
+	<string name="launch_toast_launch_save">Launch code saved!</string>
+
+	<string name="launch_title">@string/drawer_launch</string>
+	<string name="launch_description">
+		On this page you can define how you want to launch and hide this application. Perhaps
+		you don\'t want others to know that you have installed this application.
+	</string>
+	<string name="launch_dialer">Dialer Launch</string>
+	<string name="launch_dialer_description">
+		The dialer of your device could be used to launch this application. All you have to do is call the code
+		that you specified below as the launch code for this application. The pin dialog will pop up, from
+		where you can enter your vault.
+		\n\nNote that if you make mistakes with the launch code, they will appear in your call log. If you call the
+		code correctly however, it will be caught and it will not be shown in your call log.
+	</string>
+	<string name="launch_dialer_use">Use dialer launch</string>
+	<string name="launch_dialer_code">Dialer launch code:</string>
+	<string name="launch_dialer_hint">Launch code</string>
+	<string name="launch_widget">Widget Launch</string>
+	<string name="launch_widget_description">
+		You could create a widget on your home screen which is invisible. No one will know it is there, except you.
+		In order to launch this application, all you have to do is tap the invisible widget 4 times.
+		The pin dialog will then pop up, from where you can enter your vault.
+	</string>
+	<string name="launch_widget_use">Use widget for launch</string>
+	<string name="launch_widget_visible_description">
+		If you can\'t find the widget anymore, you could add another one as this would make them all temporarily
+		visible until you tap on one. Or, you can show them by enabling the checkbox below. Tap the widget on your
+		home screen in order to hide it again.
+	</string>
+	<string name="launch_widget_visible">Make widgets temporarily visible</string>
+	<string name="launch_icon">Icon Visibility</string>
+	<string name="launch_icon_description">
+		If you don\'t want other users to know about the existence of this application on your phone, we could try to
+		hide the application icon from the app drawer of your device. However, it will still be visible in the
+		\'installed application\' list of your Android Settings. A solution could be to hide this application in plain
+		sight. Go to the morphing tab for more information.
+		\n\nNOTE: This method will only be enabled if at least one of the below launch methods is enabled.
+	</string>
+	<string name="launch_icon_disable">Hide application icon</string>
+	<string name="launch_disclaimer">WARNING</string>
+	<string name="launch_disclaimer_description">
+		Note that the above methods don\'t work perfectly for people who know what they are searching for:
+		(1) the widget could be found by tapping everywhere a lot, (2) mistakes with dialing the launch code show in the call log
+		and therefore could potentially leak your launch code if you are not careful, and finally, (3) the application
+		is always shown in the \'installed application\' list of your Android Settings. There is however another way
+		to hide this application: check out the morphing tab!
+		\n\nNote that if you don\'t remember your launch method, it will be impossible to open up this application. However,
+		when using the widget you could also place another one.
+	</string>
+</resources>

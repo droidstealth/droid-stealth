@@ -309,7 +309,9 @@ public class FileIndex {
 			@Override
 			public void run() {
 				for (OnFileIndexChangedListener listener : mListeners) {
-					listener.onFileIndexChanged();
+					if (listener != null) {
+						listener.onFileIndexChanged();
+					}
 				}
 			}
 		});
@@ -339,7 +341,10 @@ public class FileIndex {
 	 */
 	public boolean hasUnlockedFiles() {
 		for (Map.Entry<String, IndexedFolder> folderMap : mFolders.entrySet()) {
+			if (folderMap.getValue() == null) continue;
+			if (folderMap.getValue().getFiles() == null) continue;
 			for (IndexedFile file : folderMap.getValue().getFiles()) {
+				if (file == null) continue;
 				if (file.getUnlockedFile().exists()) {
 					return true;
 				}

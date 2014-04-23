@@ -1,9 +1,34 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
-    android:background="#222222"
-    tools:context="com.stealth.android.NavigationDrawerFragment" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/background"
+	    tools:context="com.stealth.drawer.NavigationDrawerFragment"
+		android:orientation="vertical"
+		android:clickable="true">
+	<ListView
+			android:id="@+id/drawer_list"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:choiceMode="singleChoice"
+			android:dividerHeight="0dp"
+			tools:context="com.stealth.drawer.NavigationDrawerFragment" />
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textStyle="bold"
+			android:text="@string/true_app_name"
+			android:textColor="@color/subtle"
+			android:id="@+id/drawer_name"
+			android:paddingTop="16dp"
+			android:paddingLeft="16dp"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="@string/drawer_version"
+			android:textColor="@color/subtle"
+			android:id="@+id/drawer_version"
+			android:paddingLeft="16dp"/>
+</LinearLayout>

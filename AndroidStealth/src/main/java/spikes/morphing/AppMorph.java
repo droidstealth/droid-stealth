@@ -36,16 +36,17 @@ import org.xml.sax.SAXException;
  */
 public class AppMorph {
 	public enum ProgressStep {
+		Start,
 		Extracting,
 		SettingLabel,
 		SettingIcons,
 		Repackaging,
 		Signing,
-		Finished
 	}
 	public interface MorphProgressListener {
 		void onProgress(ProgressStep progress);
 		void onMorphFailed(ProgressStep atPoint, String text);
+		void onFinished(File newApk);
 	}
 
 	//Static initializer of the Icon size hashmap, needed to construct our bitmaps
@@ -93,14 +94,21 @@ public class AppMorph {
 			mListener.onProgress(mProgressStep);
 	}
 
+	private void finished(File newApk) {
+		mProgressStep = ProgressStep.Start;
+
+		if(mListener != null) {
+			mListener.onFinished(newApk);
+		}
+	}
+
 	/**
 	 * Creates a new signed Apk file from this application with the new label and icon. Calling this function clears any
 	 * previously generated apk files.
 	 * @param label The new app title to be used for the Apk
 	 * @param icon The new icon to be used for the Apk
-	 * @return a File pointing to the new signed application
 	 */
-    public File morphApp(String label, Uri icon) {
+    public void morphApp(String label, Uri icon) {
 	    File signedApkFile = null;
 
 	    try {
@@ -111,7 +119,7 @@ public class AppMorph {
 		    String iconResName = setManifestLabel(jarDir, label);
 
 		    setProgressStep(ProgressStep.SettingIcons);
-		    setIcons(jarDir, icon, "ic_stealth_launcher");
+		    setIcons(jarDir, icon, iconResName);
 
 		    setProgressStep(ProgressStep.Repackaging);
 		    File unSignedApkFile = createJar(jarDir);
@@ -120,13 +128,12 @@ public class AppMorph {
 		    signedApkFile = signApk(unSignedApkFile);
 
 	    } catch (Exception e){
-			if(mListener != null)
+			if(mListener != null) {
 				mListener.onMorphFailed(mProgressStep, e.getMessage());
+			}
 	    }
 
-	    setProgressStep(ProgressStep.Finished);
-
-        return signedApkFile;
+	    finished(signedApkFile);
     }
 
 	/**
@@ -217,7 +224,7 @@ public class AppMorph {
 
 		boolean singleIconFailed = false;
 
-		String newFileName = iconResName + "." + getExtension(FileUtils.getFile(mAppContext, icon));
+		String newFileName = iconResName + ".png";
 
 		for(File file : drawables){
 			if(!file.isDirectory())

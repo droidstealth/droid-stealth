@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/background">
+
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/dialog_title"
+			android:textStyle="bold"
+			android:text="Are you sure?"
+			android:paddingLeft="@dimen/dialog_paddings"
+			android:paddingRight="@dimen/dialog_paddings"
+			android:paddingBottom="@dimen/dialog_paddings"
+			android:paddingTop="@dimen/dialog_paddings"
+			style="@style/Title"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/dialog_description"
+			android:text="Do you want to continue?"
+			android:paddingLeft="@dimen/dialog_paddings"
+			android:paddingRight="@dimen/dialog_paddings"
+			android:paddingBottom="@dimen/dialog_paddings"
+			style="@style/RegularText"/>
+
+	<ListView android:layout_width="match_parent"
+              android:layout_height="300dp"
+              android:orientation="vertical"
+              android:id="@+id/dialog_list" />
+
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Nope"
+				android:textStyle="bold"
+				android:background="@drawable/pin_button_dialer"
+				android:textColor="@color/negative"
+				android:id="@+id/dialog_negative"/>
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Oki"
+				android:textStyle="bold"
+				android:background="@drawable/pin_button_dialer"
+				android:textColor="@color/positive"
+				android:id="@+id/dialog_positive"/>
+	</LinearLayout>
+</LinearLayout>

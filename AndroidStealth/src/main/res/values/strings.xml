@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="morphable_app_name">@string/true_app_name</string>
+	<string name="true_app_name">SafeBox</string>
 
 	<string name="content_loading">Loading</string>
 
@@ -8,7 +10,6 @@
 	<string name="wifi_AP_progress_message">Creating a Wifi hotspot to allow other to connect to. Please wait...</string>
 	<string name="hotspot_enable_title">Create Hotspot</string>
 	<string name="hotspot_disable_title">Disable Hotspot</string>
-	<string name="app_name">AndroidStealth</string>
 	<string name="title_section1">Section 1</string>
 	<string name="title_section2">Section 2</string>
 	<string name="title_section3">Section 3</string>
@@ -47,5 +48,17 @@
 	<string name="appwidget_text">EXAMPLE</string>
 	<string name="add_widget">Add widget</string>
 	<string name="morph_app">Morph App</string>
+	<string name="morph_action">Morph this app</string>
+	<string name="current_app">Current look and feel:</string>
+	<string name="morph_reset">Reset to original</string>
+	<string name="morph_failed">Failed to transform app!</string>
+	<string name="morphing_dialog_title">Morphing app</string>
+	<string name="morphing_started">Started app morphing</string>
+	<string name="morphing_extracting">Extracting original app</string>
+	<string name="morphing_labeling">Setting new app title</string>
+	<string name="morphing_icons">Setting new icons</string>
+	<string name="morphing_repackaging">Repackaging app</string>
+	<string name="morphing_signing">Signing new app</string>
+	<string name="icon_retrieve_failed">Retrieving icon failed</string>
 
 </resources>

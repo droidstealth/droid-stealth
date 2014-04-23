@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="no">No</string>
+	<string name="yes">Yes</string>
+	<string name="cancel">Cancel</string>
+
+	<string name="dialog_shred_description">Are you sure you want to permanently shred the selected item(s)? Cannot be undone.</string>
+	<string name="dialog_shred_title">Shred item(s) permanently?</string>
+</resources>

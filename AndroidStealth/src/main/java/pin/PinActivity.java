@@ -1,31 +1,46 @@
 package pin;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
-
+import android.support.v4.app.FragmentActivity;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.launch.VisibilityManager;
 import com.stealth.utils.Utils;
 
 public class PinActivity extends FragmentActivity implements PinFragment.OnPinResult {
 
 	private PinFragment mPinFrag;
 
+	/**
+	 * Launches the pin dialog
+	 * @param context the context to use for the launch
+	 */
+	public static void launch(Context context) {
+		// application may be hidden, so show for now
+		VisibilityManager.showApplication(context);
+
+		Intent pinIntent = new Intent(context, PinActivity.class);
+		pinIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(pinIntent);
+	}
+
+	private boolean mLaunchingMainApplication = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pin);
 		Utils.setContext(getApplicationContext());
+
+		if (!PinManager.get().hasPin()) {
+			// no pin yet set. Just launch
+			HomeActivity.launch(getApplicationContext(), "");
+			mLaunchingMainApplication = true;
+			finish();
+			return;
+		}
 
 		// Check that the activity is using the layout version with
 		// the fragment_container FrameLayout
@@ -39,11 +54,7 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 			}
 
 			// Create a new Fragment to be placed in the activity layout
-			mPinFrag = new PinFragment();
-			Bundle b = new Bundle();
-			b.putInt(PinFragment.ARG_DESCRIPTION_RESOURCE, R.string.pin_description_unlock);
-			b.putString(PinFragment.ARG_PIN, "");
-			mPinFrag.setArguments(b);
+			mPinFrag = PinFragment.newInstance(R.string.pin_title, R.string.pin_description_unlock, "");
 
 			// Add the fragment to the 'fragment_container' FrameLayout
 			getSupportFragmentManager().beginTransaction()
@@ -52,14 +63,22 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 	}
 
 	@Override
-	public void onPinEntry(String pin) {
-		mPinFrag.pinClear();
-		if (HomeActivity.launch(getApplicationContext(), pin)) {
-			finish();
-		} else {
-			Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-			mPinFrag.getView().startAnimation(shake);
+	protected void onDestroy() {
+		super.onDestroy();
+		if (!mLaunchingMainApplication) {
+			VisibilityManager.hideApplication(this);
 		}
+	}
+
+	@Override
+	public boolean onPinEntry(String pin) {
+		mPinFrag.clearPin();
+		if (HomeActivity.launch(getApplicationContext(), pin)) {
+			mLaunchingMainApplication = true;
+			finish();
+			return true;
+		}
+		return false;
 	}
 
 	@Override

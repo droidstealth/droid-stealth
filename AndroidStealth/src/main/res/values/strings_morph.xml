@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="morph_title">App morphing</string>
+	<string name="morph_description">Here you can select a different icon and name for this app and transfer it
+		to another device. For instance to your friends.
+		\n\nFirst, you pick an icon and name for the app. You can even
+		copy an existing app and use its name and icon!
+		\n\nSecond, when you are ready you press the share button. Or, if both
+		this device and the receiving device have NFC enabled, hold both devices back to back.</string>
+	<string name="morph_pick_icon">Pick icon from device</string>
+	<string name="morph_pick_app">Copy from existing app</string>
+	<string name="morph_settings_title">New look and feel:</string>
+	<string name="morph_share">Share this app</string>
+	<string name="morph_edit_name">New name</string>
+	<string name="morph_select_image">Select image</string>
+
+	<string name="morph_apppicker_title">Installed applications</string>
+	<string name="morph_apppicker_description">Pick an application from the list below in order to copy its icon
+	and name.</string>
+
+</resources>

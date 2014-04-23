@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="locked">#ff82cd14</color>
+	<color name="negative">#ff1a45</color>
+	<color name="positive">#ff82cd14</color>
 	<color name="processing">#ffeec200</color>
-	<color name="unlocked">#ff1a45</color>
-	<color name="content_list_background">#ff232323</color>
-	<color name="content_name">#ffe8e8e8</color>
-	<color name="content_text">#33ffffff</color>
+	<color name="accent">#ff33aacc</color>
+	<color name="special">#ffcc46ba</color>
+	<color name="base">#ffff</color>
+	<color name="subtle">#ff808080</color>
+	<color name="background">#ff232323</color>
+	<color name="transparent">#11ffffff</color>
 
-	<color name="item_pressed">#ff33b5e5</color>
-	<color name="item_longpressed">#ff00ddff</color>
-	<color name="item_edge_selected">#ff0099cc</color>
+	<color name="locked">@color/positive</color>
+	<color name="unlocked">@color/negative</color>
 
-	<color name="transparent">#00000000</color>
-	<color name="divider_color">#99333333</color>
-	<color name="title_color">#33B5E5</color>
+	<color name="selected">@color/accent</color>
+	<color name="item_pressed">@color/accent</color>
+	<color name="item_edge_selected">@color/accent</color>
+
+	<color name="drawer_home">#ff00b6ff</color>
+	<color name="drawer_morph">#ff00ff4c</color>
+	<color name="drawer_launch">#ffff8200</color>
+	<color name="drawer_general">#ffff005a</color>
+	<color name="drawer_pin">#fffff400</color>
 </resources>
