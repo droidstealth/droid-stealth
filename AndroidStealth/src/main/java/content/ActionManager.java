@@ -36,40 +36,44 @@ public class ActionManager implements IActionManager {
 		mContentManager = contentManager;
 	}
 
-    /**
-     * Sets the EncryptionManager used to control item encryption
-     * @param encryptionManager
-     */
+	/**
+	 * Sets the EncryptionManager used to control item encryption
+	 *
+	 * @param encryptionManager
+	 */
 	@Override
 	public void setEncryptionManager(EncryptionManager encryptionManager) {
 		mEncryptionManager = encryptionManager;
 	}
 
-    /**
-     * Passes the actionMode to this object to finalize when actions are completed
-     * @param actionMode
-     */
+	/**
+	 * Passes the actionMode to this object to finalize when actions are completed
+	 *
+	 * @param actionMode
+	 */
 	@Override
 	public void setActionMode(ActionMode actionMode) {
 		mActionMode = actionMode;
 	}
 
-    /**
-     * Removes all given items from the application index
-     * @param with The items to remove
-     * @param listener a listener which is called with a result when the task has been completed
-     */
+	/**
+	 * Removes all given items from the application index
+	 *
+	 * @param with     The items to remove
+	 * @param listener a listener which is called with a result when the task has been completed
+	 */
 	@Override
 	public void actionShred(ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		mContentManager.removeItems(with, getWrapper(listener, 0));
 	}
 
-    /**
-     * Opens the selected file through an intent based on the file's mimetype
-     * @param activity activity used to launch the intent
-     * @param with the item to open
-     * @param listener a listener which is called with a result when the task has been completed
-     */
+	/**
+	 * Opens the selected file through an intent based on the file's mimetype
+	 *
+	 * @param activity activity used to launch the intent
+	 * @param with     the item to open
+	 * @param listener a listener which is called with a result when the task has been completed
+	 */
 	@Override
 	public void actionOpen(HomeActivity activity, IndexedItem with, IOnResult<Boolean> listener) {
 		if (!(with instanceof IndexedFile)) {
@@ -94,23 +98,24 @@ public class ActionManager implements IActionManager {
 			Toast.makeText(activity, "No handler for file " + file.getUnlockedFilename(), 4000).show();
 		}
 
-        finishActionMode();
+		finishActionMode();
 
 		if (listener != null) {
 			listener.onResult(true);
 		}
 	}
 
-    /**
-     * Locks the given files
-     * @param with Files to lock
-     * @param listener a listener which is called with a result when the task has been completed
-     */
+	/**
+	 * Locks the given files
+	 *
+	 * @param with     Files to lock
+	 * @param listener a listener which is called with a result when the task has been completed
+	 */
 	@Override
 	public void actionLock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called lock when encryption service not bound!");
-            return;
+			return;
 		}
 
 		for (IndexedItem item : with) {
@@ -124,122 +129,132 @@ public class ActionManager implements IActionManager {
 		mEncryptionManager.encryptItems(with, getWrapper(listener, 0));
 	}
 
-    /**
-     * Unlocks the given files
-     * @param with Files to unlock
-     * @param listener a listener which is called with a result when the task has been completed
-     */
+	/**
+	 * Unlocks the given files
+	 *
+	 * @param with     Files to unlock
+	 * @param listener a listener which is called with a result when the task has been completed
+	 */
 	@Override
 	public void actionUnlock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called unlock when encryption service not bound!");
-            return;
+			return;
 		}
 
-        mEncryptionManager.decryptItems(with, getWrapper(listener, 0));
+		mEncryptionManager.decryptItems(with, getWrapper(listener, 0));
 	}
 
-    /**
-     * Shares the content with an intent
-     * @param activity The context needed to launch the intent
-     * @param with The item(s) to share
-     * @param listener a listener which is called with a result when the task has been completed
-     */
+	/**
+	 * Shares the content with an intent
+	 *
+	 * @param activity The context needed to launch the intent
+	 * @param with     The item(s) to share
+	 * @param listener a listener which is called with a result when the task has been completed
+	 */
 	@Override
 	public void actionShare(HomeActivity activity, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		if (with.size() == 1 && with.get(0) instanceof IndexedFile) {
-			IndexedFile file = (IndexedFile) with.get(0);
-
-			Intent intent = new Intent();
-			intent.setAction(Intent.ACTION_SEND);
-			intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_file));
-
-			MimeTypeMap map = MimeTypeMap.getSingleton();
-			String mimeType = map.getMimeTypeFromExtension(file.getExtension().substring(1));
-			intent.setType(mimeType);
-
-			Uri uri = Uri.fromFile(file.getUnlockedFile());
-			intent.putExtra(Intent.EXTRA_STREAM, uri);
-
-			activity.setRequestedActivity(true);
-
-			try {
-				activity.startActivity(intent);
-			}
-			catch (ActivityNotFoundException e) {
-				Utils.toast(R.string.share_not_found);
-			}
-
-
+			actionShareSingle(activity, with);
 		}
 		else {
-			Intent intent = new Intent();
-			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-			intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_files));
-
-			ArrayList<Uri> files = new ArrayList<Uri>();
-
-			ArrayList<String> mimes = new ArrayList<String>();
-			MimeTypeMap myMime = MimeTypeMap.getSingleton();
-
-			for (IndexedItem item : with) {
-				if (item instanceof IndexedFile) {
-					IndexedFile file = (IndexedFile) item;
-					Uri uri = Uri.fromFile(file.getUnlockedFile());
-					String mimeType = myMime.getMimeTypeFromExtension(file.getExtension().substring(1));
-					if (!mimes.contains(mimeType)) {
-						mimes.add(mimeType);
-					}
-					files.add(uri);
-				}
-			}
-
-			StringBuilder sb = new StringBuilder();
-			for (String mime : mimes) {
-				sb.append(mime);
-				sb.append(',');
-			}
-
-			sb.deleteCharAt(sb.length() - 1);
-
-			String mimeType = sb.toString();
-			Utils.d("Mimetype: " + mimeType);
-			intent.setType(mimeType);
-
-			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-
-			try {
-				activity.startActivity(intent);
-			}
-			catch (ActivityNotFoundException e) {
-				Utils.toast(R.string.multi_share_not_found);
-			}
-
+			actionShareMultiple(activity, with);
 		}
 		if (listener != null) {
 			listener.onResult(true);
 		}
 	}
 
+	private void actionShareMultiple(HomeActivity activity, ArrayList<IndexedItem> with) {
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+		intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_files));
+
+		ArrayList<Uri> files = new ArrayList<Uri>();
+
+		ArrayList<String> mimes = new ArrayList<String>();
+		MimeTypeMap myMime = MimeTypeMap.getSingleton();
+
+		for (IndexedItem item : with) {
+			if (item instanceof IndexedFile) {
+				IndexedFile file = (IndexedFile) item;
+				Uri uri = Uri.fromFile(file.getUnlockedFile());
+				String mimeType = myMime.getMimeTypeFromExtension(file.getExtension().substring(1));
+				if (!mimes.contains(mimeType)) {
+					mimes.add(mimeType);
+				}
+				files.add(uri);
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String mime : mimes) {
+			sb.append(mime);
+			sb.append(',');
+		}
+
+		sb.deleteCharAt(sb.length() - 1);
+
+		String mimeType = sb.toString();
+		Utils.d("Mimetype: " + mimeType);
+		intent.setType(mimeType);
+
+		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+
+		try {
+			activity.startActivity(intent);
+		}
+		catch (ActivityNotFoundException e) {
+			Utils.toast(R.string.multi_share_not_found);
+		}
+	}
+
+	private void actionShareSingle(HomeActivity activity, ArrayList<IndexedItem> with) {
+		IndexedFile file = (IndexedFile) with.get(0);
+
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_SEND);
+		intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_file));
+
+		MimeTypeMap map = MimeTypeMap.getSingleton();
+		String mimeType = map.getMimeTypeFromExtension(file.getExtension().substring(1));
+		intent.setType(mimeType);
+
+		Uri uri = Uri.fromFile(file.getUnlockedFile());
+		intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+		activity.setRequestedActivity(true);
+
+		try {
+			activity.startActivity(intent);
+		}
+		catch (ActivityNotFoundException e) {
+			Utils.toast(R.string.share_not_found);
+		}
+	}
+
 	/**
 	 * Restores all items to their original location, and removes all successfully restored items from the file index
-	 * @param with the files to restore and remove from the index
-	 * @param listener called with a false when no files have been restored and removed, and with the removal result otherwise
+	 *
+	 * @param with      the files to restore and remove from the index
+	 * @param listener  called with a false when no files have been restored and removed, and with the removal result
+	 *                  otherwise
 	 * @param exportDir folder to export the files to
 	 */
 	@Override
-	public void actionRestore(final ArrayList<IndexedItem> with, final IOnResult<Boolean> listener, final File exportDir) {
+	public void actionRestore(final ArrayList<IndexedItem> with, final IOnResult<Boolean> listener,
+			final File exportDir) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				ArrayList<IndexedItem> restoredItems = new ArrayList<IndexedItem>();
 				for (IndexedItem item : with) {
-					if(restoreItem(item, exportDir)){
+					if (restoreItem(item, exportDir)) {
 						restoredItems.add(item);
 					}
 				}
 
-				if(restoredItems.size() == 0) {
+				if (restoredItems.size() == 0) {
 					Utils.toast(R.string.action_no_restore);
 					if (listener != null) {
 						listener.onResult(false);
@@ -248,13 +263,15 @@ public class ActionManager implements IActionManager {
 
 				boolean allFilesRestored = restoredItems.size() == with.size();
 
-				mContentManager.removeItems(restoredItems, getWrapper(listener, allFilesRestored?  R.string.action_restored_items : R.string.action_partial_restore));
+				mContentManager.removeItems(restoredItems, getWrapper(listener,
+						allFilesRestored ? R.string.action_restored_items : R.string.action_partial_restore));
 			}
 		}).start();
 	}
 
 	/**
 	 * Restores a single item to its original position
+	 *
 	 * @param item
 	 * @return whether the item has been successfully restored
 	 */
@@ -276,11 +293,11 @@ public class ActionManager implements IActionManager {
 			File original = new File(exportDir, file.getName() + "." + file.getExtension());
 			File unlocked = file.getUnlockedFile();
 
-			if(!unlocked.exists()){
+			if (!unlocked.exists()) {
 				return false;
 			}
 			else {
-				if(original.exists()) {
+				if (original.exists()) {
 					original.delete();
 				}
 
@@ -304,6 +321,7 @@ public class ActionManager implements IActionManager {
 
 	/**
 	 * Copy the source content to the destination content
+	 *
 	 * @param src
 	 * @param dst
 	 * @throws IOException
