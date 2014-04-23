@@ -7,16 +7,25 @@
 			android:showAsAction="always"
 			android:title="@string/action_lock_hide"
 			/>
-	<item
-			android:id="@+id/action_shred"
-			android:icon="@drawable/ic_menu_shred"
-			android:showAsAction="ifRoom"
-			android:title="@string/action_shred"
-			/>
+
 	<item
 			android:id="@+id/action_share"
 			android:icon="@drawable/ic_menu_share"
 			android:showAsAction="always"
 			android:title="@string/action_share"
+			/>
+
+	<item
+			android:id="@+id/action_restore"
+			android:icon="@drawable/ic_menu_remove"
+			android:showAsAction="ifRoom"
+			android:title="@string/action_export"
+			/>
+
+	<item
+			android:id="@+id/action_shred"
+			android:icon="@drawable/ic_menu_shred"
+			android:showAsAction="ifRoom"
+			android:title="@string/action_shred"
 			/>
 </menu>

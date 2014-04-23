@@ -8,6 +8,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.view.ActionMode;
@@ -154,27 +155,47 @@ public class ActionManager implements IActionManager {
 	 */
 	@Override
 	public void actionShare(HomeActivity activity, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
+		Intent shareIntent;
+
 		if (with.size() == 1 && with.get(0) instanceof IndexedFile) {
-			actionShareSingle(activity, with);
+			shareIntent = getShareIntentSingle((IndexedFile) with.get(0));
 		}
 		else {
-			actionShareMultiple(activity, with);
+			shareIntent = getShareIntentMultiple(with);
 		}
+
+		activity.setRequestedActivity(true);
+
+		boolean activityFound = true;
+		try {
+			activity.startActivity(shareIntent);
+		}
+		catch (ActivityNotFoundException e) {
+			Utils.toast(R.string.share_not_found);
+			activityFound = false;
+		}
+
 		if (listener != null) {
-			listener.onResult(true);
+			listener.onResult(activityFound);
 		}
 	}
 
-	private void actionShareMultiple(HomeActivity activity, ArrayList<IndexedItem> with) {
+	/**
+	 * Creates an intent to share multiple files with
+	 *
+	 * @param with The files to share
+	 * @return share intent
+	 */
+	private Intent getShareIntentMultiple(ArrayList<IndexedItem> with) {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-		intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_files));
 
 		ArrayList<Uri> files = new ArrayList<Uri>();
 
 		ArrayList<String> mimes = new ArrayList<String>();
 		MimeTypeMap myMime = MimeTypeMap.getSingleton();
 
+		//TODO fix for folders
 		for (IndexedItem item : with) {
 			if (item instanceof IndexedFile) {
 				IndexedFile file = (IndexedFile) item;
@@ -201,36 +222,28 @@ public class ActionManager implements IActionManager {
 
 		intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
 
-		try {
-			activity.startActivity(intent);
-		}
-		catch (ActivityNotFoundException e) {
-			Utils.toast(R.string.multi_share_not_found);
-		}
+		return intent;
 	}
 
-	private void actionShareSingle(HomeActivity activity, ArrayList<IndexedItem> with) {
-		IndexedFile file = (IndexedFile) with.get(0);
+	/**
+	 * Gets the intent to share a single IndexedFile with
+	 *
+	 * @param with the file to share
+	 * @return share intent
+	 */
+	private Intent getShareIntentSingle(IndexedFile with) {
 
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_file));
 
 		MimeTypeMap map = MimeTypeMap.getSingleton();
-		String mimeType = map.getMimeTypeFromExtension(file.getExtension().substring(1));
+		String mimeType = map.getMimeTypeFromExtension(with.getExtension().substring(1));
 		intent.setType(mimeType);
 
-		Uri uri = Uri.fromFile(file.getUnlockedFile());
+		Uri uri = Uri.fromFile(with.getUnlockedFile());
 		intent.putExtra(Intent.EXTRA_STREAM, uri);
 
-		activity.setRequestedActivity(true);
-
-		try {
-			activity.startActivity(intent);
-		}
-		catch (ActivityNotFoundException e) {
-			Utils.toast(R.string.share_not_found);
-		}
+		return intent;
 	}
 
 	/**
@@ -337,7 +350,7 @@ public class ActionManager implements IActionManager {
 	}
 
 	/**
-	 * Finalize the action mode if it's active
+	 * Closes the action mode if it's active
 	 */
 	private void finishActionMode() {
 		if (mActionMode != null) {
@@ -351,7 +364,7 @@ public class ActionManager implements IActionManager {
 	}
 
 	/**
-	 * returns a wrapper which disables the action mode when the result comes back, and calls the original wrapper
+	 * Returns a wrapper which disables the action mode when the result comes back, and calls the original wrapper
 	 * after
 	 *
 	 * @param listener
