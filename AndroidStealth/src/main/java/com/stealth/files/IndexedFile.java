@@ -105,6 +105,10 @@ public class IndexedFile extends IndexedItem {
 		}
 	}
 
+	public String getExtension() {
+		return mExtension;
+	}
+
 	/**
 	 * @return the filename as it should be in its unlocked state.
 	 */

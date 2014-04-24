@@ -13,10 +13,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.font.FontManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
@@ -200,7 +203,75 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		// TODO #79
 	}
 
-	private void styleFileView(final IndexedFile file, final View view) {
+	private void styleFileView(IndexedFile file, View view) {
+
+		String mime = FileUtils.getMimeType(file.getExtension());
+		if (FileUtils.isImageOrVideo(mime)) {
+			styleThumbView(file, view);
+		} else {
+			styleFiletypeView(file, view);
+		}
+	}
+
+	private void styleFiletypeView(final IndexedFile file, final View view) {
+
+		View texts = view.findViewById(R.id.content_texts);
+		ImageView preview = (ImageView) view.findViewById(R.id.file_preview);
+		TextView nameTV = (TextView) view.findViewById(R.id.content_filename);
+		TextView extTV = (TextView) view.findViewById(R.id.content_extension);
+
+		String ext = file.getExtension();
+		String mime = FileUtils.getMimeType(ext);
+
+		texts.setVisibility(View.VISIBLE);
+		nameTV.setText(file.getName());
+		extTV.setText(ext.substring(1).toUpperCase());
+
+		FontManager.handleFontTags(texts);
+
+		if (mime == null) {
+			Utils.d("Could not find mimeType for " + ext);
+			preview.setBackgroundColor(Utils.color(R.color.filetype_text));
+			preview.setImageResource(R.drawable.ic_filetype_text);
+		}
+		else if (FileUtils.isAudio(mime)) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_audio));
+			preview.setImageResource(R.drawable.ic_filetype_audio);
+		}
+		else if (mime.contains("application/")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_compressed));
+			preview.setImageResource(R.drawable.ic_filetype_compressed);
+		}
+		else if (ext.contains("pdf")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_pdf));
+			preview.setImageResource(R.drawable.ic_filetype_pdf);
+		}
+		else if (ext.contains("xls")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_excel));
+			preview.setImageResource(R.drawable.ic_filetype_excel);
+		}
+		else if (ext.contains("doc")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_word));
+			preview.setImageResource(R.drawable.ic_filetype_word);
+		}
+		else if (ext.contains("ppt")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_powerpoint));
+			preview.setImageResource(R.drawable.ic_filetype_powerpoint);
+		}
+		else if (ext.contains("htm")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_html));
+			preview.setImageResource(R.drawable.ic_filetype_html);
+		}
+		else {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_text));
+			preview.setImageResource(R.drawable.ic_filetype_text);
+		}
+
+	}
+
+	private void styleThumbView(final IndexedFile file, final View view) {
+
+		view.findViewById(R.id.content_texts).setVisibility(View.INVISIBLE);
 
 		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
 		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);

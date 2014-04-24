@@ -177,6 +177,17 @@ public class FileUtils {
 	}
 
 	/**
+	 * @return The MIME type for the given extension
+	 */
+	public static String getMimeType(String extension) {
+
+		if (extension.length() > 0)
+			return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.substring(1).toLowerCase());
+
+		return "application/octet-stream";
+	}
+
+	/**
 	 * @return The MIME type for the given file.
 	 */
 	public static String getMimeType(File file) {
