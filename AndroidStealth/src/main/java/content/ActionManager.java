@@ -357,7 +357,9 @@ public class ActionManager implements IActionManager {
 			Utils.runOnMain(new Runnable() {
 				@Override
 				public void run() {
-					mActionMode.finish();
+					if (mActionMode != null) {
+						mActionMode.finish();
+					}
 				}
 			});
 		}
