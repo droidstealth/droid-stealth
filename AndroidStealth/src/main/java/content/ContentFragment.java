@@ -331,6 +331,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
 								itemList.add(result);
 								mActionManager.actionLock(itemList, null); // lock right now
+								result.getOriginalFile().delete();
 
 								Utils.toast(R.string.content_success_add);
 							}

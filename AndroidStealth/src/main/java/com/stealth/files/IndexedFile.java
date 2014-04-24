@@ -290,12 +290,4 @@ public class IndexedFile extends IndexedItem {
 		return isUnlocked() && getModificationCheckerFile().exists()
 				&& getUnlockedFile().lastModified() > getModificationCheckerFile().lastModified();
 	}
-
-	/**
-	 * Returns the extension of the unlocked file
-	 * @return
-	 */
-	public String getExtension(){
-		return mExtension;
-	}
 }
