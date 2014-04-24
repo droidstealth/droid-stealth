@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/background"
+	tools:context="com.stealth.android.RecorderActivity">
+
+	<ImageView
+		android:id="@+id/record_image"
+		android:src="@drawable/record_image"
+		android:layout_width="@dimen/record_image_size"
+		android:layout_height="@dimen/record_image_size"
+		android:layout_centerInParent="true"/>
+
+	<ProgressBar
+		android:id="@+id/volume_level"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_below="@+id/record_image"
+		android:indeterminate="false"
+		android:progressDrawable="@drawable/progress_volume"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/record_volume_height"
+		android:padding="@dimen/progress_padding"/>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:id="@+id/action_toggle_record"
+		android:layout_alignParentBottom="true"
+		android:layout_width="match_parent"
+		android:gravity="center"
+		android:layout_height="@dimen/record_action_bar_height">
+		<ImageView
+			android:id="@+id/record_action_record"
+			android:layout_gravity="center"
+			android:src="@drawable/record"
+			android:padding="@dimen/record_action_item_padding"
+			android:layout_width="@dimen/record_action_item_height"
+			android:layout_height="@dimen/record_action_item_height" />
+		</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:id="@+id/action_toggle_submit"
+		android:visibility="gone"
+		android:gravity="center"
+		android:layout_alignParentBottom="true"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/record_action_bar_height">
+		<ImageView
+			android:id="@+id/record_action_back"
+			android:src="@drawable/back"
+			android:layout_weight="0.3"
+			android:padding="@dimen/record_action_item_padding"
+			android:layout_width="@dimen/record_action_item_height"
+			android:layout_height="@dimen/record_action_item_height" />
+		<ImageView
+			android:id="@+id/record_action_play"
+			android:layout_weight="0.3"
+			android:src="@drawable/play"
+			android:padding="@dimen/record_action_item_padding"
+			android:layout_width="@dimen/record_action_item_height"
+			android:layout_height="@dimen/record_action_item_height" />
+		<ImageView
+			android:id="@+id/record_action_submit"
+			android:layout_weight="0.3"
+			android:src="@drawable/ic_cab_done_holo_dark"
+			android:padding="@dimen/record_action_item_padding"
+			android:layout_width="@dimen/record_action_item_height"
+			android:layout_height="@dimen/record_action_item_height" />
+	</LinearLayout>
+</RelativeLayout>
