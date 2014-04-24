@@ -3,9 +3,7 @@ package com.stealth.font;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.stealth.android.R;
 import com.stealth.utils.Utils;
 
 /**
@@ -26,7 +24,7 @@ public class FontManager {
 		if (!sInitialized){
 			sBoldCondensed = Typeface.createFromAsset(Utils.getContext().getAssets(), "fonts/YanoneKaffeesatz-Bold.ttf");
 			sLightCondensed = Typeface.createFromAsset(Utils.getContext().getAssets(), "fonts/YanoneKaffeesatz-Light.ttf");
-			sRegular = Typeface.createFromAsset(Utils.getContext().getAssets(), "fonts/DroidSerif.ttf");
+			sRegular = Typeface.createFromAsset(Utils.getContext().getAssets(), "fonts/RobotoSlab-Light.ttf");
 			sInitialized = true;
 		}
 	}

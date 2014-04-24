@@ -17,6 +17,8 @@
 		android:stretchMode="columnWidth"
 		android:listSelector="@drawable/view_selector"/>
 	<TextView
+			style="@style/RegularText"
+			android:textColor="@color/background"
 			android:layout_width="match_parent"
 			android:layout_height="40dp"
 			android:background="#ffff00"
