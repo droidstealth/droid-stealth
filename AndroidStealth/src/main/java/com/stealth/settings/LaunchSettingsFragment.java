@@ -110,7 +110,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 
 		mIgnoreToasts = false;
 
-		FontManager.handleFontTags((ViewGroup) root);
+		FontManager.handleFontTags(root);
 
 		return root;
 	}

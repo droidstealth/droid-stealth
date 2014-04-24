@@ -129,7 +129,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener {
 		mName = (EditText) root.findViewById(R.id.morph_edit_name);
 		mIcon = (ImageView) root.findViewById(R.id.morph_edit_icon);
 
-		FontManager.handleFontTags((ViewGroup) root);
+		FontManager.handleFontTags(root);
 
 		return root;
 	}

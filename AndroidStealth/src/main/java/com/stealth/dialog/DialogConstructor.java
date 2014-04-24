@@ -28,7 +28,7 @@ public class DialogConstructor {
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.dialog_base);
 
-		FontManager.handleFontTags((ViewGroup) dialog.findViewById(R.id.dialog_container));
+		FontManager.handleFontTags(dialog.findViewById(R.id.dialog_container));
 
 		final ArrayList<EditText> editTexts = new ArrayList<EditText>();
 		final IDialogAdapter<?> adapter = options.getDialogAdapter();

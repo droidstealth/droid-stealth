@@ -33,6 +33,7 @@
 					android:id="@+id/pin_description"
 					style="@style/RegularText"/>
 			<TextView
+					android:tag="@string/font_regular"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:paddingTop="7dp"

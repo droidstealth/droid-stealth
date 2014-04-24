@@ -25,6 +25,7 @@
 	</style>
 
 	<style name="EditText">
+		<item name="android:tag">@string/font_regular</item>
 		<item name="android:background">@drawable/frame_input_states</item>
 		<item name="android:textSize">@dimen/text_medium</item>
 		<item name="android:textColor">@color/base</item>
@@ -36,6 +37,7 @@
 	</style>
 
 	<style name="RegularText">
+		<item name="android:tag">@string/font_regular</item>
 		<item name="android:textSize">@dimen/text_regular</item>
 		<item name="android:textColor">@color/base</item>
 		<item name="android:textStyle">normal</item>

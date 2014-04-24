@@ -44,7 +44,7 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 			ImageView ico = (ImageView) v.findViewById(R.id.drawer_item_icon);
 			TextView name = (TextView) v.findViewById(R.id.drawer_item_name);
 
-			FontManager.handleFontTags((ViewGroup) v);
+			FontManager.handleFontTags(v);
 
 			col.setBackgroundColor(Utils.color(p.getColor()));
 			ico.setImageResource(p.getIcon());

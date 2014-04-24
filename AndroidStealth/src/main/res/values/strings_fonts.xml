@@ -2,4 +2,5 @@
 <resources>
 	<string name="font_bold_condensed">BoldCondensed</string>
 	<string name="font_light_condensed">LightCondensed</string>
+	<string name="font_regular">Regular</string>
 </resources>
