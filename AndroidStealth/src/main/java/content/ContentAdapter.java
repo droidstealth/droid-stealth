@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -206,7 +207,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private void styleFileView(IndexedFile file, View view) {
 
 		String mime = FileUtils.getMimeType(file.getExtension());
-		if (FileUtils.isImageOrVideo(mime)) {
+		if (FileUtils.isImageOrVideo(mime) && file.getThumbFile().exists()) {
 			styleThumbView(file, view);
 		} else {
 			styleFiletypeView(file, view);
@@ -259,9 +260,17 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			preview.setBackgroundColor(Utils.color(R.color.filetype_text));
 			preview.setImageResource(R.drawable.ic_filetype_text);
 		}
-		else if (FileUtils.isAudio(mime)) {
+		else if (FileUtils.isAudio(mime) || ext.contains("3gp")) {
 			preview.setBackgroundColor(Utils.color(R.color.filetype_audio));
 			preview.setImageResource(R.drawable.ic_filetype_audio);
+		}
+		else if (FileUtils.isVideo(mime)) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_video));
+			preview.setImageResource(R.drawable.ic_filetype_video);
+		}
+		else if (FileUtils.isImage(mime)) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_image));
+			preview.setImageResource(R.drawable.ic_filetype_image);
 		}
 		else if (ext.contains("pdf")) {
 			preview.setBackgroundColor(Utils.color(R.color.filetype_pdf));

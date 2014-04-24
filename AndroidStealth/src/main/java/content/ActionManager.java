@@ -27,7 +27,7 @@ import encryption.IContentManager;
 /**
  * Created by Alex on 13-4-2014.
  */
-public class ActionManager implements IActionManager {
+public class ActionManager {
 
 	private ActionMode mActionMode;
 	private IContentManager mContentManager;
@@ -42,7 +42,6 @@ public class ActionManager implements IActionManager {
 	 *
 	 * @param encryptionManager
 	 */
-	@Override
 	public void setEncryptionManager(EncryptionManager encryptionManager) {
 		mEncryptionManager = encryptionManager;
 	}
@@ -52,7 +51,6 @@ public class ActionManager implements IActionManager {
 	 *
 	 * @param actionMode
 	 */
-	@Override
 	public void setActionMode(ActionMode actionMode) {
 		mActionMode = actionMode;
 	}
@@ -63,7 +61,6 @@ public class ActionManager implements IActionManager {
 	 * @param with     The items to remove
 	 * @param listener a listener which is called with a result when the task has been completed
 	 */
-	@Override
 	public void actionShred(ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		mContentManager.removeItems(with, getWrapper(listener, 0));
 	}
@@ -75,7 +72,6 @@ public class ActionManager implements IActionManager {
 	 * @param with     the item to open
 	 * @param listener a listener which is called with a result when the task has been completed
 	 */
-	@Override
 	public void actionOpen(HomeActivity activity, IndexedItem with, IOnResult<Boolean> listener) {
 		if (!(with instanceof IndexedFile)) {
 			return;
@@ -112,7 +108,6 @@ public class ActionManager implements IActionManager {
 	 * @param with     Files to lock
 	 * @param listener a listener which is called with a result when the task has been completed
 	 */
-	@Override
 	public void actionLock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called lock when encryption service not bound!");
@@ -136,7 +131,6 @@ public class ActionManager implements IActionManager {
 	 * @param with     Files to unlock
 	 * @param listener a listener which is called with a result when the task has been completed
 	 */
-	@Override
 	public void actionUnlock(ArrayList<IndexedItem> with, final IOnResult<Boolean> listener) {
 		if (mEncryptionManager == null) {
 			Utils.d("Called unlock when encryption service not bound!");
@@ -153,7 +147,6 @@ public class ActionManager implements IActionManager {
 	 * @param with     The item(s) to share
 	 * @param listener a listener which is called with a result when the task has been completed
 	 */
-	@Override
 	public void actionShare(HomeActivity activity, ArrayList<IndexedItem> with, IOnResult<Boolean> listener) {
 		Intent shareIntent;
 
@@ -254,7 +247,6 @@ public class ActionManager implements IActionManager {
 	 *                  otherwise
 	 * @param exportDir folder to export the files to
 	 */
-	@Override
 	public void actionRestore(final ArrayList<IndexedItem> with, final IOnResult<Boolean> listener,
 			final File exportDir) {
 		new Thread(new Runnable() {
