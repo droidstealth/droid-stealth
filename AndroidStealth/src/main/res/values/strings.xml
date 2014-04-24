@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="morphable_app_name">@string/true_app_name</string>
-	<string name="true_app_name">SafeBox</string>
+	<string name="true_app_name">Safe \'n Sound</string>
 
 	<string name="content_loading">Loading</string>
 
