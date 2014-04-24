@@ -295,7 +295,7 @@ public class ActionManager {
 		}
 		else if (item instanceof IndexedFile) {
 			IndexedFile file = (IndexedFile) item;
-			File original = new File(exportDir, file.getName() + "." + file.getExtension());
+			File original = new File(exportDir, file.getName() + file.getExtension());
 			File unlocked = file.getUnlockedFile();
 
 			if (!unlocked.exists()) {
