@@ -215,6 +215,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
 
+		// temporarily remove the bottom bar
+		content.findViewById(R.id.content_bottombar).setVisibility(View.GONE);
 
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
