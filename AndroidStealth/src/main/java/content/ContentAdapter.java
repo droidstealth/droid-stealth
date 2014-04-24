@@ -211,6 +211,31 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		} else {
 			styleFiletypeView(file, view);
 		}
+
+		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
+		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
+		View statusBar = view.findViewById(R.id.content_item_status_line);
+
+		if (file.isUnlocked()) {
+			statusImage.clearAnimation();
+			statusImage.setImageResource(R.drawable.ic_status_unlocked);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));
+			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
+		}
+		else if (file.isLocked()) {
+			statusImage.clearAnimation();
+			statusImage.setImageResource(R.drawable.ic_status_locked);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.locked));
+			statusBar.setBackgroundColor(Utils.color(R.color.locked));
+		}
+		else {
+			statusImage.setImageResource(R.drawable.ic_status_processing);
+			statusImageBG.setBackgroundColor(Utils.color(R.color.processing));
+			statusBar.setBackgroundColor(Utils.color(R.color.processing));
+			if (view.getContext() != null) {
+				statusImage.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.rotate));
+			}
+		}
 	}
 
 	private void styleFiletypeView(final IndexedFile file, final View view) {
@@ -274,11 +299,6 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		view.findViewById(R.id.content_texts).setVisibility(View.INVISIBLE);
 
 		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
-		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
-		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
-		View statusBar = view.findViewById(R.id.content_item_status_line);
-
-		boolean isUnlocked = file.isUnlocked();
 
 		thumbImage.setImageBitmap(null);
 		thumbImage.invalidate();
@@ -292,7 +312,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 				}
 			};
 
-			boolean modified = isUnlocked && file.isModified();
+			boolean modified = file.isUnlocked() && file.isModified();
 			if (file.getThumbnail() == null || modified) {
 				if (modified) {
 					Utils.d("A file has been modified! Getting new thumbnail.");
@@ -305,27 +325,6 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			}
 			else {
 				displayThumb.onResult(true);
-			}
-		}
-
-		if (isUnlocked) {
-			statusImage.clearAnimation();
-			statusImage.setImageResource(R.drawable.ic_status_unlocked);
-			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));
-			view.findViewById(R.id.content_item_status_line).setBackgroundColor(Utils.color(R.color.unlocked));
-		}
-		else if (file.isLocked()) {
-			statusImage.clearAnimation();
-			statusImage.setImageResource(R.drawable.ic_status_locked);
-			statusImageBG.setBackgroundColor(Utils.color(R.color.locked));
-			statusBar.setBackgroundColor(Utils.color(R.color.locked));
-		}
-		else {
-			statusImage.setImageResource(R.drawable.ic_status_processing);
-			statusImageBG.setBackgroundColor(Utils.color(R.color.processing));
-			statusBar.setBackgroundColor(Utils.color(R.color.processing));
-			if (view.getContext() != null) {
-				statusImage.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.rotate));
 			}
 		}
 	}
