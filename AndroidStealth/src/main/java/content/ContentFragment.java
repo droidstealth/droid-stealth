@@ -2,9 +2,11 @@ package content;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +39,7 @@ import android.widget.ListView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.android.RecorderActivity;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
@@ -43,6 +47,7 @@ import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.font.FontManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
@@ -56,7 +61,7 @@ import sharing.SharingUtils;
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
 		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
-	private static final int CAMERA_REQUEST = 1888;
+	private static final int CONTENT_REQUEST = 1888;
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
 	private ContentShareMultiModeListener mMultiModeListener;
@@ -79,8 +84,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			Utils.d("Encryption manager is disconnected..?");
 		}
 	};
-	private File mTempImageFile;
-	private NfcAdapter mNfcAdapter;
+	private File mTempResultFile;
 	private boolean mIsBound;
 	/**
 	 * Remembers which item is currently being selected in single selection mode
@@ -137,12 +141,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		Utils.d("Created content fragment");
 
 		mMode = null;
-
-		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
-				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
-			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
-		}
 
 		setHasOptionsMenu(true);
 	}
@@ -207,11 +205,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View content = inflater.inflate(R.layout.fragment_content, container, false);
 
+		FontManager.handleFontTags(content);
+
 		mGridView = (GridView) content.findViewById(R.id.content_container);
 		//		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
 
+		// temporarily remove the bottom bar
+		content.findViewById(R.id.content_bottombar).setVisibility(View.GONE);
 
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
@@ -239,12 +241,27 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
-			case R.id.content_make:
-				mTempImageFile = Utils.getRandomCacheFile(".jpg");
+			case R.id.content_image_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".jpg");
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
-				startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				startActivityForResult(cameraIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_video_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".mp4");
+				Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+				videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(videoIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_audio_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".3gp");
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+
+				Intent audioIntent = new Intent(getActivity(), RecorderActivity.class);
+				audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				startActivityForResult(audioIntent, CONTENT_REQUEST);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -261,9 +278,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case CAMERA_REQUEST:
+			case CONTENT_REQUEST:
 			case REQUEST_CHOOSER:
-
 				if (resultCode == Activity.RESULT_OK) {
 
 					File dataFile = null;
@@ -271,16 +287,21 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					if (data == null) {
 						//In this case, we can retrieve the url from temp image pos
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
-						dataFile = mTempImageFile;
+						dataFile = mTempResultFile;
 					}
 					else {
+						Uri uri = data.getData();
 						//In this case, we can find file in Uri path
-						dataFile = FileUtils.getFile(getActivity(), data.getData());
+						dataFile = FileUtils.getFile(getActivity(), uri);
 					}
 
 					//Something failed somewhere
-					if (dataFile == null || !dataFile.exists()) {
+					if (dataFile == null) {
 						Utils.d("Empty result was found!");
+						return;
+					}
+					if (!dataFile.exists()) {
+						Utils.d("File with result does not exist...!");
 						return;
 					}
 
@@ -301,7 +322,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							}
 						}
 					});
-
 				}
 				break;
 		}
@@ -325,6 +345,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private ContentActionMode getContentActionMode() {
 		// TODO also support folder. Currently only looking at files, until #79 is made
 		ArrayList<IndexedItem> selectedItems = getSelectedItems();
+
+		Utils.d("!! selected items " + selectedItems.size());
 
 		boolean locked = false;
 		boolean unlocked = false;
@@ -371,7 +393,31 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 */
 	public void handleActionButtons() {
 		if (mMultiModeListener != null) {
-			mMultiModeListener.inflate(getContentActionMode());
+			ContentActionMode newMode = getContentActionMode();
+			Utils.d("Action mode " + newMode);
+			if (newMode != mMultiModeListener.getContentMode()) {
+
+				long[] longIds = mGridView.getCheckedItemIds();
+
+				// convert checked positions to int array
+				int[] ids = new int[longIds.length];
+				for (int i = 0; i < longIds.length; i++) {
+					ids[i] = (int) longIds[i];
+				}
+
+				if (ids.length == 0) {
+					return;
+				}
+
+				if (isMultiSelecting()) {
+					Utils.d("Restarting multi selection");
+					startMultiSelection(ids);
+				}
+				else {
+					Utils.d("Restarting single selection");
+					startSingleSelection(ids);
+				}
+			}
 		}
 	}
 
@@ -432,16 +478,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			showMultiSelectionFeedback();
 			checkSelections();
+			handleActionButtons();
 		}
 		else if (isSingleSelecting()) {
-			startMultiSelection(position);
 			mGridView.setItemChecked(mSingleSelected, true);
+			startMultiSelection(new int[]{position, mSingleSelected});
 		}
 		else {
 			startMultiSelection(position);
 		}
 
-		handleActionButtons();
 		handleSelection();
 
 		return true;
@@ -450,13 +496,30 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Starts the single selection mode with given file
 	 *
+	 * @param withItemIds the items to select (will only take the last)
+	 */
+	public void startSingleSelection(int withItemIds[]) {
+		if (withItemIds.length == 0) {
+			return;
+		}
+		else {
+			startSingleSelection(withItemIds[withItemIds.length - 1]);
+		}
+	}
+
+	/**
+	 * Starts the single selection mode with given file
+	 *
 	 * @param withItemId the item to select
 	 */
-	public void startSingleSelection(int withItemId) {
+	public void startSingleSelection(final int withItemId) {
+		if (mMode != null) {
+			mMode.finish();
+		}
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		mGridView.setItemChecked(withItemId, true);
 		mMultiModeListener = new ContentShareMultiModeListener();
 		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
-		mGridView.setItemChecked(withItemId, true);
 		mSingleSelected = withItemId;
 
 		showSingleSelectionFeedback();
@@ -465,15 +528,68 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Starts the multi selection mode with given file
 	 *
-	 * @param withItemId the item to select
+	 * @param withItemId the items to select
 	 */
 	public void startMultiSelection(int withItemId) {
+		startMultiSelection(new int[] { withItemId });
+	}
+
+	/**
+	 * Starts the multi selection mode with given files
+	 *
+	 * @param withItemIds the items to select
+	 */
+	public void startMultiSelection(final int[] withItemIds) {
+		if (mMode != null) {
+			mMode.finish();
+		}
+
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+		for (int id : withItemIds) {
+			mGridView.setItemChecked(id, true);
+		}
+
 		mMultiModeListener = new ContentShareMultiModeListener();
 		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
-		mGridView.setItemChecked(withItemId, true);
 
 		showMultiSelectionFeedback();
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		if (getSelectedItems().size() > 1) {
+			Utils.runOnMain(new Runnable() {
+				@Override
+				public void run() {
+					actionMode.finish();
+				}
+			});
+		}
 	}
 
 	/**
@@ -652,42 +768,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		);
 	}
 
-	/**
-	 * Finishes the action mode on the UI thread
-	 *
-	 * @param actionMode the action mode the finish
-	 */
-	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) {
-			return;
-		}
-		Utils.runOnMain(new Runnable() {
-			@Override
-			public void run() {
-				actionMode.finish();
-			}
-		});
-	}
-
-	/**
-	 * Finishes the action mode on the UI thread
-	 *
-	 * @param actionMode the action mode the finish
-	 */
-	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) {
-			return;
-		}
-		if (getSelectedItems().size() > 1) {
-			Utils.runOnMain(new Runnable() {
-				@Override
-				public void run() {
-					actionMode.finish();
-				}
-			});
-		}
-	}
-
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
@@ -701,6 +781,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		private ContentActionMode mContentMode;
 		private MenuInflater mInflater;
 		private Menu mMenu;
+
+		public ContentShareMultiModeListener() {
+			mContentMode = getContentActionMode();
+		}
 
 		/**
 		 * Called when the ActionMode is created. Inflates the ActionMode Menu.
@@ -718,15 +802,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 
 		/**
+		 * @param contentMode  The current mode that is shown
+		 */
+		public void setContentMode(ContentActionMode contentMode) {
+			mContentMode = contentMode;
+		}
+
+		/**
+		 * @return The current mode that is shown
+		 */
+		public ContentActionMode getContentMode() {
+			return mContentMode;
+		}
+
+		/**
 		 * Inflates the given content action mode to fit the selected context
 		 *
 		 * @param mode the mode to inflate
 		 */
-		public void inflate(ContentActionMode mode) {
-			if (mode == mContentMode) {
-				return; // already inflated
-			}
-
+		private void inflate(ContentActionMode mode) {
 			Utils.d("Inflating " + mode);
 
 			mContentMode = mode;
@@ -818,19 +912,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			if (actionMode == mMode) {
 				mMode = null;
 			}
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
-
-		@Override
-		public Uri[] createBeamUris(NfcEvent nfcEvent) {
-			return new Uri[] { getApkUri() };
-		}
-
-		private Uri getApkUri() {
-			return Uri.fromFile(SharingUtils.getApk(getActivity()));
 		}
 	}
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="filetype_excel">#0ba267</color>
+	<color name="filetype_word">#6fa9ff</color>
+	<color name="filetype_powerpoint">#ea7722</color>
+	<color name="filetype_text">#81678a</color>
+	<color name="filetype_html">#81678a</color>
+	<color name="filetype_audio">#d0a203</color>
+	<color name="filetype_video">#bc6406</color>
+	<color name="filetype_image">#ff00bc88</color>
+	<color name="filetype_pdf">#b64848</color>
+	<color name="filetype_compressed">#6e6e6e</color>
+</resources>

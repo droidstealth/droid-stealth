@@ -40,6 +40,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.BuildConfig;
 import com.stealth.android.R;
 import com.stealth.files.DirectoryManager;
+import com.stealth.font.FontManager;
 import encryption.ConcealCrypto;
 
 /**
@@ -299,6 +300,8 @@ public class Utils {
 				if (layout == null) {
 					return;
 				}
+
+				FontManager.handleFontTags(layout);
 
 				TextView text = (TextView) layout.findViewById(R.id.toast_text);
 				text.setText(Utils.str(message_resource));

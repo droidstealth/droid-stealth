@@ -16,8 +16,8 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/drawer_item_icon"
 			android:layout_gravity="center_vertical"
-			android:layout_marginLeft="12dp"
-			android:layout_marginRight="8dp"
+			android:layout_marginLeft="@dimen/default_regular_padding"
+			android:layout_marginRight="@dimen/default_regular_padding"
 			android:src="@drawable/ic_stat_unlocking" />
 	<TextView
 			android:layout_width="wrap_content"
@@ -28,6 +28,7 @@
 			android:id="@+id/drawer_item_name"
 			android:layout_gravity="center_vertical"
 			android:paddingTop="12dp"
-			android:paddingBottom="12dp"/>
+			android:paddingBottom="12dp"
+			android:tag="@string/font_light_condensed"/>
 
 </LinearLayout>

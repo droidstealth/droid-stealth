@@ -11,22 +11,23 @@
 	</style>
 
 	<style name="Title">
-		<item name="android:fontFamily">sans-serif-condensed</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+		<item name="android:tag">@string/font_bold_condensed</item>
+		<item name="android:textSize">@dimen/text_largest</item>
 		<item name="android:textColor">@color/accent</item>
 		<item name="android:textStyle">bold</item>
 	</style>
 
 	<style name="SubTitle">
-		<item name="android:fontFamily">sans-serif-condensed</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:tag">@string/font_light_condensed</item>
+		<item name="android:textSize">@dimen/text_medium</item>
 		<item name="android:textColor">@color/accent</item>
 		<item name="android:textStyle">italic</item>
 	</style>
 
 	<style name="EditText">
+		<item name="android:tag">@string/font_regular</item>
 		<item name="android:background">@drawable/frame_input_states</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:textSize">@dimen/text_medium</item>
 		<item name="android:textColor">@color/base</item>
 		<item name="android:paddingLeft">@dimen/default_medium_padding</item>
 		<item name="android:paddingRight">@dimen/default_medium_padding</item>
@@ -36,17 +37,25 @@
 	</style>
 
 	<style name="RegularText">
-		<item name="android:fontFamily">sans-serif</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:tag">@string/font_regular</item>
+		<item name="android:textSize">@dimen/text_regular</item>
 		<item name="android:textColor">@color/base</item>
 		<item name="android:textStyle">normal</item>
 	</style>
 
 	<style name="Checkbox">
-		<item name="android:fontFamily">sans-serif-condensed</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:tag">@string/font_light_condensed</item>
+		<item name="android:textSize">@dimen/text_medium</item>
 		<item name="android:textColor">@color/accent</item>
 		<item name="android:textStyle">italic</item>
+	</style>
+
+	<style name="DialogButton">
+		<item name="android:tag">@string/font_bold_condensed</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:background">@drawable/pin_button_dialer</item>
 	</style>
 
 	<!-- ActionBar styles -->
@@ -94,6 +103,7 @@
 		<item name="android:clickable">true</item>
 	</style>
 	<style name="PinButtonTitleText">
+		<item name="android:tag">@string/font_bold_condensed</item>
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:gravity">center</item>
@@ -102,6 +112,7 @@
 		<item name="android:textStyle">bold</item>
 	</style>
 	<style name="PinButtonSubText" parent="PinButtonTitleText">
+		<item name="android:tag">@string/font_light_condensed</item>
 		<item name="android:layout_marginTop">-2dp</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textStyle">normal</item>

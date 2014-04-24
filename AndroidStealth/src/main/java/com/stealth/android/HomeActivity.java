@@ -11,7 +11,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import com.stealth.drawer.NavigationDrawerFragment;
+import com.stealth.font.FontManager;
 import com.stealth.morphing.MorphingFragment;
 import com.stealth.settings.GeneralSettingsFragment;
 import com.stealth.settings.LaunchSettingsFragment;
@@ -73,6 +76,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home_loading);
 		mInterfaceConstructed = false;
+
+		FontManager.handleFontTags(findViewById(R.id.progress_layout));
 
 		String pin = getIntent().getStringExtra(PinManager.EXTRA_PIN);
 		BootManager.boot(this, pin, new IOnResult<Boolean>() {

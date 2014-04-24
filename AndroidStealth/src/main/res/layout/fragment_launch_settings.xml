@@ -24,6 +24,7 @@
 					android:src="@drawable/ic_drawer_launch"
 					android:layout_marginRight="@dimen/default_medium_padding"/>
 			<TextView
+					android:id="@+id/launch_title_1"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/launch_title"
@@ -41,6 +42,7 @@
 		<!-- APPLICATION ICON -->
 
 		<TextView
+				android:id="@+id/launch_title_2"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/launch_icon"
@@ -66,6 +68,7 @@
 		<!-- WIDGET -->
 
 		<TextView
+				android:id="@+id/launch_title_3"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/launch_widget"
@@ -106,6 +109,7 @@
 		<!-- DIALER -->
 
 		<TextView
+				android:id="@+id/launch_title_4"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/launch_dialer"
@@ -151,6 +155,7 @@
 		<!-- WARNING -->
 
 		<TextView
+				android:id="@+id/launch_title_5"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/launch_disclaimer"

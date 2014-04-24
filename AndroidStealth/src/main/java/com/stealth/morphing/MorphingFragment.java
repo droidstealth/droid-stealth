@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -17,7 +19,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,7 +37,10 @@ import com.stealth.android.R;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogAdapter;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
+
+import sharing.SharingUtils;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Use the {@link MorphingFragment#newInstance} factory
@@ -47,6 +55,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 	private EditText mName;
 	private AppMorph mAppMorph;
 	private ProgressDialog mMorphProgressDialog;
+    private NfcAdapter mNfcAdapter;
 
 	private File mCurrentApp;
 	private String mCurrentLabel;
@@ -121,7 +130,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		return fragment;
 	}
 
-	@Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -133,7 +143,14 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 
 		mCurrentApp = new File(getActivity().getPackageResourcePath());
 
-		if (getArguments() != null) {
+        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
+                && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+            mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
+        }
+
+
+        if (getArguments() != null) {
 			// we have no arguments
 		}
 	}
@@ -165,6 +182,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 
 		mName = (EditText) root.findViewById(R.id.morph_edit_name);
 		mIcon = (ImageView) root.findViewById(R.id.morph_edit_icon);
+
+		FontManager.handleFontTags(root);
 
 		return root;
 	}
@@ -479,4 +498,18 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 			return null;
 		}
 	}
+
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+
+        @Override
+        public Uri[] createBeamUris(NfcEvent nfcEvent) {
+            return new Uri[] { Uri.fromFile(mCurrentApp) };
+        }
+
+        private Uri getApkUri() {
+            return Uri.fromFile(SharingUtils.getApk(getActivity()));
+        }
+    }
 }
