@@ -18,6 +18,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.stealth.android.R;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 
@@ -125,6 +126,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 		long animStep = 10;
 		long animNow = 100;
+
+		FontManager.handleFontTags(root);
 
 		mTitle = (TextView) root.findViewById(R.id.pin_title);
 		mTitle.setText(mTitleResource);

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.stealth.android.R;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 /**
@@ -42,6 +43,8 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 			View col = v.findViewById(R.id.drawer_item_color);
 			ImageView ico = (ImageView) v.findViewById(R.id.drawer_item_icon);
 			TextView name = (TextView) v.findViewById(R.id.drawer_item_name);
+
+			FontManager.handleFontTags(v);
 
 			col.setBackgroundColor(Utils.color(p.getColor()));
 			ico.setImageResource(p.getIcon());

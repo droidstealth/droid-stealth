@@ -45,6 +45,7 @@ import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.font.FontManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
@@ -209,11 +210,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View content = inflater.inflate(R.layout.fragment_content, container, false);
 
+		FontManager.handleFontTags(content);
+
 		mGridView = (GridView) content.findViewById(R.id.content_container);
 		//		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
 
+		// temporarily remove the bottom bar
+		content.findViewById(R.id.content_bottombar).setVisibility(View.GONE);
 
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),

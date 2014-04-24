@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/dialog_container"
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -37,21 +38,13 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 		<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
+				style="@style/DialogButton"
 				android:text="Nope"
-				android:textStyle="bold"
-				android:background="@drawable/pin_button_dialer"
 				android:textColor="@color/negative"
 				android:id="@+id/dialog_negative"/>
 		<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
+				style="@style/DialogButton"
 				android:text="Oki"
-				android:textStyle="bold"
-				android:background="@drawable/pin_button_dialer"
 				android:textColor="@color/positive"
 				android:id="@+id/dialog_positive"/>
 	</LinearLayout>
