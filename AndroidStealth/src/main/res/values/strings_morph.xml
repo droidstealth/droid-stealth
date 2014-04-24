@@ -9,8 +9,8 @@
 		this device and the receiving device have NFC enabled, hold both devices back to back.</string>
 	<string name="morph_pick_icon">Pick icon from device</string>
 	<string name="morph_pick_app">Copy from existing app</string>
-	<string name="morph_settings_title">Morphing the icon and name</string>
-	<string name="morph_share">Share this morphed app</string>
+	<string name="morph_settings_title">New look and feel:</string>
+	<string name="morph_share">Share this app</string>
 	<string name="morph_edit_name">New name</string>
 	<string name="morph_select_image">Select image</string>
 
