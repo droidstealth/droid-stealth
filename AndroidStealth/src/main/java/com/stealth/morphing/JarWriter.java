@@ -1,4 +1,4 @@
-package spikes.morphing;
+package com.stealth.morphing;
 
 /*  JarWriter.java
  *

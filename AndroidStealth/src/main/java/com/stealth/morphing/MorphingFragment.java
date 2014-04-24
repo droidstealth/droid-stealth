@@ -3,7 +3,6 @@ package com.stealth.morphing;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,15 +19,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
@@ -37,7 +33,6 @@ import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogAdapter;
 import com.stealth.utils.Utils;
-import spikes.morphing.AppMorph;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Use the {@link MorphingFragment#newInstance} factory
@@ -134,6 +129,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 
 		mAppMorph = new AppMorph(getActivity());
 		mAppMorph.setMorphProgressListener(this);
+		mAppMorph.setIconResName("ic_drawer_home");
 
 		mCurrentApp = new File(getActivity().getPackageResourcePath());
 
@@ -416,7 +412,9 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 				Utils.runOnMain(new Runnable() {
 					@Override
 					public void run() {
-						mMorphProgressDialog.setMessage(finalMessage);
+						if (mMorphProgressDialog != null) {
+							mMorphProgressDialog.setMessage(finalMessage);
+						}
 					}
 				});
 
@@ -429,6 +427,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		mMorphProgressDialog.dismiss();
 		mMorphProgressDialog = null;
 		Utils.toast(R.string.morph_failed);
+		Utils.d("Failed: " + atPoint.toString() + " because: " + text);
 	}
 
 	@Override

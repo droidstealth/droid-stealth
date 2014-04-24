@@ -1,4 +1,4 @@
-package spikes.morphing;
+package com.stealth.morphing;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,16 +18,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Solution of decompressing by: http://stackoverflow.com/a/4761689
- * Created by Alex on 2-4-2014.
- * Modified by Joris on 21-4-2014
+ * Solution of decompressing by: http://stackoverflow.com/a/4761689 Created by Alex on 2-4-2014. Modified by Joris on
+ * 21-4-2014
  */
 public class ManifestTransformer {
 	private static int endDocTag = 0x00100101;
 	private static int startTag = 0x00100102;
 	private static int endTag = 0x00100103;
 
-	public static Document decompressXML(File manifest, String label) throws
+	public static void writeLabel(File manifest, String label) throws
 			IOException,
 			ParserConfigurationException,
 			SAXException {
@@ -39,7 +38,6 @@ public class ManifestTransformer {
 		StringBuilder finalXML = new StringBuilder();
 
 		int numbStrings = LEW(xml, 4 * 4);
-
 
 		int sitOff = 0x24;
 		int stOff = sitOff + numbStrings * 4;
@@ -79,20 +77,23 @@ public class ManifestTransformer {
 					sb.append(" " + attrName + "=\"" + attrValue + "\"");
 
 					Utils.d("Tag: " + name + " attr: " + attrName + " value: " + attrValue);
-					if (name.equals("application") && attrName.equals("label") ) {
+					if (name.equals("application") && attrName.equals("label")) {
 						insertXmlString(label, xml, sitOff, stOff, attrValueSi);
 					}
 				}
 				finalXML.append("<" + name + sb + ">");
 
-			} else if (tag0 == endTag) {
+			}
+			else if (tag0 == endTag) {
 				off += 6 * 4;
 				String name = compXmlString(xml, sitOff, stOff, nameSi);
 				finalXML.append("</" + name + ">");
-			} else if (tag0 == endDocTag) {
+			}
+			else if (tag0 == endDocTag) {
 				break;
 
-			} else {
+			}
+			else {
 				break;
 			}
 		}
@@ -100,12 +101,12 @@ public class ManifestTransformer {
 		OutputStream output = new FileOutputStream(manifest);
 		output.write(xml);
 		output.close();
-		return parseManifest(finalXML.toString());
 	}
 
 	private static String compXmlString(byte[] xml, int sitOff, int stOff, int strInd) {
-		if (strInd < 0)
+		if (strInd < 0) {
 			return null;
+		}
 		int strOff = stOff + LEW(xml, sitOff + strInd * 4);
 		return compXmlStringAt(xml, strOff);
 	}
@@ -123,8 +124,9 @@ public class ManifestTransformer {
 	} // end of compXmlStringAt
 
 	private static void insertXmlString(String input, byte[] xml, int sitOff, int stOff, int strInd) {
-		if (strInd < 0)
+		if (strInd < 0) {
 			return;
+		}
 		int strOff = stOff + LEW(xml, sitOff + strInd * 4);
 		insertXmlString(input, xml, strOff);
 	}
@@ -150,12 +152,4 @@ public class ManifestTransformer {
 		return arr[off + 3] << 24 & 0xff000000 | arr[off + 2] << 16 & 0xff0000
 				| arr[off + 1] << 8 & 0xff00 | arr[off] & 0xFF;
 	} // end of LEW
-
-	private static Document parseManifest(String manifest) throws ParserConfigurationException, IOException, SAXException {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory
-				.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(new InputSource(new StringReader(manifest)));
-		return doc;
-	}
 }

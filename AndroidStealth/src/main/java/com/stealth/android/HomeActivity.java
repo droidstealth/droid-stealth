@@ -3,18 +3,14 @@ package com.stealth.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.drawer.NavigationDrawerFragment;
 import com.stealth.morphing.MorphingFragment;
 import com.stealth.settings.GeneralSettingsFragment;
@@ -25,7 +21,6 @@ import com.stealth.utils.Utils;
 import content.ContentFragment;
 import pin.PinFragment;
 import pin.PinManager;
-import spikes.morphing.AppMorph;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
