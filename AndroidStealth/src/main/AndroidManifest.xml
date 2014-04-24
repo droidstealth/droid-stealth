@@ -10,6 +10,8 @@
 	<uses-permission android:name="android.permission.NFC" />
 	<uses-permission android:name="android.permission.CALL_PHONE" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
 
 	<application
 		android:allowBackup="true"
@@ -18,11 +20,11 @@
 		android:theme="@style/AppTheme" >
 		<activity
 			android:name="com.stealth.android.HomeActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:excludeFromRecents="true"
 			android:label="@string/morphable_app_name"
 			android:launchMode="singleTop"
-			android:uiOptions="splitActionBarWhenNarrow"
-			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:excludeFromRecents="true" >
+			android:uiOptions="splitActionBarWhenNarrow" >
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
@@ -47,16 +49,19 @@
 			<intent-filter android:priority="1" >
 				<action android:name="android.intent.action.NEW_OUTGOING_CALL" />
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
+
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</receiver>
 
-		<service android:name="encryption.EncryptionService"
-				android:exported="false">
+		<service
+			android:name="encryption.EncryptionService"
+			android:exported="false" >
 			<intent-filter>
 				<action android:name="encryption.EncryptionService.TAP_TO_LOCK" />
 			</intent-filter>
 		</service>
+
 		<activity
 			android:name="com.ipaulpro.afilechooser.FileChooserActivity"
 			android:enabled="@bool/use_activity"
@@ -74,11 +79,12 @@
 		</activity>
 		<activity
 			android:name="pin.PinActivity"
+			android:excludeFromRecents="true"
 			android:label="@string/morphable_app_name"
-			android:theme="@style/AppTheme.Dialog"
-			android:excludeFromRecents="true" >
+			android:theme="@style/AppTheme.Dialog" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
+
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
@@ -95,6 +101,11 @@
 				android:name="android.appwidget.provider"
 				android:resource="@xml/stealth_button_info" />
 		</receiver>
+
+		<activity
+			android:name="com.stealth.android.RecorderActivity"
+			android:label="@string/title_activity_recorder" >
+		</activity>
 	</application>
 
 </manifest>

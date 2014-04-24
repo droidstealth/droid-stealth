@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import android.widget.ListView;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
+import com.stealth.android.RecorderActivity;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
@@ -44,6 +46,7 @@ import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.files.UnlockObserver;
+import com.stealth.font.FontManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
@@ -58,7 +61,7 @@ import sharing.SharingUtils;
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
 		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
-	private static final int CAMERA_REQUEST = 1888;
+	private static final int CONTENT_REQUEST = 1888;
 	private static final int REQUEST_DIRECTORY = 0547;
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
@@ -86,7 +89,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			Utils.d("Encryption manager is disconnected..?");
 		}
 	};
-
+	private File mTempResultFile;
 	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
 	/**
@@ -214,10 +217,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View content = inflater.inflate(R.layout.fragment_content, container, false);
 
+		FontManager.handleFontTags(content);
+
 		mGridView = (GridView) content.findViewById(R.id.content_container);
 		//		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
+
+		// temporarily remove the bottom bar
+		content.findViewById(R.id.content_bottombar).setVisibility(View.GONE);
 
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
@@ -250,12 +258,27 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				((HomeActivity) getActivity()).setRequestedActivity(true);
 				startActivityForResult(intent, REQUEST_CHOOSER);
 				return true;
-			case R.id.content_make:
-				mTempImageFile = Utils.getRandomCacheFile(".jpg");
+			case R.id.content_image_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".jpg");
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempImageFile));
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
 				((HomeActivity) getActivity()).setRequestedActivity(true);
-				startActivityForResult(cameraIntent, CAMERA_REQUEST);
+				startActivityForResult(cameraIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_video_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".mp4");
+				Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+				videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+				startActivityForResult(videoIntent, CONTENT_REQUEST);
+				return true;
+			case R.id.content_audio_capture:
+				mTempResultFile = Utils.getRandomCacheFile(".3gp");
+				((HomeActivity) getActivity()).setRequestedActivity(true);
+
+				Intent audioIntent = new Intent(getActivity(), RecorderActivity.class);
+				audioIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempResultFile));
+				startActivityForResult(audioIntent, CONTENT_REQUEST);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -272,9 +295,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case CAMERA_REQUEST:
+			case CONTENT_REQUEST:
 			case REQUEST_CHOOSER:
-
 				if (resultCode == Activity.RESULT_OK) {
 
 					File dataFile = null;
@@ -282,16 +304,21 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 					if (data == null) {
 						//In this case, we can retrieve the url from temp image pos
 						Utils.d("Oops... Result was OK, but intent was null. That's just great.");
-						dataFile = mTempImageFile;
+						dataFile = mTempResultFile;
 					}
 					else {
+						Uri uri = data.getData();
 						//In this case, we can find file in Uri path
-						dataFile = FileUtils.getFile(getActivity(), data.getData());
+						dataFile = FileUtils.getFile(getActivity(), uri);
 					}
 
 					//Something failed somewhere
-					if (dataFile == null || !dataFile.exists()) {
+					if (dataFile == null) {
 						Utils.d("Empty result was found!");
+						return;
+					}
+					if (!dataFile.exists()) {
+						Utils.d("File with result does not exist...!");
 						return;
 					}
 
@@ -312,7 +339,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							}
 						}
 					});
-
 				}
 				break;
 			case REQUEST_DIRECTORY:

@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.stealth.android.R;
 import com.stealth.android.StealthButton;
+import com.stealth.font.FontManager;
 import com.stealth.launch.DialerManager;
 import com.stealth.launch.LaunchManager;
 import com.stealth.launch.WidgetManager;
@@ -41,6 +43,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 	private CheckBox mWidget;
 	private CheckBox mWidgetVisible;
 	private CheckBox mHideIcon;
+	private boolean mIgnoreToasts;
 
 	public LaunchSettingsFragment() {
 		// Required empty public constructor
@@ -71,6 +74,8 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		mWidgetVisible.setOnCheckedChangeListener(this);
 		mHideIcon.setOnCheckedChangeListener(this);
 
+		mIgnoreToasts = true;
+
 		mDialer.setChecked(LaunchManager.isDialerEnabled());
 		mWidget.setChecked(LaunchManager.isWidgetEnabled());
 		mWidgetVisible.setChecked(WidgetManager.isWidgetTemporarilyVisible());
@@ -96,8 +101,16 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!newCode.equals(code)) {
 					mLaunchCode.setText(DialerManager.setLaunchCode(newCode));
 				}
+
+				if (!mIgnoreToasts) {
+					Utils.toast(R.string.launch_toast_launch_save);
+				}
 			}
 		});
+
+		mIgnoreToasts = false;
+
+		FontManager.handleFontTags(root);
 
 		return root;
 	}
@@ -107,18 +120,53 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		switch (box.getId()) {
 			case R.id.launch_dialer_use:
 				LaunchManager.setDialerEnabled(b);
+				if (!mIgnoreToasts) {
+					if (b) {
+						Utils.toast(R.string.launch_toast_dialer_on);
+					}
+					else {
+						Utils.toast(R.string.launch_toast_dialer_off);
+					}
+				}
 				break;
 			case R.id.launch_widget_use:
 				LaunchManager.setWidgetEnabled(b);
+				if (!mIgnoreToasts) {
+					if (b) {
+						Utils.toast(R.string.launch_toast_widget_on);
+					}
+					else {
+						Utils.toast(R.string.launch_toast_widget_off);
+					}
+				}
 				break;
 			case R.id.launch_widget_visible:
 				WidgetManager.setWidgetTemporarilyVisible(b);
 				StealthButton.updateMe(getActivity().getApplicationContext());
+				if (!mIgnoreToasts) {
+					if (b) {
+						Utils.toast(R.string.launch_toast_widget_visible_on);
+					}
+					else {
+						Utils.toast(R.string.launch_toast_widget_visible_off);
+					}
+				}
 				break;
 			case R.id.launch_icon_disable:
 				boolean result = LaunchManager.setIconDisabled(b);
-				if (result != b) {
-					mHideIcon.setChecked(result);
+				if (!mIgnoreToasts) {
+					if (result != b) {
+						mHideIcon.setChecked(result);
+						Utils.toast(R.string.launch_toast_icon_fail);
+					}
+					else {
+						if (b) {
+							Utils.toast(R.string.launch_toast_icon_on);
+						}
+						else {
+							Utils.toast(R.string.launch_toast_icon_off);
+						}
+					}
 				}
 				break;
 

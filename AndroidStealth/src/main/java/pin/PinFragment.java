@@ -18,6 +18,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.stealth.android.R;
+import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
 
@@ -114,20 +115,6 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		// force portrait, as the pin layout otherwise fails. It should be completely visible
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		// let the sensor now define the orientation
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -139,6 +126,8 @@ public class PinFragment extends Fragment implements View.OnClickListener, View.
 
 		long animStep = 10;
 		long animNow = 100;
+
+		FontManager.handleFontTags(root);
 
 		mTitle = (TextView) root.findViewById(R.id.pin_title);
 		mTitle.setText(mTitleResource);

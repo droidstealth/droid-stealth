@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
 	<string name="morphable_app_name">@string/true_app_name</string>
 	<string name="true_app_name">SafeBox</string>
-
 	<string name="content_loading">Loading</string>
-
 	<string name="http_service">HTTP Service</string>
 	<string name="wifi_AP_progress_title">Wifi Hotspot</string>
 	<string name="wifi_AP_progress_message">Creating a Wifi hotspot to allow other to connect to. Please wait...</string>
@@ -47,6 +46,7 @@
 	<string name="hello_world">Hello world!</string>
 	<string name="appwidget_text">EXAMPLE</string>
 	<string name="add_widget">Add widget</string>
+	<string name="title_activity_recorder">AudioRecorder</string>
 	<string name="share_file">Share File</string>
 	<string name="share_files">Share Files</string>
 	<string name="multi_share_not_found">No app found to share multiple files with</string>

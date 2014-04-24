@@ -88,7 +88,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 	}
 
 	private void createExecutor() {
-		Utils.d("Creating thread pool of size " + POOL_SIZE);
+		Utils.d("Creating executor with thread pool of size " + POOL_SIZE);
 		mCryptoExecutor = Executors.newScheduledThreadPool(POOL_SIZE);
 	}
 
@@ -245,7 +245,7 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 		Utils.d("[" + mode + "] Submitting new task..");
 
 		if (mCryptoExecutor.isTerminated() || mCryptoExecutor.isShutdown()) {
-			Utils.d("[" + mode + "] BUT WAIT.... THE EXECUTOR IS DEAD: terminated? " + mCryptoExecutor.isTerminated() + "; shutdown?? " + mCryptoExecutor.isShutdown());
+			Utils.d("[" + mode + "] Executor is dead");
 			createExecutor();
 		}
 

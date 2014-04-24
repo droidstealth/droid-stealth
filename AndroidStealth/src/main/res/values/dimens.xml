@@ -26,8 +26,14 @@
 
 	<dimen name="default_huge_padding">32dp</dimen>
 	<dimen name="default_large_padding">16dp</dimen>
+	<dimen name="default_regular_padding">12dp</dimen>
 	<dimen name="default_medium_padding">8dp</dimen>
 	<dimen name="default_small_padding">4dp</dimen>
+
+	<dimen name="text_regular">14sp</dimen>
+	<dimen name="text_medium">18sp</dimen>
+	<dimen name="text_large">24sp</dimen>
+	<dimen name="text_largest">26sp</dimen>
 
 	<!-- not used..? -->
 	<dimen name="divider_width">1dp</dimen>
@@ -44,5 +50,11 @@
 	<dimen name="notification_large_icon_width">64dp</dimen>
 	<dimen name="notification_large_icon_height">64dp</dimen>
 	<dimen name="widget_margin">8dp</dimen>
+	<dimen name="progress_padding">8dp</dimen>
+	<dimen name="record_image_size">100dp</dimen>
+	<dimen name="record_action_item_padding">8dp</dimen>
+	<dimen name="record_action_bar_height">72dp</dimen>
+	<dimen name="record_action_item_height">48dp</dimen>
+	<dimen name="record_volume_height">36dp</dimen>
 
 </resources>

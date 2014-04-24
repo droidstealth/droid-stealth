@@ -11,7 +11,7 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
-			<ImageView
+		<ImageView
 				android:id="@+id/file_preview"
 				android:layout_width="@dimen/content_image_width"
 				android:layout_height="@dimen/content_image_height"
@@ -21,9 +21,9 @@
 				android:layout_alignParentRight="true"
 				android:layout_alignParentTop="true"
 				android:layout_alignParentBottom="true"
-				android:background="@color/background"
+				android:background="@color/subtle"
 				android:src="@drawable/file_icon"/>
-			<ImageView
+		<ImageView
 				android:id="@+id/file_select"
 				android:layout_width="@dimen/content_image_width"
 				android:layout_height="@dimen/content_image_height"
@@ -33,6 +33,36 @@
 				android:layout_alignParentTop="true"
 				android:layout_alignParentBottom="true" />
 				<!--android:background="@drawable/frame_selected"-->
+		<LinearLayout
+				android:id="@+id/content_texts"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
+				android:layout_alignParentBottom="true"
+				android:paddingLeft="@dimen/default_medium_padding"
+				android:paddingRight="@dimen/default_medium_padding"
+				android:paddingBottom="@dimen/default_medium_padding"
+				android:orientation="vertical">
+			<TextView
+					style="@style/RegularText"
+					android:id="@+id/content_filename"
+					android:textScaleX="0.8"
+					android:textColor="@color/background"
+					android:text="Filename"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="-4dp"/>
+			<TextView
+					style="@style/RegularText"
+					android:id="@+id/content_extension"
+					android:textScaleX="0.9"
+					android:textColor="@color/background"
+					android:text="PDF"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:alpha="0.3" />
+		</LinearLayout>
 		<ImageView
 				android:id="@+id/file_status_background"
 				android:layout_width="wrap_content"

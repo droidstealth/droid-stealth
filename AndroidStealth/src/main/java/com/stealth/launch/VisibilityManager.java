@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.StealthButton;
+import pin.PinActivity;
 
 /**
  * This class manages the hidden/visible state of the application Created by OlivierHokke on 06-Apr-14.
@@ -21,7 +22,7 @@ public class VisibilityManager {
 	 */
 	public static void hideApplication(Context context) {
 		if (LaunchManager.isIconDisabled()) {
-			hideClass(context, HomeActivity.class, PackageManager.DONT_KILL_APP);
+			hideClass(context, PinActivity.class, PackageManager.DONT_KILL_APP);
 		}
 	}
 
@@ -32,7 +33,7 @@ public class VisibilityManager {
 	 * @param context the context to use for this operation
 	 */
 	public static void showApplication(Context context) {
-		showClass(context, HomeActivity.class, PackageManager.DONT_KILL_APP);
+		showClass(context, PinActivity.class, PackageManager.DONT_KILL_APP);
 	}
 
 	/**

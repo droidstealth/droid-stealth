@@ -13,10 +13,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.font.FontManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
@@ -200,44 +203,20 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		// TODO #79
 	}
 
-	private void styleFileView(final IndexedFile file, final View view) {
+	private void styleFileView(IndexedFile file, View view) {
 
-		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
+		String mime = FileUtils.getMimeType(file.getExtension());
+		if (FileUtils.isImageOrVideo(mime)) {
+			styleThumbView(file, view);
+		} else {
+			styleFiletypeView(file, view);
+		}
+
 		ImageView statusImage = (ImageView) view.findViewById(R.id.file_status);
 		ImageView statusImageBG = (ImageView) view.findViewById(R.id.file_status_background);
 		View statusBar = view.findViewById(R.id.content_item_status_line);
 
-		boolean isUnlocked = file.isUnlocked();
-
-		thumbImage.setImageBitmap(null);
-		thumbImage.invalidate();
-
-		if (file.getThumbFile().exists()) {
-
-			IOnResult<Boolean> displayThumb = new IOnResult<Boolean>() {
-				@Override
-				public void onResult(Boolean result) {
-					displayThumbnail(file);
-				}
-			};
-
-			boolean modified = isUnlocked && file.isModified();
-			if (file.getThumbnail() == null || modified) {
-				if (modified) {
-					Utils.d("A file has been modified! Getting new thumbnail.");
-					file.resetModificationChecker();
-					ThumbnailManager.createThumbnail(file, displayThumb);
-				}
-				else {
-					ThumbnailManager.retrieveThumbnail(file, displayThumb);
-				}
-			}
-			else {
-				displayThumb.onResult(true);
-			}
-		}
-
-		if (isUnlocked) {
+		if (file.isUnlocked()) {
 			statusImage.clearAnimation();
 			statusImage.setImageResource(R.drawable.ic_status_unlocked);
 			statusImageBG.setBackgroundColor(Utils.color(R.color.unlocked));
@@ -255,6 +234,97 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			statusBar.setBackgroundColor(Utils.color(R.color.processing));
 			if (view.getContext() != null) {
 				statusImage.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.rotate));
+			}
+		}
+	}
+
+	private void styleFiletypeView(final IndexedFile file, final View view) {
+
+		View texts = view.findViewById(R.id.content_texts);
+		ImageView preview = (ImageView) view.findViewById(R.id.file_preview);
+		TextView nameTV = (TextView) view.findViewById(R.id.content_filename);
+		TextView extTV = (TextView) view.findViewById(R.id.content_extension);
+
+		String ext = file.getExtension();
+		String mime = FileUtils.getMimeType(ext);
+
+		texts.setVisibility(View.VISIBLE);
+		nameTV.setText(file.getName());
+		extTV.setText(ext.substring(1).toUpperCase());
+
+		FontManager.handleFontTags(texts);
+
+		if (mime == null) {
+			Utils.d("Could not find mimeType for " + ext);
+			preview.setBackgroundColor(Utils.color(R.color.filetype_text));
+			preview.setImageResource(R.drawable.ic_filetype_text);
+		}
+		else if (FileUtils.isAudio(mime)) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_audio));
+			preview.setImageResource(R.drawable.ic_filetype_audio);
+		}
+		else if (ext.contains("pdf")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_pdf));
+			preview.setImageResource(R.drawable.ic_filetype_pdf);
+		}
+		else if (mime.contains("application/")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_compressed));
+			preview.setImageResource(R.drawable.ic_filetype_compressed);
+		}
+		else if (ext.contains("xls")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_excel));
+			preview.setImageResource(R.drawable.ic_filetype_excel);
+		}
+		else if (ext.contains("doc")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_word));
+			preview.setImageResource(R.drawable.ic_filetype_word);
+		}
+		else if (ext.contains("ppt")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_powerpoint));
+			preview.setImageResource(R.drawable.ic_filetype_powerpoint);
+		}
+		else if (ext.contains("htm")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_html));
+			preview.setImageResource(R.drawable.ic_filetype_html);
+		}
+		else {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_text));
+			preview.setImageResource(R.drawable.ic_filetype_text);
+		}
+
+	}
+
+	private void styleThumbView(final IndexedFile file, final View view) {
+
+		view.findViewById(R.id.content_texts).setVisibility(View.INVISIBLE);
+
+		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
+
+		thumbImage.setImageBitmap(null);
+		thumbImage.invalidate();
+
+		if (file.getThumbFile().exists()) {
+
+			IOnResult<Boolean> displayThumb = new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					displayThumbnail(file);
+				}
+			};
+
+			boolean modified = file.isUnlocked() && file.isModified();
+			if (file.getThumbnail() == null || modified) {
+				if (modified) {
+					Utils.d("A file has been modified! Getting new thumbnail.");
+					file.resetModificationChecker();
+					ThumbnailManager.createThumbnail(file, displayThumb);
+				}
+				else {
+					ThumbnailManager.retrieveThumbnail(file, displayThumb);
+				}
+			}
+			else {
+				displayThumb.onResult(true);
 			}
 		}
 	}
