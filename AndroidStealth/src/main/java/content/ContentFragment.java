@@ -2,6 +2,7 @@ package content;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -23,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -351,6 +353,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		// TODO also support folder. Currently only looking at files, until #79 is made
 		ArrayList<IndexedItem> selectedItems = getSelectedItems();
 
+		Utils.d("!! selected items " + selectedItems.size());
+
 		boolean locked = false;
 		boolean unlocked = false;
 
@@ -396,7 +400,31 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 */
 	public void handleActionButtons() {
 		if (mMultiModeListener != null) {
-			mMultiModeListener.inflate(getContentActionMode());
+			ContentActionMode newMode = getContentActionMode();
+			Utils.d("Action mode " + newMode);
+			if (newMode != mMultiModeListener.getContentMode()) {
+
+				long[] longIds = mGridView.getCheckedItemIds();
+
+				// convert checked positions to int array
+				int[] ids = new int[longIds.length];
+				for (int i = 0; i < longIds.length; i++) {
+					ids[i] = (int) longIds[i];
+				}
+
+				if (ids.length == 0) {
+					return;
+				}
+
+				if (isMultiSelecting()) {
+					Utils.d("Restarting multi selection");
+					startMultiSelection(ids);
+				}
+				else {
+					Utils.d("Restarting single selection");
+					startSingleSelection(ids);
+				}
+			}
 		}
 	}
 
@@ -457,16 +485,16 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			mGridView.setItemChecked(position, !mGridView.isItemChecked(position));
 			showMultiSelectionFeedback();
 			checkSelections();
+			handleActionButtons();
 		}
 		else if (isSingleSelecting()) {
-			startMultiSelection(position);
 			mGridView.setItemChecked(mSingleSelected, true);
+			startMultiSelection(new int[]{position, mSingleSelected});
 		}
 		else {
 			startMultiSelection(position);
 		}
 
-		handleActionButtons();
 		handleSelection();
 
 		return true;
@@ -475,13 +503,30 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Starts the single selection mode with given file
 	 *
+	 * @param withItemIds the items to select (will only take the last)
+	 */
+	public void startSingleSelection(int withItemIds[]) {
+		if (withItemIds.length == 0) {
+			return;
+		}
+		else {
+			startSingleSelection(withItemIds[withItemIds.length - 1]);
+		}
+	}
+
+	/**
+	 * Starts the single selection mode with given file
+	 *
 	 * @param withItemId the item to select
 	 */
-	public void startSingleSelection(int withItemId) {
+	public void startSingleSelection(final int withItemId) {
+		if (mMode != null) {
+			mMode.finish();
+		}
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		mGridView.setItemChecked(withItemId, true);
 		mMultiModeListener = new ContentShareMultiModeListener();
 		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
-		mGridView.setItemChecked(withItemId, true);
 		mSingleSelected = withItemId;
 
 		showSingleSelectionFeedback();
@@ -490,15 +535,68 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	/**
 	 * Starts the multi selection mode with given file
 	 *
-	 * @param withItemId the item to select
+	 * @param withItemId the items to select
 	 */
 	public void startMultiSelection(int withItemId) {
+		startMultiSelection(new int[] { withItemId });
+	}
+
+	/**
+	 * Starts the multi selection mode with given files
+	 *
+	 * @param withItemIds the items to select
+	 */
+	public void startMultiSelection(final int[] withItemIds) {
+		if (mMode != null) {
+			mMode.finish();
+		}
+
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+		for (int id : withItemIds) {
+			mGridView.setItemChecked(id, true);
+		}
+
 		mMultiModeListener = new ContentShareMultiModeListener();
 		mMode = ((ActionBarActivity) getActivity()).startSupportActionMode(mMultiModeListener);
-		mGridView.setItemChecked(withItemId, true);
 
 		showMultiSelectionFeedback();
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+			}
+		});
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		if (getSelectedItems().size() > 1) {
+			Utils.runOnMain(new Runnable() {
+				@Override
+				public void run() {
+					actionMode.finish();
+				}
+			});
+		}
 	}
 
 	/**
@@ -677,42 +775,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		);
 	}
 
-	/**
-	 * Finishes the action mode on the UI thread
-	 *
-	 * @param actionMode the action mode the finish
-	 */
-	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) {
-			return;
-		}
-		Utils.runOnMain(new Runnable() {
-			@Override
-			public void run() {
-				actionMode.finish();
-			}
-		});
-	}
-
-	/**
-	 * Finishes the action mode on the UI thread
-	 *
-	 * @param actionMode the action mode the finish
-	 */
-	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) {
-			return;
-		}
-		if (getSelectedItems().size() > 1) {
-			Utils.runOnMain(new Runnable() {
-				@Override
-				public void run() {
-					actionMode.finish();
-				}
-			});
-		}
-	}
-
 	public enum ContentActionMode {
 		SINGLE_LOCKED, SINGLE_UNLOCKED, MULTI_LOCKED, MULTI_UNLOCKED, MULTI_MIXED, PROCESSING
 	}
@@ -726,6 +788,10 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		private ContentActionMode mContentMode;
 		private MenuInflater mInflater;
 		private Menu mMenu;
+
+		public ContentShareMultiModeListener() {
+			mContentMode = getContentActionMode();
+		}
 
 		/**
 		 * Called when the ActionMode is created. Inflates the ActionMode Menu.
@@ -743,15 +809,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 
 		/**
+		 * @param contentMode  The current mode that is shown
+		 */
+		public void setContentMode(ContentActionMode contentMode) {
+			mContentMode = contentMode;
+		}
+
+		/**
+		 * @return The current mode that is shown
+		 */
+		public ContentActionMode getContentMode() {
+			return mContentMode;
+		}
+
+		/**
 		 * Inflates the given content action mode to fit the selected context
 		 *
 		 * @param mode the mode to inflate
 		 */
-		public void inflate(ContentActionMode mode) {
-			if (mode == mContentMode) {
-				return; // already inflated
-			}
-
+		private void inflate(ContentActionMode mode) {
 			Utils.d("Inflating " + mode);
 
 			mContentMode = mode;
