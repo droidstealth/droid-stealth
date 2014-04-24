@@ -50,5 +50,11 @@
 	<dimen name="notification_large_icon_width">64dp</dimen>
 	<dimen name="notification_large_icon_height">64dp</dimen>
 	<dimen name="widget_margin">8dp</dimen>
+	<dimen name="progress_padding">8dp</dimen>
+	<dimen name="record_image_size">100dp</dimen>
+	<dimen name="record_action_item_padding">8dp</dimen>
+	<dimen name="record_action_bar_height">72dp</dimen>
+	<dimen name="record_action_item_height">48dp</dimen>
+	<dimen name="record_volume_height">36dp</dimen>
 
 </resources>
