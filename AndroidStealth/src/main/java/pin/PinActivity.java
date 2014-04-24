@@ -12,9 +12,11 @@ import com.stealth.utils.Utils;
 public class PinActivity extends FragmentActivity implements PinFragment.OnPinResult {
 
 	private PinFragment mPinFrag;
+	private boolean mLaunchingMainApplication = false;
 
 	/**
 	 * Launches the pin dialog
+	 *
 	 * @param context the context to use for the launch
 	 */
 	public static void launch(Context context) {
@@ -25,8 +27,6 @@ public class PinActivity extends FragmentActivity implements PinFragment.OnPinRe
 		pinIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(pinIntent);
 	}
-
-	private boolean mLaunchingMainApplication = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
