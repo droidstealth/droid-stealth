@@ -238,13 +238,13 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 			preview.setBackgroundColor(Utils.color(R.color.filetype_audio));
 			preview.setImageResource(R.drawable.ic_filetype_audio);
 		}
-		else if (mime.contains("application/")) {
-			preview.setBackgroundColor(Utils.color(R.color.filetype_compressed));
-			preview.setImageResource(R.drawable.ic_filetype_compressed);
-		}
 		else if (ext.contains("pdf")) {
 			preview.setBackgroundColor(Utils.color(R.color.filetype_pdf));
 			preview.setImageResource(R.drawable.ic_filetype_pdf);
+		}
+		else if (mime.contains("application/")) {
+			preview.setBackgroundColor(Utils.color(R.color.filetype_compressed));
+			preview.setImageResource(R.drawable.ic_filetype_compressed);
 		}
 		else if (ext.contains("xls")) {
 			preview.setBackgroundColor(Utils.color(R.color.filetype_excel));
