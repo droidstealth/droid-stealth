@@ -91,7 +91,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 	};
 	private File mTempResultFile;
-	private NfcAdapter mNfcAdapter;
 	private boolean mIsBound;
 	/**
 	 * Remembers which item is currently being selected in single selection mode
@@ -149,12 +148,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		Utils.d("Created content fragment");
 
 		mMode = null;
-
-		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
-				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
-			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
-		}
 
 		setHasOptionsMenu(true);
 	}
@@ -934,19 +927,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				mMode = null;
 				mActionManager.setActionMode(null);
 			}
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
-
-		@Override
-		public Uri[] createBeamUris(NfcEvent nfcEvent) {
-			return new Uri[] { getApkUri() };
-		}
-
-		private Uri getApkUri() {
-			return Uri.fromFile(SharingUtils.getApk(getActivity()));
 		}
 	}
 }
