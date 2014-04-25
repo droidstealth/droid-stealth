@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.stealth.utils.Utils;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -41,7 +43,7 @@ public class AppMorph {
 	public interface MorphProgressListener {
 		void onProgress(ProgressStep progress);
 
-		void onMorphFailed(ProgressStep atPoint, String text);
+		void onMorphFailed(ProgressStep atPoint, Exception failure);
 
 		void onFinished(File newApk);
 	}
@@ -140,7 +142,7 @@ public class AppMorph {
 		}
 		catch (Exception e) {
 			if (mListener != null) {
-				mListener.onMorphFailed(mProgressStep, e.getMessage());
+				mListener.onMorphFailed(mProgressStep, e);
 			}
 		}
 
@@ -168,7 +170,7 @@ public class AppMorph {
 		File[] unneeded = jarDir.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File file) {
-				return file.getName().equals("META-INF") || file.getName().equals("keys");
+				return file.getName().equals("META-INF");
 			}
 		});
 

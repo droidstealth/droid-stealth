@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -442,11 +441,12 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 	}
 
 	@Override
-	public void onMorphFailed(AppMorph.ProgressStep atPoint, String text) {
+	public void onMorphFailed(AppMorph.ProgressStep atPoint, Exception failure) {
 		mMorphProgressDialog.dismiss();
 		mMorphProgressDialog = null;
 		Utils.toast(R.string.morph_failed);
-		Utils.d("Failed: " + atPoint.toString() + " because: " + text);
+		Utils.d("Failed: " + atPoint.toString() + " because: " + failure.getLocalizedMessage());
+        failure.printStackTrace();
 	}
 
 	@Override
