@@ -302,9 +302,8 @@ public class ActionManager {
 				return false;
 			}
 			else {
-				if (original.exists()) {
-					original.delete();
-				}
+				original.delete();
+				file.removeModificationChecker();
 
 				try {
 					original.createNewFile();
@@ -370,7 +369,7 @@ public class ActionManager {
 			@Override
 			public void onResult(Boolean result) {
 				if (result) {
-					finishActionMode();
+					//finishActionMode();
 
 					if (toastResID != 0) {
 						Utils.toast(toastResID);

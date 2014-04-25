@@ -825,7 +825,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			Intent chooserIntent = new Intent(getActivity(), DirectoryChooserActivity.class);
 			// Optional: Allow users to create a new directory with a fixed name.
 			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME,
-					"DirChooserSample");
+					"Export");
 
 			// REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
 			((HomeActivity) getActivity()).setRequestedActivity(true);
