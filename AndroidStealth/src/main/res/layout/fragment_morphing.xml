@@ -84,6 +84,7 @@
 					android:layout_marginRight="@dimen/default_regular_padding"
 					android:src="@drawable/ic_morph_share" />
 			<TextView
+					android:tag="@string/font_light_condensed"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceMedium"
