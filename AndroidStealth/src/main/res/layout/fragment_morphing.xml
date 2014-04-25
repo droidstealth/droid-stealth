@@ -51,7 +51,7 @@
 					android:layout_width="48dp"
 					android:layout_height="48dp"
 					android:id="@+id/morph_current_icon"
-					android:src="@drawable/ic_drawer_home"
+					android:src="@drawable/ic_app_home"
 					android:layout_marginRight="@dimen/default_regular_padding"/>
 			<TextView
 					android:tag="@string/font_light_condensed"
@@ -152,7 +152,7 @@
 					android:layout_width="48dp"
 					android:layout_height="48dp"
 					android:id="@+id/morph_edit_icon"
-					android:src="@drawable/ic_drawer_home"
+					android:src="@drawable/ic_app_home"
 					android:layout_marginRight="@dimen/default_medium_padding"/>
 			<EditText
 					android:layout_width="match_parent"

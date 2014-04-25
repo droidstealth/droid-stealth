@@ -46,15 +46,15 @@ import sharing.SharingUtils;
  * method to create an instance of this fragment.
  */
 public class MorphingFragment extends Fragment implements View.OnClickListener, AppMorph.MorphProgressListener {
-
 	private static final int REQUEST_CHOOSER = 65456;
+	private static final int APP_ICON_ID = R.drawable.ic_app_home;
 
 	private List<ApplicationInfo> mPackages;
 	private ImageView mIcon;
 	private EditText mName;
 	private AppMorph mAppMorph;
 	private ProgressDialog mMorphProgressDialog;
-    private NfcAdapter mNfcAdapter;
+	private NfcAdapter mNfcAdapter;
 
 	private File mCurrentApp;
 	private String mCurrentLabel;
@@ -129,29 +129,38 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		return fragment;
 	}
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mPackMan = getActivity().getPackageManager();
 
+		String iconName = getAppDrawerIconName();
+		Utils.d("icon name: " + iconName);
+
 		mAppMorph = new AppMorph(getActivity());
 		mAppMorph.setMorphProgressListener(this);
-		mAppMorph.setIconResName("ic_drawer_home");
+		mAppMorph.setIconResName(iconName);
 
 		mCurrentApp = new File(getActivity().getPackageResourcePath());
 
-        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
-                && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
-            mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
-            mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
-        }
-
-
-        if (getArguments() != null) {
-			// we have no arguments
+		if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)
+				&& (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
 		}
+	}
+
+	/**
+	 * Finds the name of the icon resource as it should be present in the folder structure.
+	 *
+	 * @return
+	 */
+	private String getAppDrawerIconName() {
+		String fullName = getActivity().getResources().getResourceName(APP_ICON_ID);
+		String iconName = fullName.substring(fullName.lastIndexOf('/') + 1);
+		return iconName;
 	}
 
 	@Override
@@ -446,7 +455,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		mMorphProgressDialog = null;
 		Utils.toast(R.string.morph_failed);
 		Utils.d("Failed: " + atPoint.toString() + " because: " + failure.getLocalizedMessage());
-        failure.printStackTrace();
+		failure.printStackTrace();
 	}
 
 	@Override
@@ -500,16 +509,16 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 	}
 
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback {
 
-        @Override
-        public Uri[] createBeamUris(NfcEvent nfcEvent) {
-            return new Uri[] { Uri.fromFile(mCurrentApp) };
-        }
+		@Override
+		public Uri[] createBeamUris(NfcEvent nfcEvent) {
+			return new Uri[] { Uri.fromFile(mCurrentApp) };
+		}
 
-        private Uri getApkUri() {
-            return Uri.fromFile(SharingUtils.getApk(getActivity()));
-        }
-    }
+		private Uri getApkUri() {
+			return Uri.fromFile(SharingUtils.getApk(getActivity()));
+		}
+	}
 }
