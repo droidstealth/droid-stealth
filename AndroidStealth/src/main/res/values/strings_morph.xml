@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="morph_title">App morphing</string>
-	<string name="morph_description">Here you can select a different icon and name for this app and transfer it
+	<string name="morph_current">The current state of the app:</string>
+	<string name="morph_description">Below you can select a different icon and name for this app and transfer it
 		to another device. For instance to your friends.
 		\n\nFirst, you pick an icon and name for the app. You can even
 		copy an existing app and use its name and icon!
