@@ -21,6 +21,7 @@ import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.font.FontManager;
+import com.stealth.settings.GeneralSettingsManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.IContentManager;
@@ -191,6 +192,7 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 		}
 
 		if (file.getThumbnail() != null) {
+			v.findViewById(R.id.content_texts).setVisibility(View.INVISIBLE);
 			ImageView thumbImage = (ImageView) v.findViewById(R.id.file_preview);
 			thumbImage.setImageBitmap(file.getThumbnail());
 			thumbImage.invalidate();
@@ -207,7 +209,14 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	private void styleFileView(IndexedFile file, View view) {
 
 		String mime = FileUtils.getMimeType(file.getExtension());
-		if (FileUtils.isImageOrVideo(mime) && file.getThumbFile().exists()) {
+		if (FileUtils.isImageOrVideo(mime)
+				&& file.getThumbFile().exists()
+				&& GeneralSettingsManager.isThumbnailsShown()) {
+			if (file.getThumbnail() == null) {
+				// there is no thumbnail yet to set. it still has to be created or retrieved.
+				// so for now show the normal view
+				styleFiletypeView(file, view);
+			}
 			styleThumbView(file, view);
 		} else {
 			styleFiletypeView(file, view);
@@ -304,14 +313,6 @@ public class ContentAdapter extends BaseAdapter implements IContentManager.Conte
 	}
 
 	private void styleThumbView(final IndexedFile file, final View view) {
-
-		view.findViewById(R.id.content_texts).setVisibility(View.INVISIBLE);
-
-		ImageView thumbImage = (ImageView) view.findViewById(R.id.file_preview);
-
-		thumbImage.setImageBitmap(null);
-		thumbImage.invalidate();
-
 		if (file.getThumbFile().exists()) {
 
 			IOnResult<Boolean> displayThumb = new IOnResult<Boolean>() {

@@ -1,13 +1,61 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.stealth.settings.GeneralSettingsFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			tools:context="com.stealth.settings.GeneralSettingsFragment"
+			android:background="@color/background"
+			android:orientation="vertical"
+			android:paddingTop="@dimen/default_large_padding"
+			android:paddingLeft="@dimen/default_large_padding"
+			android:paddingRight="@dimen/default_large_padding"
+			android:paddingBottom="@dimen/default_huge_padding">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
+		<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/default_medium_padding">
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/general_icon"
+					android:src="@drawable/ic_drawer_general"
+					android:layout_marginRight="@dimen/default_medium_padding"/>
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/general_title"
+					android:id="@+id/morph_title"
+					android:layout_gravity="center_vertical"
+					style="@style/Title"/>
+		</LinearLayout>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/general_thumbnails"
+				android:id="@+id/general_thumbnails"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginTop="@dimen/default_medium_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/general_doubletap_lock"
+				android:id="@+id/general_doubletap_lock"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginTop="@dimen/default_medium_padding"/>
+		<CheckBox
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/general_doubletap_unlock"
+				android:id="@+id/general_doubletap_unlock"
+				android:drawablePadding="10dp"
+				android:layout_gravity="start"
+				style="@style/Checkbox"
+				android:layout_marginTop="@dimen/default_medium_padding"/>
+	</LinearLayout>
+</ScrollView>
