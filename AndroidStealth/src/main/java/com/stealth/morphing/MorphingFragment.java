@@ -302,6 +302,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		mMorphProgressDialog = ProgressDialog.show(getActivity(), Utils.str(R.string.morphing_dialog_title),
 				Utils.str(R.string.morphing_started), false, false);
 
+		mCurrentLabel = mName.getText().toString();
 		new MorphTask(mCurrentLabel, mCurrentIconPath).execute();
 	}
 
