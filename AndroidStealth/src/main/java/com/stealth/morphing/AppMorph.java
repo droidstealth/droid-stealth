@@ -119,6 +119,10 @@ public class AppMorph {
 			setProgressStep(ProgressStep.SettingIcons); //TODO: Handle null pointers. Maybe with standard icon.
 			setIcons(jarDir, icon, mIconResName);
 
+			label = label.replaceAll("[\\\\|\\?*<\":>+\\[\\]/]", "");
+			if (label.equals("")) {
+				label = "app";
+			}
 			setProgressStep(ProgressStep.Repackaging);
 			File unSignedApkFile = createJar(jarDir, label);
 			deleteRecursively(jarDir);
