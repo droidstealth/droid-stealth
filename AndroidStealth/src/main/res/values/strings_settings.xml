@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="general_title">@string/drawer_general</string>
+	<string name="general_thumbnails">Show image thumbnails</string>
+	<string name="general_doubletap_unlock">Double tap a locked file to unlock</string>
+	<string name="general_doubletap_lock">Double tap an unlocked file to lock<!--open--></string>
+	<string name="general_saved">Saved changes!</string>
+</resources>
