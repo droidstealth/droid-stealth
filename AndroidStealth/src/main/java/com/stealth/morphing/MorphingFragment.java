@@ -24,6 +24,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.text.LoginFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -188,7 +191,11 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		View morph = root.findViewById(R.id.morph_execute);
 		morph.setOnClickListener(this);
 
+		//TODO: Figure out way to have real max length. In case we pad with spaces.
+		InputFilter lengthFilter = new InputFilter.LengthFilter(getString(R.string.morphable_app_name).length());
+		InputFilter asciiFilter = new LoginFilter.PasswordFilterGMail(); // Encodes ISO-8859-1 (Extended Ascii)
 		mName = (EditText) root.findViewById(R.id.morph_edit_name);
+		mName.setFilters(new InputFilter[]{lengthFilter, asciiFilter});
 		mIcon = (ImageView) root.findViewById(R.id.morph_edit_icon);
 
 		FontManager.handleFontTags(root);
@@ -359,7 +366,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		File bitmapFile = FileUtils.getFile(getActivity(), uri);
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(bitmapFile.getPath(), options);
+		BitmapFactory.decodeFile(bitmapFile.getPath(), options); // TODO: Handle null pointers.
 
 		options.inSampleSize = calculateSampleSize(options, size, size);
 		options.inJustDecodeBounds = false;
@@ -482,8 +489,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 						setImageOnView(mCurrentIconPath, icon);
 					}
 
-					mCurrentLabel = null;
-					mCurrentIconPath = null;
+					//mCurrentLabel = null; //So this is still here because it's probable here for a reason But I have no clue what.
+					//mCurrentIconPath = null;
 				}
 				else {
 					//TODO indicate failure

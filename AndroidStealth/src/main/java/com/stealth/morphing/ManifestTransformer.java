@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import com.stealth.utils.Utils;
 import org.w3c.dom.Document;
@@ -140,9 +141,16 @@ public class ManifestTransformer {
 				input += " ";
 			}
 		}
-		byte[] inputChars = input.getBytes();
-		for (int ii = 0; ii < strLen; ii++) {
-			arr[strOff + 2 + ii * 2] = inputChars[ii];
+
+		byte[] inputChars = new byte[0];
+		try {
+			inputChars = input.getBytes("ISO-8859-1");
+			for (int ii = 0; ii < strLen; ii++) {
+				arr[strOff + 2 + ii * 2] = inputChars[ii];
+			}
+		}
+		catch (UnsupportedEncodingException e) {
+			Utils.d("Morphing Failed. Somehow the character set does not exist despite garuantees.");
 		}
 	} // end of compXmlStringAt
 

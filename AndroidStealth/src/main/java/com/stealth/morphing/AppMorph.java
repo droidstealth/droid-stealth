@@ -116,7 +116,7 @@ public class AppMorph {
 			setProgressStep(ProgressStep.SettingLabel);
 			setManifestLabel(jarDir, label);
 
-			setProgressStep(ProgressStep.SettingIcons);
+			setProgressStep(ProgressStep.SettingIcons); //TODO: Handle null pointers. Maybe with standard icon.
 			setIcons(jarDir, icon, mIconResName);
 
 			setProgressStep(ProgressStep.Repackaging);
