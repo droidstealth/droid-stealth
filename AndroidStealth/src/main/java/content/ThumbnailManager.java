@@ -2,8 +2,10 @@ package content;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,8 +20,21 @@ import com.stealth.utils.Utils;
  */
 public class ThumbnailManager {
 
-	private static HashSet<IndexedFile> mRetrievingThumbs = new HashSet<IndexedFile>();
-	private static HashSet<IndexedFile> mCreatingThumbs = new HashSet<IndexedFile>();
+	private static final int POOL_SIZE = 1;
+	private static HashSet<IndexedFile> sRetrievingThumbs = new HashSet<IndexedFile>();
+	private static HashSet<IndexedFile> sCreatingThumbs = new HashSet<IndexedFile>();
+	private static ExecutorService sExecutorService;
+
+	/**
+	 * Get the executor service to run
+	 * @return
+	 */
+	private static ExecutorService getExecutorService() {
+		if (sExecutorService == null || sExecutorService.isShutdown() || sExecutorService.isTerminated()) {
+			sExecutorService = Executors.newFixedThreadPool(POOL_SIZE);
+		}
+		return sExecutorService;
+	}
 
 	/**
 	 * Is the manager currently creating a thumbnail for the given file?
@@ -27,7 +42,7 @@ public class ThumbnailManager {
 	 * @return if thumbnail is being created
 	 */
 	public static boolean isCreating(IndexedFile item) {
-		return mCreatingThumbs.contains(item);
+		return sCreatingThumbs.contains(item);
 	}
 
 	/**
@@ -36,7 +51,7 @@ public class ThumbnailManager {
 	 */
 	public static void createThumbnail(final IndexedFile item, final IOnResult<Boolean> callback) {
 
-		if (mCreatingThumbs.contains(item)) {
+		if (sCreatingThumbs.contains(item)) {
 			// we are already in the process of retrieving the thumbnail.
 			callback.onResult(false);
 			return;
@@ -45,14 +60,14 @@ public class ThumbnailManager {
 		final IOnResult<Boolean> onResult = new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
-				mCreatingThumbs.remove(item);
+				sCreatingThumbs.remove(item);
 				callback.onResult(result);
 			}
 		};
 
-		mCreatingThumbs.add(item);
+		sCreatingThumbs.add(item);
 
-		new Thread(new Runnable() {
+		getExecutorService().submit(new Runnable() {
 			@Override
 			public void run() {
 				boolean result = false;
@@ -96,7 +111,7 @@ public class ThumbnailManager {
 
 				onResult.onResult(result);
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -113,7 +128,7 @@ public class ThumbnailManager {
 			return;
 		}
 
-		if (mRetrievingThumbs.contains(item)) {
+		if (sRetrievingThumbs.contains(item)) {
 			// we are already in the process of retrieving the thumbnail.
 			callback.onResult(false);
 			return;
@@ -126,15 +141,15 @@ public class ThumbnailManager {
 			return;
 		}
 
-		mRetrievingThumbs.add(item);
+		sRetrievingThumbs.add(item);
 
-		new Thread(new Runnable() {
+		getExecutorService().submit(new Runnable() {
 			@Override
 			public void run() {
 				boolean result = false;
 
 				// just a precaution: wait until creation of thumbnail is done
-				while (mCreatingThumbs.contains(item)) {
+				while (sCreatingThumbs.contains(item)) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
@@ -163,9 +178,9 @@ public class ThumbnailManager {
 
 				}
 
-				mRetrievingThumbs.remove(item); // remember that we are done retrieving
+				sRetrievingThumbs.remove(item); // remember that we are done retrieving
 				Utils.runCallbackOnMain(callback, result);
 			}
-		}).start();
+		});
 	}
 }
