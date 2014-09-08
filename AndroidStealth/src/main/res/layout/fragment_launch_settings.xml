@@ -56,14 +56,29 @@
 				android:text="@string/launch_icon_description"
 				android:layout_gravity="left|top"
 				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<CheckBox
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<CheckBox
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/launch_icon_disable"
 				android:id="@+id/launch_icon_disable"
 				android:layout_gravity="start"
 				style="@style/Checkbox"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
+				android:layout_marginBottom="@dimen/default_huge_padding" />
+
+			<Button
+				android:id="@+id/launch_icon_help"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:background="@drawable/launch_icon_help"
+				android:layout_gravity="end"/>
+		</LinearLayout>
+
 
 		<!-- WIDGET -->
 

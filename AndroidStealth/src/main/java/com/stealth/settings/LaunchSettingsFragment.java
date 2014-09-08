@@ -1,7 +1,6 @@
 package com.stealth.settings;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -9,11 +8,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
+
 import com.stealth.android.R;
 import com.stealth.android.StealthButton;
 import com.stealth.font.FontManager;
@@ -26,7 +24,7 @@ import com.stealth.utils.Utils;
  * A simple {@link android.support.v4.app.Fragment} subclass. Use the {@link LaunchSettingsFragment#newInstance} factory
  * method to create an instance of this fragment.
  */
-public class LaunchSettingsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
+public class LaunchSettingsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
 	/**
 	 * Use this factory method to create a new instance of this fragment using the provided parameters.
@@ -183,4 +181,10 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		super.onDetach();
 	}
 
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()){
+
+		}
+	}
 }
