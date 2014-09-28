@@ -8,12 +8,17 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebIconDatabase;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.stealth.android.R;
 import com.stealth.android.StealthButton;
+import com.stealth.dialog.DialogConstructor;
+import com.stealth.dialog.DialogOptions;
+import com.stealth.dialog.IDialogResponse;
 import com.stealth.font.FontManager;
 import com.stealth.launch.DialerManager;
 import com.stealth.launch.LaunchManager;
@@ -26,6 +31,19 @@ import com.stealth.utils.Utils;
  */
 public class LaunchSettingsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
+	private CheckBox mDialer;
+	private EditText mLaunchCode;
+	private CheckBox mWidget;
+	private Button mWidgetHelp;
+	private CheckBox mWidgetVisible;
+	private CheckBox mHideIcon;
+	private Button mHideIconHelp;
+	private boolean mIgnoreToasts;
+
+	public LaunchSettingsFragment() {
+		// Required empty public constructor
+	}
+
 	/**
 	 * Use this factory method to create a new instance of this fragment using the provided parameters.
 	 *
@@ -36,16 +54,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		return fragment;
 	}
 
-	private CheckBox mDialer;
-	private EditText mLaunchCode;
-	private CheckBox mWidget;
-	private CheckBox mWidgetVisible;
-	private CheckBox mHideIcon;
-	private boolean mIgnoreToasts;
 
-	public LaunchSettingsFragment() {
-		// Required empty public constructor
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -64,8 +73,66 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		mLaunchCode = (EditText) root.findViewById(R.id.launch_dialer_code);
 		mDialer = (CheckBox) root.findViewById(R.id.launch_dialer_use);
 		mWidget = (CheckBox) root.findViewById(R.id.launch_widget_use);
+		mWidgetHelp = (Button) root.findViewById(R.id.launch_widget_use_help);
 		mWidgetVisible = (CheckBox) root.findViewById(R.id.launch_widget_visible);
 		mHideIcon = (CheckBox) root.findViewById(R.id.launch_icon_disable);
+		mHideIconHelp = (Button) root.findViewById(R.id.launch_icon_disable_help);
+
+		mHideIconHelp.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				DialogOptions dialogOptions = new DialogOptions()
+						.setTitle(R.string.launch_icon)
+						.setNegativeButtonEnabled(false)
+						.setPositiveButtonEnabled(false)
+						.setDescription(R.string.launch_icon_description);
+
+				DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
+					@Override
+					public void onPositive() {
+						// Do nothing
+					}
+
+					@Override
+					public void onNegative(){
+						// Do nothing
+					}
+
+					@Override
+					public void onCancel() {
+						// Do nothing
+					}
+				});
+			}
+		});
+
+		mWidgetHelp.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				DialogOptions dialogOptions = new DialogOptions()
+						.setTitle(R.string.launch_widget)
+						.setNegativeButtonEnabled(false)
+						.setPositiveButtonEnabled(false)
+						.setDescription(R.string.launch_widget_description);
+
+				DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
+					@Override
+					public void onPositive() {
+
+					}
+
+					@Override
+					public void onNegative() {
+
+					}
+
+					@Override
+					public void onCancel() {
+
+					}
+				});
+			}
+		});
 
 		mDialer.setOnCheckedChangeListener(this);
 		mWidget.setOnCheckedChangeListener(this);
@@ -121,8 +188,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_dialer_on);
-					}
-					else {
+					} else {
 						Utils.toast(R.string.launch_toast_dialer_off);
 					}
 				}
@@ -132,8 +198,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_widget_on);
-					}
-					else {
+					} else {
 						Utils.toast(R.string.launch_toast_widget_off);
 					}
 				}
@@ -144,8 +209,7 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_widget_visible_on);
-					}
-					else {
+					} else {
 						Utils.toast(R.string.launch_toast_widget_visible_off);
 					}
 				}
@@ -156,12 +220,10 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 					if (result != b) {
 						mHideIcon.setChecked(result);
 						Utils.toast(R.string.launch_toast_icon_fail);
-					}
-					else {
+					} else {
 						if (b) {
 							Utils.toast(R.string.launch_toast_icon_on);
-						}
-						else {
+						} else {
 							Utils.toast(R.string.launch_toast_icon_off);
 						}
 					}
