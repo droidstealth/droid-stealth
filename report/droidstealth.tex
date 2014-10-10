@@ -130,12 +130,6 @@ methods like bluetooth, wi-fi direct, and of course sharing to other apps,
 can be utilised to achieve this.
 
 
-\subsection{subsection}
-
-
-\subsection{another subsection}
-
-
 \section{Design and software architecture}
 
 Here we say stuff about the libraries and intents because why reinvent
@@ -154,13 +148,35 @@ What the hell do we do to make morphing possible.
 
 \section{Future Work}
 
-bla bla, unlimited naming for morphed apps. (UTF-8, length limits?
-Byte length indicator start of manifest and length of name field.)
+There are several aspects of the application than can be improved. Which
+can be categorised under one of the following: usability, and morphing.
+The categories will be discusses individually as they are separated both
+technically and conceptually. 
 
-Sharing, invisible widget
+In terms of usability there has been no formal study on what aspects of
+the application work work well. However informal testing has shown several
+avenues of improvement. First is how to access the application. 
 
-Locking files on timer or detecting if app that was opened on intent
-is closed/home buttoned. Since that leaves stuff open.
+While the freely chosen app name and icon do suffice there are other ways 
+it could be done. Namely the widgets available to android users. This could 
+be a simple widget mimicing the standard available widgets, or even be 
+invisible. So as to have no recognisable screen space. While it could still
+react to certain use patterns. A first implementation of this functionality is
+available but needs to be properly evaluated.
+
+Once the application has been started there are still some ways the user
+needs to be observant in how she uses the application. As it can result in
+inadvertent data breaches. Mainly when the data is opened in other apps.
+While several solutions have been discussed, like listening to home button
+presses or having files only be unlocked for limited time, these still need
+to be explored in depth.
+
+When it comes to morphing there is one major limitation, app renaming.
+Right now there is a functional limitation in the length of the new name.
+It has to be the same length or shorter than the original name length,
+which can be padded with whitespace. But as of yet the way android
+manifests are encoded are opaque enough that not all size indicators
+have been correctly identified.
 
 
 \appendices{}
@@ -170,6 +186,9 @@ is closed/home buttoned. Since that leaves stuff open.
 
 Citation: \cite{example:beebe_archive}
 
+\subsection{subsection}
+
+\subsection{another subsection}
 
 \section{Appendix example for tables and images.}
 
