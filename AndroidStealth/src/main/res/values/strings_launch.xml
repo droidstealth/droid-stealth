@@ -37,7 +37,7 @@
         Forgot where you put the widget? Make them temporarily visible. The widget(s) become transparent
         again when you use one of them to open this application.
 	</string>
-    <string name="launch_widget_visible">Make widgets temporarily visible</string>
+    <string name="launch_widget_visible">Temporarily disable transparency</string>
     <string name="launch_icon">Icon Visibility</string>
 	<string name="launch_icon_description">
         This removes the application icon from the app drawer. This way, when someone scrolls through

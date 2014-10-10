@@ -1,6 +1,5 @@
 package com.stealth.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -8,11 +7,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebIconDatabase;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.stealth.android.R;
 import com.stealth.android.StealthButton;
@@ -34,13 +32,15 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 	private CheckBox mDialer;
 	private EditText mLaunchCode;
 	private CheckBox mWidget;
-	private Button mWidgetHelp;
+	private ImageView mWidgetHelp;
 	private CheckBox mWidgetVisible;
 	private CheckBox mHideIcon;
-	private Button mHideIconHelp;
+	private ImageView mHideIconHelp;
 	private boolean mIgnoreToasts;
+    private ImageView mWidgetVisibleHelp;
+    private ImageView mDialerHelp;
 
-	public LaunchSettingsFragment() {
+    public LaunchSettingsFragment() {
 		// Required empty public constructor
 	}
 
@@ -54,16 +54,6 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 		return fragment;
 	}
 
-
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-			// we have no arguments
-		}
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -72,67 +62,18 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 
 		mLaunchCode = (EditText) root.findViewById(R.id.launch_dialer_code);
 		mDialer = (CheckBox) root.findViewById(R.id.launch_dialer_use);
+        mDialerHelp = (ImageView) root.findViewById(R.id.launch_dialer_use_help);
 		mWidget = (CheckBox) root.findViewById(R.id.launch_widget_use);
-		mWidgetHelp = (Button) root.findViewById(R.id.launch_widget_use_help);
+		mWidgetHelp = (ImageView) root.findViewById(R.id.launch_widget_use_help);
 		mWidgetVisible = (CheckBox) root.findViewById(R.id.launch_widget_visible);
+        mWidgetVisibleHelp = (ImageView) root.findViewById(R.id.launch_widget_visible_help);
 		mHideIcon = (CheckBox) root.findViewById(R.id.launch_icon_disable);
-		mHideIconHelp = (Button) root.findViewById(R.id.launch_icon_disable_help);
+		mHideIconHelp = (ImageView) root.findViewById(R.id.launch_icon_disable_help);
 
-		mHideIconHelp.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				DialogOptions dialogOptions = new DialogOptions()
-						.setTitle(R.string.launch_icon)
-						.setNegativeButtonEnabled(false)
-						.setPositiveButtonEnabled(false)
-						.setDescription(R.string.launch_icon_description);
-
-				DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
-					@Override
-					public void onPositive() {
-						// Do nothing
-					}
-
-					@Override
-					public void onNegative(){
-						// Do nothing
-					}
-
-					@Override
-					public void onCancel() {
-						// Do nothing
-					}
-				});
-			}
-		});
-
-		mWidgetHelp.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				DialogOptions dialogOptions = new DialogOptions()
-						.setTitle(R.string.launch_widget)
-						.setNegativeButtonEnabled(false)
-						.setPositiveButtonEnabled(false)
-						.setDescription(R.string.launch_widget_description);
-
-				DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
-					@Override
-					public void onPositive() {
-
-					}
-
-					@Override
-					public void onNegative() {
-
-					}
-
-					@Override
-					public void onCancel() {
-
-					}
-				});
-			}
-		});
+		mHideIconHelp.setOnClickListener(this);
+		mWidgetHelp.setOnClickListener(this);
+        mWidgetVisibleHelp.setOnClickListener(this);
+        mDialerHelp.setOnClickListener(this);
 
 		mDialer.setOnCheckedChangeListener(this);
 		mWidget.setOnCheckedChangeListener(this);
@@ -234,19 +175,45 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-	}
-
-	@Override
 	public void onClick(View view) {
 		switch (view.getId()){
-
+            case R.id.launch_widget_use_help:
+                createHelpDialog(R.string.launch_widget_use, R.string.launch_widget_description);
+                break;
+            case R.id.launch_dialer_use_help:
+                createHelpDialog(R.string.launch_dialer_use, R.string.launch_dialer_description);
+                break;
+            case R.id.launch_icon_disable_help:
+                createHelpDialog(R.string.launch_icon_disable, R.string.launch_icon_description);
+                break;
+            case R.id.launch_widget_visible_help:
+                createHelpDialog(R.string.launch_widget_visible, R.string.launch_widget_visible_description);
+                break;
 		}
 	}
+
+    private void createHelpDialog(int titleResourceID, int bodyResourceID) {
+        DialogOptions dialogOptions = new DialogOptions()
+                .setTitle(titleResourceID)
+                .setNegativeButtonEnabled(false)
+                .setPositiveButtonEnabled(false)
+                .setDescription(bodyResourceID);
+
+        DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
+            @Override
+            public void onPositive() {
+                // Do nothing
+            }
+
+            @Override
+            public void onNegative() {
+                // Do nothing
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        });
+    }
 }
