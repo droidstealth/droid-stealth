@@ -59,7 +59,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_huge_padding"
+            android:layout_marginBottom="@dimen/default_large_padding"
             android:orientation="horizontal">
 
             <CheckBox
@@ -72,6 +72,7 @@
                 android:text="@string/launch_icon_disable" />
 
             <ImageView
+				android:padding="10dp"
                 android:id="@+id/launch_icon_disable_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,6 +108,7 @@
                 android:text="@string/launch_widget_use" />
 
             <ImageView
+				android:padding="10dp"
                 android:id="@+id/launch_widget_use_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -131,6 +133,7 @@
                 android:text="@string/launch_widget_visible" />
 
             <ImageView
+				android:padding="10dp"
                 android:id="@+id/launch_widget_visible_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -165,6 +168,7 @@
                 android:text="@string/launch_dialer_use" />
 
             <ImageView
+				android:padding="10dp"
                 android:id="@+id/launch_dialer_use_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
