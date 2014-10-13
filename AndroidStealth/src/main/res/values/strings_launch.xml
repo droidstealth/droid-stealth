@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="launch_toast_icon_on">Icon is now hidden!</string>
-    <string name="launch_toast_icon_off">Icon is now shown!</string>
-    <string name="launch_toast_icon_fail">First select an alternate launch method!</string>
-    <string name="launch_toast_widget_on">Widget is now available!</string>
-    <string name="launch_toast_widget_off">Widget is disabled!</string>
-    <string name="launch_toast_widget_visible_on">Widgets are now temporarily shown!</string>
-    <string name="launch_toast_widget_visible_off">Widgets are now hidden!</string>
-    <string name="launch_toast_dialer_on">Dialer launch enabled!</string>
-    <string name="launch_toast_dialer_off">Dialer launch method disabled!</string>
-    <string name="launch_toast_launch_save">Launch code saved!</string>
+	<string name="launch_toast_icon_on">Icon is now hidden!</string>
+	<string name="launch_toast_icon_off">Icon is now shown!</string>
+	<string name="launch_toast_icon_fail">First select an alternate launch method!</string>
+	<string name="launch_toast_widget_on">Widget is now available!</string>
+	<string name="launch_toast_widget_off">Widget is disabled!</string>
+	<string name="launch_toast_widget_visible_on">Widgets are now temporarily shown!</string>
+	<string name="launch_toast_widget_visible_off">Widgets are now hidden!</string>
+	<string name="launch_toast_dialer_on">Dialer launch enabled!</string>
+	<string name="launch_toast_dialer_off">Dialer launch method disabled!</string>
+	<string name="launch_toast_launch_save">Launch code saved!</string>
 
-    <string name="launch_title">@string/drawer_launch</string>
+	<string name="launch_title">@string/drawer_launch</string>
 	<string name="launch_description">
-        Define how you want to launch and hide this application.
+		Define how you want to launch and hide this application.
 	</string>
-    <string name="launch_dialer">Dialer Launch</string>
+	<string name="launch_dialer">Dialer Launch</string>
 	<string name="launch_dialer_description">
-        If the check box is enabled, you can \'call\' the specified dialer launch code to launch
-        the application. This will make the pin dialog pop up, allowing you to enter your vault.
-        \n\nIf entered correctly, the code will not be recorded in your call history.
-        WARNING: If you do enter an incorrect code, the call will appear in your call history. You
-        must delete these records manually.
+		If the check box is enabled, you can \'call\' the specified dialer launch code to launch
+		the application. This will make the pin dialog pop up, allowing you to enter your vault.
+		\n\nIf entered correctly, the code will not be recorded in your call history.
+		WARNING: If you do enter an incorrect code, the call will appear in your call history. You
+		must delete these records manually.
 	</string>
-    <string name="launch_dialer_use">Use dialer launch</string>
-    <string name="launch_dialer_code">Dialer launch code:</string>
-    <string name="launch_dialer_hint">Launch code</string>
-    <string name="launch_widget">Widget Launch</string>
+	<string name="launch_dialer_use">Use dialer launch</string>
+	<string name="launch_dialer_code">Dialer launch code:</string>
+	<string name="launch_dialer_hint">Launch code</string>
+	<string name="launch_widget">Widget Launch</string>
 	<string name="launch_widget_description">
-        Use a transparent widget on your home screen to activate the app. Tap the widget four times,
-        and it will trigger the pin dialog pop-up.
+		Use a transparent widget on your home screen to activate the app. Tap the widget four times,
+		and it will trigger the pin dialog pop-up.
 	</string>
-    <string name="launch_widget_use">Use widget for launch</string>
+	<string name="launch_widget_use">Use widget for launch</string>
 	<string name="launch_widget_visible_description">
-        Forgot where you put the widget? Make them temporarily visible. The widget(s) become transparent
-        again when you use one of them to open this application.
+		Forgot where you put the widget? Make them temporarily visible. The widget(s) become transparent
+		again when you use one of them to open this application.
 	</string>
-    <string name="launch_widget_visible">Temporarily disable transparency</string>
-    <string name="launch_icon">Icon Visibility</string>
+	<string name="launch_widget_visible">Temporarily disable transparency</string>
+	<string name="launch_icon">Icon Visibility</string>
 	<string name="launch_icon_description">
-        This removes the application icon from the app drawer. This way, when someone scrolls through
-        your application list, they will not be able to find this app.
-        \n\nWARNING: The application will still appear under \'Installed applications\' under \'Settings\'.
-        To solve this, consider morphing the application (see the morphing tab in the application menu).
+		This removes the application icon from the app drawer. This way, when someone scrolls through
+		your application list, they will not be able to find this app.
+		\n\nWARNING: The application will still appear under \'Installed applications\' under \'Settings\'.
+		To solve this, consider morphing the application (see the morphing tab in the application menu).
 		Morphing is only be enabled if at least one of the below launch methods (widget or dialer) is enabled.
 	</string>
-    <string name="launch_icon_disable">Hide application icon</string>
-    <string name="launch_disclaimer">WARNING</string>
+	<string name="launch_icon_disable">Hide application icon</string>
+	<string name="launch_disclaimer">WARNING</string>
 	<string name="launch_disclaimer_description">
-        Note that the above methods provide security against random search through your phone. It is
-        not secure to anyone who has worked with the application.
-        Those who know of this application will use the following methods to attempt to open the
-        application:
+		Note that the above methods provide security against random search through your phone. It is
+		not secure to anyone who has worked with the application.
+		Those who know of this application will use the following methods to attempt to open the
+		application:
 		\n\n(1) The transparent widget can be found by tapping seemingly \'empty\' places on the home screen.
-        \n\n(2) When the incorrect dialer code is used, the incorrect entry is saved in the call log.
-        Delete these entries from the call log manually!
+		\n\n(2) When an incorrect dialer code is used, the incorrect entry is saved in the call log.
+		Delete these entries from the call log manually!
 		\n\n(3) The application is always shown in the \'installed applications\' overview under
-        \'Settings > Applications (or Apps)\'.
-        Solve this by morphing the application to mimic a less suspicions app.
+		\'Settings > Applications (or Apps)\'.
+		Solve this by morphing the application to mimic a less suspicions app.
 		\n\nIn case of forgotten login method/code:
-        If you forget your pin code, it is impossible to open the app.
-        If you have enabled the widget launch mode, you can add a new widget if you forget the
-        previous location.
-        If you only have the dialer launch mode enabled, and forget the dialer code, it is impossible
-        to open the application.
+		If you forget your pin code, it is impossible to open the app.
+		If you have enabled the widget launch mode, you can add a new widget if you forget the
+		previous location.
+		If you only have the dialer launch mode enabled, and forget the dialer code, it is impossible
+		to open the application.
 	</string>
 </resources>

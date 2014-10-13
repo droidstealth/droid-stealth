@@ -37,10 +37,10 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 	private CheckBox mHideIcon;
 	private ImageView mHideIconHelp;
 	private boolean mIgnoreToasts;
-    private ImageView mWidgetVisibleHelp;
-    private ImageView mDialerHelp;
+	private ImageView mWidgetVisibleHelp;
+	private ImageView mDialerHelp;
 
-    public LaunchSettingsFragment() {
+	public LaunchSettingsFragment() {
 		// Required empty public constructor
 	}
 
@@ -62,18 +62,18 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 
 		mLaunchCode = (EditText) root.findViewById(R.id.launch_dialer_code);
 		mDialer = (CheckBox) root.findViewById(R.id.launch_dialer_use);
-        mDialerHelp = (ImageView) root.findViewById(R.id.launch_dialer_use_help);
+		mDialerHelp = (ImageView) root.findViewById(R.id.launch_dialer_use_help);
 		mWidget = (CheckBox) root.findViewById(R.id.launch_widget_use);
 		mWidgetHelp = (ImageView) root.findViewById(R.id.launch_widget_use_help);
 		mWidgetVisible = (CheckBox) root.findViewById(R.id.launch_widget_visible);
-        mWidgetVisibleHelp = (ImageView) root.findViewById(R.id.launch_widget_visible_help);
+		mWidgetVisibleHelp = (ImageView) root.findViewById(R.id.launch_widget_visible_help);
 		mHideIcon = (CheckBox) root.findViewById(R.id.launch_icon_disable);
 		mHideIconHelp = (ImageView) root.findViewById(R.id.launch_icon_disable_help);
 
 		mHideIconHelp.setOnClickListener(this);
 		mWidgetHelp.setOnClickListener(this);
-        mWidgetVisibleHelp.setOnClickListener(this);
-        mDialerHelp.setOnClickListener(this);
+		mWidgetVisibleHelp.setOnClickListener(this);
+		mDialerHelp.setOnClickListener(this);
 
 		mDialer.setOnCheckedChangeListener(this);
 		mWidget.setOnCheckedChangeListener(this);
@@ -129,7 +129,8 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_dialer_on);
-					} else {
+					}
+					else {
 						Utils.toast(R.string.launch_toast_dialer_off);
 					}
 				}
@@ -139,7 +140,8 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_widget_on);
-					} else {
+					}
+					else {
 						Utils.toast(R.string.launch_toast_widget_off);
 					}
 				}
@@ -150,7 +152,8 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 				if (!mIgnoreToasts) {
 					if (b) {
 						Utils.toast(R.string.launch_toast_widget_visible_on);
-					} else {
+					}
+					else {
 						Utils.toast(R.string.launch_toast_widget_visible_off);
 					}
 				}
@@ -161,10 +164,12 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 					if (result != b) {
 						mHideIcon.setChecked(result);
 						Utils.toast(R.string.launch_toast_icon_fail);
-					} else {
+					}
+					else {
 						if (b) {
 							Utils.toast(R.string.launch_toast_icon_on);
-						} else {
+						}
+						else {
 							Utils.toast(R.string.launch_toast_icon_off);
 						}
 					}
@@ -176,44 +181,44 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 
 	@Override
 	public void onClick(View view) {
-		switch (view.getId()){
-            case R.id.launch_widget_use_help:
-                createHelpDialog(R.string.launch_widget_use, R.string.launch_widget_description);
-                break;
-            case R.id.launch_dialer_use_help:
-                createHelpDialog(R.string.launch_dialer_use, R.string.launch_dialer_description);
-                break;
-            case R.id.launch_icon_disable_help:
-                createHelpDialog(R.string.launch_icon_disable, R.string.launch_icon_description);
-                break;
-            case R.id.launch_widget_visible_help:
-                createHelpDialog(R.string.launch_widget_visible, R.string.launch_widget_visible_description);
-                break;
+		switch (view.getId()) {
+			case R.id.launch_widget_use_help:
+				createHelpDialog(R.string.launch_widget_use, R.string.launch_widget_description);
+				break;
+			case R.id.launch_dialer_use_help:
+				createHelpDialog(R.string.launch_dialer_use, R.string.launch_dialer_description);
+				break;
+			case R.id.launch_icon_disable_help:
+				createHelpDialog(R.string.launch_icon_disable, R.string.launch_icon_description);
+				break;
+			case R.id.launch_widget_visible_help:
+				createHelpDialog(R.string.launch_widget_visible, R.string.launch_widget_visible_description);
+				break;
 		}
 	}
 
-    private void createHelpDialog(int titleResourceID, int bodyResourceID) {
-        DialogOptions dialogOptions = new DialogOptions()
-                .setTitle(titleResourceID)
-                .setNegativeButtonEnabled(false)
-                .setPositiveButtonEnabled(false)
-                .setDescription(bodyResourceID);
+	private void createHelpDialog(int titleResourceID, int bodyResourceID) {
+		DialogOptions dialogOptions = new DialogOptions()
+				.setTitle(titleResourceID)
+				.setNegativeButtonEnabled(false)
+				.setPositiveButtonEnabled(false)
+				.setDescription(bodyResourceID);
 
-        DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
-            @Override
-            public void onPositive() {
-                // Do nothing
-            }
+		DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
+			@Override
+			public void onPositive() {
+				// Do nothing
+			}
 
-            @Override
-            public void onNegative() {
-                // Do nothing
-            }
+			@Override
+			public void onNegative() {
+				// Do nothing
+			}
 
-            @Override
-            public void onCancel() {
-                // Do nothing
-            }
-        });
-    }
+			@Override
+			public void onCancel() {
+				// Do nothing
+			}
+		});
+	}
 }
