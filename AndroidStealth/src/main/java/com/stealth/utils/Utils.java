@@ -547,7 +547,7 @@ public class Utils {
 		int orientation = 0;
 		if (cursor == null || cursor.getCount() != 1) {
 			Utils.d("FUCK");
-			return null;
+			return bm;
 		}
 		cursor.moveToFirst();
 		orientation = cursor.getInt(0);

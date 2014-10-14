@@ -1,4 +1,4 @@
-package com.stealth.morphing;
+package com.alexkolpa.appmorphing;
 
 /*  JarWriter.java
  *

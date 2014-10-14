@@ -26,13 +26,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputFilter;
 import android.text.LoginFilter;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.alexkolpa.appmorphing.AppMorph;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.HomeActivity;
 import com.stealth.android.R;
@@ -52,6 +53,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 	private static final int REQUEST_CHOOSER = 65456;
 	private static final int APP_ICON_ID = R.drawable.ic_app_home;
 
+    private static final int ICON_SIZE_DP = 48;
+
 	private List<ApplicationInfo> mPackages;
 	private ImageView mIcon;
 	private EditText mName;
@@ -69,7 +72,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		public void onClick(View view) {
 			ApplicationInfo ai = (ApplicationInfo) view.getTag();
 
-			int iconSize = Utils.px(48);
+			int iconSize = Utils.px(ICON_SIZE_DP);
 
 			Bitmap bitmap = convertToBitmap(mPackMan.getApplicationIcon(ai), iconSize, iconSize);
 
@@ -84,7 +87,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 			mCurrentIconPath = Uri.fromFile(cache);
 			mCurrentLabel = mPackMan.getApplicationLabel(ai).toString();
 
-			mIcon.setImageDrawable(mPackMan.getApplicationIcon(ai));
+			mIcon.setImageBitmap(bitmap);
 			mName.setText(mCurrentLabel);
 			Utils.fadein(mIcon, 75);
 			Utils.fadein(mName, 100);
@@ -139,12 +142,8 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 
 		mPackMan = getActivity().getPackageManager();
 
-		String iconName = getAppDrawerIconName();
-		Utils.d("icon name: " + iconName);
-
 		mAppMorph = new AppMorph(getActivity());
 		mAppMorph.setMorphProgressListener(this);
-		mAppMorph.setIconResName(iconName);
 
 		mCurrentApp = new File(getActivity().getPackageResourcePath());
 
@@ -153,17 +152,6 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
 			mNfcAdapter.setBeamPushUrisCallback(new FileUriCallback(), getActivity());
 		}
-	}
-
-	/**
-	 * Finds the name of the icon resource as it should be present in the folder structure.
-	 *
-	 * @return
-	 */
-	private String getAppDrawerIconName() {
-		String fullName = getActivity().getResources().getResourceName(APP_ICON_ID);
-		String iconName = fullName.substring(fullName.lastIndexOf('/') + 1);
-		return iconName;
 	}
 
 	@Override
@@ -255,7 +243,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		if (getActivity() == null) {
 			return;
 		}
-		if (getActivity().getPackageManager() == null) {
+		if (mPackMan == null) {
 			return;
 		}
 
