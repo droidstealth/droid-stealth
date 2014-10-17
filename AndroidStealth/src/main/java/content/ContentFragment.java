@@ -2,11 +2,9 @@ package content;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +22,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +48,7 @@ import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.files.UnlockObserver;
 import com.stealth.font.FontManager;
+import com.stealth.settings.GeneralSettingsManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
@@ -65,6 +65,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CONTENT_REQUEST = 1888;
 	private static final int REQUEST_DIRECTORY = 0547;
+	private static final long DOUBLE_TAP_INTERVAL = 500;
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
 	private ContentShareMultiModeListener mMultiModeListener;
@@ -98,6 +99,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 * Remembers which item is currently being selected in single selection mode
 	 */
 	private int mSingleSelected;
+	private long mTimeSelected;
 	private IOnResult<Boolean> mUpdateList = new IOnResult<Boolean>() {
 		@Override
 		public void onResult(Boolean result) {
@@ -372,8 +374,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		// TODO also support folder. Currently only looking at files, until #79 is made
 		ArrayList<IndexedItem> selectedItems = getSelectedItems();
 
-		Utils.d("!! selected items " + selectedItems.size());
-
 		boolean locked = false;
 		boolean unlocked = false;
 
@@ -455,6 +455,28 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	}
 
 	/**
+	 * Called when user double tapped on item
+	 * @return whether double tap was handled
+	 */
+	private boolean onDoubleTap(IndexedItem item) {
+		if (item instanceof IndexedFile) {
+			IndexedFile file = (IndexedFile)item;
+			if (GeneralSettingsManager.isDoubleTapLock() && file.isUnlocked()) {
+				// TODO do action open or keep like below:
+				actionLock(getSelectedItems(), mMode);
+				mTimeSelected = 0;
+				return true;
+			}
+			else if (GeneralSettingsManager.isDoubleTapUnlock() && file.isLocked()) {
+				actionUnlock(getSelectedItems(), mMode);
+				mTimeSelected = 0;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Because a Checkable is used, it needs to be unchecked when the view is not in ActionMode. If the view is in
 	 * ActionMode, check whether any items are still checked after the click.
 	 *
@@ -465,14 +487,24 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+		long now = System.currentTimeMillis();
+		boolean doubleTapped = now - mTimeSelected < DOUBLE_TAP_INTERVAL;
+		IndexedItem item = mAdapter.getItem(position);
+
 		if (isSelecting()) {
 			if (isSingleSelecting()) {
 				if (mSingleSelected == position && mGridView.isItemChecked(position)) {
-					// the item was already previously set to true, but now we pressed it again, so
-					// let's disable it. Selection mode will stop afterwards, because in theory
-					// nothing is selected anymore.
-					mGridView.setItemChecked(position, false);
-					showSingleSelectionFeedback();
+					boolean keepSelected = false;
+					if (doubleTapped) {
+						keepSelected = onDoubleTap(item);
+					}
+					if (!keepSelected) {
+						// the item was already previously set to true, but now we pressed it again, so
+						// let's disable it. Selection mode will stop afterwards, because in theory
+						// nothing is selected anymore.
+						mGridView.setItemChecked(position, false);
+						showSingleSelectionFeedback();
+					}
 				}
 			}
 			else {
@@ -483,9 +515,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else {
 			startSingleSelection(position);
+			if (doubleTapped) {
+				onDoubleTap(item);
+			}
 		}
+
 		handleActionButtons();
 		handleSelection();
+
+		mTimeSelected = now;
 	}
 
 	/**
