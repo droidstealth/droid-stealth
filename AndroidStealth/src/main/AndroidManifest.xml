@@ -4,19 +4,15 @@
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.NFC" />
-	<uses-permission android:name="android.permission.CALL_PHONE" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 
 	<application
 		android:allowBackup="true"
-		android:icon="@drawable/ic_drawer_home"
-		android:label="@string/morphable_app_name"
+		android:icon="@drawable/ic_app_home"
+		android:label="Safe 'n Sound"
 		android:theme="@style/AppTheme" >
 		<activity
 			android:name="com.stealth.android.HomeActivity"
@@ -80,7 +76,6 @@
 		<activity
 			android:name="pin.PinActivity"
 			android:excludeFromRecents="true"
-			android:label="@string/morphable_app_name"
 			android:theme="@style/AppTheme.Dialog" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

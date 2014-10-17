@@ -16,6 +16,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -546,7 +547,7 @@ public class Utils {
 		int orientation = 0;
 		if (cursor == null || cursor.getCount() != 1) {
 			Utils.d("FUCK");
-			return null;
+			return bm;
 		}
 		cursor.moveToFirst();
 		orientation = cursor.getInt(0);
