@@ -463,12 +463,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 			IndexedFile file = (IndexedFile)item;
 			if (GeneralSettingsManager.isDoubleTapLock() && file.isUnlocked()) {
 				// TODO do action open or keep like below:
-				actionLock(getSelectedItems(), mMode);
+				mActionManager.actionLock(getSelectedItems(), mUpdateList);
 				mTimeSelected = 0;
 				return true;
 			}
 			else if (GeneralSettingsManager.isDoubleTapUnlock() && file.isLocked()) {
-				actionUnlock(getSelectedItems(), mMode);
+				mActionManager.actionUnlock(getSelectedItems(), mUpdateList);
 				mTimeSelected = 0;
 				return true;
 			}
