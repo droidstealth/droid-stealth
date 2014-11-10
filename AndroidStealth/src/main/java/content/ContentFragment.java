@@ -21,8 +21,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.SparseBooleanArray;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,7 +59,8 @@ import sharing.SharingUtils;
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
-		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
+		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener,
+		ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CONTENT_REQUEST = 1888;
 	private static final int REQUEST_DIRECTORY = 0547;
@@ -456,11 +455,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Called when user double tapped on item
+	 *
 	 * @return whether double tap was handled
 	 */
 	private boolean onDoubleTap(IndexedItem item) {
 		if (item instanceof IndexedFile) {
-			IndexedFile file = (IndexedFile)item;
+			IndexedFile file = (IndexedFile) item;
 			if (GeneralSettingsManager.isDoubleTapLock() && file.isUnlocked()) {
 				// TODO do action open or keep like below:
 				mActionManager.actionLock(getSelectedItems(), mUpdateList);
@@ -546,7 +546,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else if (isSingleSelecting()) {
 			mGridView.setItemChecked(mSingleSelected, true);
-			startMultiSelection(new int[]{position, mSingleSelected});
+			startMultiSelection(new int[] { position, mSingleSelected });
 		}
 		else {
 			startMultiSelection(position);
@@ -762,7 +762,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 
 		/**
-		 * @param contentMode  The current mode that is shown
+		 * @param contentMode The current mode that is shown
 		 */
 		public void setContentMode(ContentActionMode contentMode) {
 			mContentMode = contentMode;

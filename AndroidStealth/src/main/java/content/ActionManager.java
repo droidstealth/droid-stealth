@@ -1,14 +1,6 @@
 package content;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.view.ActionMode;
@@ -23,6 +15,13 @@ import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
 import encryption.IContentManager;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 /**
  * Created by Alex on 13-4-2014.
@@ -335,9 +334,13 @@ public class ActionManager {
 		FileOutputStream outStream = new FileOutputStream(dst);
 		FileChannel inChannel = inStream.getChannel();
 		FileChannel outChannel = outStream.getChannel();
-		inChannel.transferTo(0, inChannel.size(), outChannel);
-		inStream.close();
-		outStream.close();
+		try {
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+		}
+		finally {
+			inStream.close();
+			outStream.close();
+		}
 	}
 
 	/**
@@ -368,12 +371,8 @@ public class ActionManager {
 		return new IOnResult<Boolean>() {
 			@Override
 			public void onResult(Boolean result) {
-				if (result) {
-					//finishActionMode();
-
-					if (toastResID != 0) {
-						Utils.toast(toastResID);
-					}
+				if (result && toastResID != 0) {
+					Utils.toast(toastResID);
 				}
 
 				if (listener != null) {
