@@ -1,173 +1,243 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-	<LinearLayout
+			xmlns:tools="http://schemas.android.com/tools"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+	<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			tools:context="com.stealth.morphing.MorphingFragment"
 			android:background="@color/background"
 			android:orientation="vertical"
-			android:paddingTop="@dimen/default_large_padding"
+			android:paddingBottom="@dimen/default_huge_padding"
 			android:paddingLeft="@dimen/default_large_padding"
 			android:paddingRight="@dimen/default_large_padding"
-			android:paddingBottom="@dimen/default_huge_padding">
+			android:paddingTop="@dimen/default_large_padding"
+			tools:context="com.stealth.morphing.MorphingFragment">
 
-		<LinearLayout
-				android:orientation="horizontal"
+		<RelativeLayout
+				android:id="@+id/launch_settings_title"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/default_medium_padding">
+				android:layout_marginBottom="@dimen/default_medium_padding"
+				android:orientation="horizontal">
+
 			<ImageView
+					android:id="@+id/launch_icon"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:src="@drawable/ic_drawer_launch"
-					android:layout_marginRight="@dimen/default_medium_padding"/>
+					android:layout_marginRight="@dimen/default_medium_padding"
+					android:layout_marginTop="@dimen/default_large_padding"
+					android:src="@drawable/ic_drawer_launch"/>
+
 			<TextView
 					android:id="@+id/launch_title_1"
+					style="@style/Title"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="@string/launch_title"
 					android:layout_gravity="center_vertical"
-					style="@style/Title"/>
-		</LinearLayout>
+					android:layout_toRightOf="@id/launch_icon"
+					android:text="@string/launch_title"/>
+		</RelativeLayout>
+
 		<TextView
+				android:id="@+id/launch_settings_general_explanation"
+				style="@style/RegularText"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_description"
+				android:layout_below="@id/launch_settings_title"
 				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
+				android:layout_marginBottom="@dimen/default_large_padding"
+				android:text="@string/launch_description"/>
 
 		<!-- APPLICATION ICON -->
 
 		<TextView
-				android:id="@+id/launch_title_2"
+				android:id="@+id/launch_title_icon"
+				style="@style/Title"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/launch_icon"
+				android:layout_below="@id/launch_settings_general_explanation"
 				android:layout_gravity="center_vertical"
 				android:layout_marginBottom="@dimen/default_small_padding"
-				style="@style/Title"/>
-		<TextView
-				android:layout_width="wrap_content"
+				android:text="@string/launch_icon"/>
+
+		<RelativeLayout
+				android:id="@+id/launch_icon_checkbox"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_icon_description"
-				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<CheckBox
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/launch_icon_disable"
-				android:id="@+id/launch_icon_disable"
-				android:layout_gravity="start"
-				style="@style/Checkbox"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
+				android:layout_below="@id/launch_title_icon"
+				android:orientation="horizontal">
+
+			<CheckBox
+					android:id="@+id/launch_icon_disable"
+					style="@style/Checkbox"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_gravity="start"
+					android:text="@string/launch_icon_disable"/>
+
+			<ImageView
+					android:id="@+id/launch_icon_disable_help"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:background="@drawable/help_button_selector"
+					android:padding="10dp"
+					android:src="@android:drawable/ic_menu_help"/>
+
+		</RelativeLayout>
 
 		<!-- WIDGET -->
 
 		<TextView
-				android:id="@+id/launch_title_3"
+				android:id="@+id/launch_title_widget"
+				style="@style/Title"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/launch_widget"
+				android:layout_below="@id/launch_icon_checkbox"
 				android:layout_gravity="center_vertical"
 				android:layout_marginBottom="@dimen/default_small_padding"
-				style="@style/Title"/>
-		<TextView
-				android:layout_width="wrap_content"
+				android:text="@string/launch_widget"/>
+
+		<RelativeLayout
+				android:id="@+id/launch_widget_checkbox"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_widget_description"
-				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<CheckBox
-				android:layout_width="wrap_content"
+				android:layout_below="@id/launch_title_widget">
+
+			<CheckBox
+					android:id="@+id/launch_widget_use"
+					style="@style/Checkbox"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_marginBottom="@dimen/default_large_padding"
+					android:text="@string/launch_widget_use"/>
+
+			<ImageView
+					android:id="@+id/launch_widget_use_help"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:background="@drawable/help_button_selector"
+					android:contentDescription="@string/info"
+					android:padding="10dp"
+					android:src="@android:drawable/ic_menu_help"/>
+		</RelativeLayout>
+
+		<RelativeLayout
+				android:id="@+id/launch_widget_disable_transperancy_checkbox"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/launch_widget_use"
-				android:id="@+id/launch_widget_use"
-				android:layout_gravity="start"
-				style="@style/Checkbox"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_widget_visible_description"
-				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<CheckBox
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/launch_widget_visible"
-				android:id="@+id/launch_widget_visible"
-				android:layout_gravity="start"
-				style="@style/Checkbox"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
+				android:layout_below="@id/launch_widget_checkbox">
+
+			<CheckBox
+					android:id="@+id/launch_widget_visible"
+					style="@style/Checkbox"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_marginBottom="@dimen/default_huge_padding"
+					android:text="@string/launch_widget_visible"/>
+
+			<ImageView
+					android:id="@+id/launch_widget_visible_help"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:background="@drawable/help_button_selector"
+					android:padding="10dp"
+					android:src="@android:drawable/ic_menu_help"/>
+		</RelativeLayout>
+
 
 		<!-- DIALER -->
 
 		<TextView
-				android:id="@+id/launch_title_4"
+				android:id="@+id/launch_title_dialer"
+				style="@style/Title"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/launch_dialer"
+				android:layout_below="@id/launch_widget_disable_transperancy_checkbox"
 				android:layout_gravity="center_vertical"
 				android:layout_marginBottom="@dimen/default_small_padding"
-				style="@style/Title"/>
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_dialer_description"
-				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<CheckBox
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/launch_dialer_use"
-				android:id="@+id/launch_dialer_use"
-				android:layout_gravity="start"
-				style="@style/Checkbox"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				style="@style/SubTitle"
-				android:text="@string/launch_dialer_code"
-				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_large_padding"/>
-		<EditText
+				android:text="@string/launch_dialer"/>
+
+		<RelativeLayout
+				android:id="@+id/launch_dialer_checkbox"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_below="@id/launch_title_dialer">
+
+			<CheckBox
+					android:id="@+id/launch_dialer_use"
+					style="@style/Checkbox"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="@dimen/default_large_padding"
+					android:text="@string/launch_dialer_use"/>
+
+			<ImageView
+					android:id="@+id/launch_dialer_use_help"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentRight="true"
+					android:background="@drawable/help_button_selector"
+					android:padding="10dp"
+					android:src="@android:drawable/ic_menu_help"/>
+
+		</RelativeLayout>
+
+		<TextView
+				android:id="@+id/launch_dialer_code_title"
+				style="@style/SubTitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/launch_dialer_checkbox"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"
+				android:text="@string/launch_dialer_code"/>
+
+		<EditText
 				android:id="@+id/launch_dialer_code"
-				android:background="@drawable/frame_input_states"
-				android:layout_gravity="center_vertical"
-				android:hint="@string/launch_dialer_hint"
-				android:text=""
-				android:maxLines="1"
-				android:maxLength="10"
-				android:inputType="phone"
 				style="@style/EditText"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/launch_dialer_code_title"
+				android:layout_gravity="center_vertical"
+				android:background="@drawable/frame_input_states"
+				android:hint="@string/launch_dialer_hint"
+				android:inputType="phone"
+				android:maxLength="10"
+				android:maxLines="1"
+				android:text=""/>
 
 		<!-- WARNING -->
 
 		<TextView
-				android:id="@+id/launch_title_5"
+				android:id="@+id/launch_title_warning"
+				style="@style/Title"
+				android:layout_marginTop="@dimen/default_huge_padding"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/launch_disclaimer"
+				android:layout_below="@id/launch_dialer_code"
 				android:layout_gravity="center_vertical"
 				android:layout_marginBottom="@dimen/default_small_padding"
-				style="@style/Title"/>
+				android:text="@string/launch_disclaimer"/>
+
 		<TextView
+				style="@style/RegularText"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				style="@style/RegularText"
-				android:text="@string/launch_disclaimer_description"
+				android:layout_below="@id/launch_title_warning"
 				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
-	</LinearLayout>
+				android:text="@string/launch_disclaimer_description"/>
+	</RelativeLayout>
 </ScrollView>
