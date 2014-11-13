@@ -48,8 +48,8 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/default_large_padding">
 			<ImageView
-					android:layout_width="48dp"
-					android:layout_height="48dp"
+					android:layout_width="@dimen/icon_size"
+					android:layout_height="@dimen/icon_size"
 					android:id="@+id/morph_current_icon"
 					android:src="@drawable/ic_app_home"
 					android:layout_marginRight="@dimen/default_regular_padding"/>
@@ -67,7 +67,7 @@
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-		              android:layout_marginBottom="1dp"
+		              android:layout_marginBottom="@dimen/divider_width"
 		              android:clickable="true"
 		              android:id="@+id/morph_share">
 
@@ -103,7 +103,7 @@
 		              android:id="@+id/morph_reset">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/processing"  />
 			<ImageView
@@ -121,8 +121,8 @@
 					android:text="@string/morph_reset"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 		</LinearLayout>
 
 		<TextView
@@ -149,8 +149,8 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/default_huge_padding">
 			<ImageView
-					android:layout_width="48dp"
-					android:layout_height="48dp"
+					android:layout_width="@dimen/icon_size"
+					android:layout_height="@dimen/icon_size"
 					android:id="@+id/morph_edit_icon"
 					android:src="@drawable/ic_app_home"
 					android:layout_marginRight="@dimen/default_medium_padding"/>
@@ -168,12 +168,12 @@
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-					  android:layout_marginBottom="1dp"
+					  android:layout_marginBottom="@dimen/divider_width"
 					  android:clickable="true"
 					  android:id="@+id/morph_pick_app">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/positive" />
 			<ImageView
@@ -191,20 +191,20 @@
 					android:text="@string/morph_pick_app"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal"
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-		              android:layout_marginBottom="1dp"
+		              android:layout_marginBottom="@dimen/divider_width"
 		              android:clickable="true"
 		              android:id="@+id/morph_pick_icon">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/processing"  />
 			<ImageView
@@ -222,20 +222,20 @@
 					android:text="@string/morph_pick_icon"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal"
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-		              android:layout_marginBottom="1dp"
+		              android:layout_marginBottom="@dimen/divider_width"
 		              android:clickable="true"
 		              android:id="@+id/morph_execute">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/special"  />
 			<ImageView
@@ -253,8 +253,8 @@
 					android:text="@string/morph_action"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
 

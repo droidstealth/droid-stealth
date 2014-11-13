@@ -51,9 +51,8 @@ import sharing.SharingUtils;
  */
 public class MorphingFragment extends Fragment implements View.OnClickListener, AppMorph.MorphProgressListener {
 	private static final int REQUEST_CHOOSER = 65456;
-	private static final int APP_ICON_ID = R.drawable.ic_app_home;
 
-    private static final int ICON_SIZE_DP = 48;
+	private static final int ICON_SIZE_DP = 48;
 
 	private List<ApplicationInfo> mPackages;
 	private ImageView mIcon;
@@ -376,9 +375,9 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 	/**
 	 * Helper function to determine the minimum required sample size for a bitmap based on the passed options
 	 *
-	 * @param options   The options from which width and height of the original image are extracted
+	 * @param options The options from which width and height of the original image are extracted
 	 * @param reqHeight height in pixel the resulting image should be
-	 * @param reqWidth  width in pixels the resulting image should be
+	 * @param reqWidth width in pixels the resulting image should be
 	 * @return the sample size required to get an image at least the size of reqHeight and reqWidth
 	 */
 	private static int calculateSampleSize(BitmapFactory.Options options, int reqHeight, int reqWidth) {
@@ -476,18 +475,12 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 						ImageView icon = (ImageView) currentView.findViewById(R.id.morph_current_icon);
 						setImageOnView(mCurrentIconPath, icon);
 					}
-
-					//mCurrentLabel = null; //So this is still here because it's probable here for a reason But I have no clue what.
-					//mCurrentIconPath = null;
-				}
-				else {
-					//TODO indicate failure
 				}
 			}
 		});
 	}
 
-	private class MorphTask extends AsyncTask<Void, Void, File> {
+	private class MorphTask extends AsyncTask<Void, Void, Void> {
 
 		private String mLabel;
 		private Uri mIcon;
@@ -498,7 +491,7 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		}
 
 		@Override
-		protected File doInBackground(Void... voids) {
+		protected Void doInBackground(Void... voids) {
 			mAppMorph.morphApp(mLabel, mIcon);
 			return null;
 		}
@@ -511,10 +504,6 @@ public class MorphingFragment extends Fragment implements View.OnClickListener, 
 		@Override
 		public Uri[] createBeamUris(NfcEvent nfcEvent) {
 			return new Uri[] { Uri.fromFile(mCurrentApp) };
-		}
-
-		private Uri getApkUri() {
-			return Uri.fromFile(SharingUtils.getApk(getActivity()));
 		}
 	}
 }

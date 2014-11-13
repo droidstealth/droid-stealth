@@ -27,7 +27,6 @@ import pin.PinManager;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-	private static final int ICON_CHOOSER = 2625;
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,7 +39,6 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 	private CharSequence mTitle;
 	private int mActiveNavigationOption = 0;
 	private boolean mInterfaceConstructed = false;
-
 
 	private boolean mRequestedActivity;
 
