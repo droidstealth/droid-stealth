@@ -22,5 +22,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.1'
     compile project(':libraries:FileChooser')
     compile project(':libraries:droidmorphing-lib')
+    compile project(':libraries:DirectoryChooser')
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }
