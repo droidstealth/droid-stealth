@@ -278,15 +278,17 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				Utils.d("[" + cryptoMode + "] Starting en/decryption task.");
 				switch (cryptoMode) {
 					case ENCRYPT:
+						if(file.isModified() || !locked.exists()){
+							encrypter.encrypt(locked, unlocked, name);
+						}
+
 						file.removeModificationChecker();
-						locked.createNewFile();
-						encrypter.encrypt(locked, unlocked, name);
 						unlocked.delete();
+
 						break;
 					case DECRYPT:
 						unlocked.createNewFile();
 						encrypter.decrypt(locked, unlocked, name);
-						locked.delete();
 						file.createModificationChecker();
 						break;
 				}
@@ -307,8 +309,6 @@ public class EncryptionService extends Service implements FileIndex.OnFileIndexC
 				if (e instanceof NativeGCMCipherException) {
 					if (cryptoMode == ConcealCrypto.CryptoMode.ENCRYPT) {
 						unlocked.delete();
-					} else if (cryptoMode == ConcealCrypto.CryptoMode.DECRYPT) {
-						locked.delete();
 					}
 				}
 			}

@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,10 +39,12 @@ import com.stealth.android.RecorderActivity;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
 import com.stealth.dialog.IDialogResponse;
+import com.stealth.files.DirectoryManager;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
+import com.stealth.files.UnlockObserver;
 import com.stealth.font.FontManager;
 import com.stealth.settings.GeneralSettingsManager;
 import com.stealth.utils.IOnResult;
@@ -51,35 +52,42 @@ import com.stealth.utils.Utils;
 import encryption.EncryptionManager;
 import encryption.EncryptionService;
 import encryption.IContentManager;
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import sharing.SharingUtils;
 
 /**
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.
  */
 public class ContentFragment extends Fragment implements AdapterView.OnItemClickListener,
-		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener, ContentAdapter.IAdapterChangedListener {
+		AdapterView.OnItemLongClickListener, EncryptionService.IUpdateListener,
+		ContentAdapter.IAdapterChangedListener {
 	private static final int REQUEST_CHOOSER = 1234;
 	private static final int CONTENT_REQUEST = 1888;
+	private static final int REQUEST_DIRECTORY = 0547;
 	private static final long DOUBLE_TAP_INTERVAL = 500;
 	private GridView mGridView;
 	private android.support.v7.view.ActionMode mMode;
 	private ContentShareMultiModeListener mMultiModeListener;
 	private IContentManager mContentManager;
 	private ContentAdapter mAdapter;
-	private EncryptionManager mEncryptionManager;
 	private EncryptionService mEncryptionService;
+	private ActionManager mActionManager;
+	private UnlockObserver mObserver;
+
+	private File mTempImageFile;
+
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 			mEncryptionService = ((EncryptionService.ServiceBinder) iBinder).getService();
-			mEncryptionManager = EncryptionManager.create(mEncryptionService);
+			mActionManager.setEncryptionManager(EncryptionManager.create(mEncryptionService));
 			Utils.d("Encryption manager is connected!");
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName componentName) {
-			mEncryptionManager = null;
 			mEncryptionService = null;
+			mActionManager.setEncryptionManager(null);
 			Utils.d("Encryption manager is disconnected..?");
 		}
 	};
@@ -225,10 +233,15 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		mContentManager = ContentManagerFactory.getInstance(
 				getActivity(),
 				FileIndex.get());
+
+		mActionManager = new ActionManager(mContentManager);
 		mAdapter = new ContentAdapter(mContentManager, mGridView);
 		mAdapter.setAdapterChangedListener(this);
 		mContentManager.addContentChangedListener(mAdapter);
 		mGridView.setAdapter(mAdapter);
+
+		mObserver = new UnlockObserver(DirectoryManager.unlocked().getPath());
+		mObserver.addListener(mAdapter);
 
 		return content;
 	}
@@ -320,7 +333,8 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 								ArrayList<IndexedItem> itemList = new ArrayList<IndexedItem>();
 								itemList.add(result);
-								actionLock(itemList, mMode); // lock right now
+								mActionManager.actionLock(itemList, null); // lock right now
+								result.getOriginalFile().delete();
 
 								Utils.toast(R.string.content_success_add);
 							}
@@ -329,6 +343,12 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 							}
 						}
 					});
+				}
+				break;
+			case REQUEST_DIRECTORY:
+				if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+					File exportDir = new File(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+					mActionManager.actionRestore(getSelectedItems(), null, exportDir);
 				}
 				break;
 		}
@@ -435,19 +455,20 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 	/**
 	 * Called when user double tapped on item
+	 *
 	 * @return whether double tap was handled
 	 */
 	private boolean onDoubleTap(IndexedItem item) {
 		if (item instanceof IndexedFile) {
-			IndexedFile file = (IndexedFile)item;
+			IndexedFile file = (IndexedFile) item;
 			if (GeneralSettingsManager.isDoubleTapLock() && file.isUnlocked()) {
 				// TODO do action open or keep like below:
-				actionLock(getSelectedItems(), mMode);
+				mActionManager.actionLock(getSelectedItems(), mUpdateList);
 				mTimeSelected = 0;
 				return true;
 			}
 			else if (GeneralSettingsManager.isDoubleTapUnlock() && file.isLocked()) {
-				actionUnlock(getSelectedItems(), mMode);
+				mActionManager.actionUnlock(getSelectedItems(), mUpdateList);
 				mTimeSelected = 0;
 				return true;
 			}
@@ -525,7 +546,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		}
 		else if (isSingleSelecting()) {
 			mGridView.setItemChecked(mSingleSelected, true);
-			startMultiSelection(new int[]{position, mSingleSelected});
+			startMultiSelection(new int[] { position, mSingleSelected });
 		}
 		else {
 			startMultiSelection(position);
@@ -604,23 +625,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	 *
 	 * @param actionMode the action mode the finish
 	 */
-	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
-		if (actionMode == null) {
-			return;
-		}
-		Utils.runOnMain(new Runnable() {
-			@Override
-			public void run() {
-				actionMode.finish();
-			}
-		});
-	}
-
-	/**
-	 * Finishes the action mode on the UI thread
-	 *
-	 * @param actionMode the action mode the finish
-	 */
 	private void finishMultiActionMode(final android.support.v7.view.ActionMode actionMode) {
 		if (actionMode == null) {
 			return;
@@ -633,6 +637,25 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 				}
 			});
 		}
+	}
+
+	/**
+	 * Finishes the action mode on the UI thread
+	 *
+	 * @param actionMode the action mode the finish
+	 */
+	private void finishActionMode(final android.support.v7.view.ActionMode actionMode) {
+		if (actionMode == null) {
+			return;
+		}
+		Utils.runOnMain(new Runnable() {
+			@Override
+			public void run() {
+				actionMode.finish();
+
+				mActionManager.setActionMode(null);
+			}
+		});
 	}
 
 	/**
@@ -679,7 +702,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 	private void checkSelections() {
 		for (long id : mGridView.getCheckedItemIds()) {
 			if (id >= mAdapter.getCount()) {
-				mGridView.setItemChecked((int)id, false);
+				mGridView.setItemChecked((int) id, false);
 			}
 		}
 		if (mGridView.getCheckedItemIds().length == 0 && mMode != null) {
@@ -702,113 +725,6 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		catch (Exception e) {
 			// could not set image
 		}
-	}
-
-	/**
-	 * Locks all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionLock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-		if (!mIsBound) {
-			Utils.d("EncryptionService was not bound");
-		}
-
-		if (with == null) {
-			Utils.d("We got an empty list to process. Can't deal with this.");
-			return;
-		}
-
-		for (IndexedItem item : with) {
-			if (item instanceof IndexedFile) {
-				// clear the thumbnails because if we lock the file
-				// it might have changed
-				((IndexedFile) item).clearThumbnail();
-			}
-		}
-
-		mEncryptionManager.encryptItems(with, new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					finishMultiActionMode(actionMode);
-				}
-			}
-		});
-	}
-
-	/**
-	 * Unlocks all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionUnlock(ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-		if (!mIsBound) {
-			Log.e(this.getClass().toString() + ".onActionItemClicked",
-					"encryptionService was not bound");
-		}
-
-		mEncryptionManager.decryptItems(with, new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					finishMultiActionMode(actionMode);
-				}
-			}
-		});
-	}
-
-	/**
-	 * Shreds all items
-	 *
-	 * @param with       the items to perform this action on
-	 * @param actionMode the mode to finish if desired
-	 */
-	public void actionShred(final ArrayList<IndexedItem> with, final android.support.v7.view.ActionMode actionMode) {
-
-		final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
-			@Override
-			public void onResult(Boolean result) {
-				if (result) {
-					Utils.toast(R.string.content_success_shred);
-					finishMultiActionMode(actionMode);
-					checkSelections();
-				}
-				else {
-					Utils.toast(R.string.content_fail_shred);
-				}
-			}
-		};
-
-		DialogOptions options = new DialogOptions()
-				.setTitle(R.string.dialog_shred_title)
-				.setDescription(R.string.dialog_shred_description)
-				.setNegative(R.string.cancel)
-				.setPositive(R.string.yes)
-				.setReverseColors(true);
-
-		DialogConstructor.show(
-				getActivity(),
-				options,
-				new IDialogResponse() {
-					@Override
-					public void onPositive() {
-						mContentManager.removeItems(with, shredListener);
-					}
-
-					@Override
-					public void onNegative() {
-						// do nothing
-					}
-
-					@Override
-					public void onCancel() {
-						// do nothing
-					}
-				}
-		);
 	}
 
 	public enum ContentActionMode {
@@ -840,12 +756,13 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 		public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
 			mMenu = actionMode.getMenu();
 			mInflater = actionMode.getMenuInflater();
+			mActionManager.setActionMode(actionMode);
 			inflate(mContentMode);
 			return true;
 		}
 
 		/**
-		 * @param contentMode  The current mode that is shown
+		 * @param contentMode The current mode that is shown
 		 */
 		public void setContentMode(ContentActionMode contentMode) {
 			mContentMode = contentMode;
@@ -915,28 +832,91 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			switch (menuItem.getItemId()) {
 				case R.id.action_lock:
-					actionLock(selectedItems, actionMode);
+					mActionManager.actionLock(selectedItems, null);
 					break;
 				case R.id.action_unlock:
-					actionUnlock(selectedItems, actionMode);
+					mActionManager.actionUnlock(selectedItems, null);
 					break;
 				case R.id.action_share:
-					//TODO share goes here
+					mActionManager.actionShare((HomeActivity) getActivity(), selectedItems, null);
 					break;
 				case R.id.action_restore:
-					//TODO unlock files if necessary, remove from list and restore to choosen/original location (don't
-					// delete file)
+					restoreItems(selectedItems);
 					break;
 				case R.id.action_open:
-					//TODO open selected file
-					// delete file)
+					mActionManager.actionOpen((HomeActivity) getActivity(), selectedItems.get(0), null);
 					break;
 				case R.id.action_shred:
-					actionShred(selectedItems, actionMode);
+					shredItems(selectedItems);
 					break;
 			}
 
 			return true;
+		}
+
+		/**
+		 * Asks the user for an export folder
+		 *
+		 * @param with
+		 */
+		private void restoreItems(final ArrayList<IndexedItem> with) {
+			Intent chooserIntent = new Intent(getActivity(), DirectoryChooserActivity.class);
+			// Optional: Allow users to create a new directory with a fixed name.
+			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_NEW_DIR_NAME,
+					"Export");
+
+			// REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
+			((HomeActivity) getActivity()).setRequestedActivity(true);
+			startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+		}
+
+		/**
+		 * Asks user for confirmation to remove these items
+		 *
+		 * @param with
+		 */
+		private void shredItems(final ArrayList<IndexedItem> with) {
+			final IOnResult<Boolean> shredListener = new IOnResult<Boolean>() {
+				@Override
+				public void onResult(Boolean result) {
+					if (result) {
+						Utils.toast(R.string.content_success_shred);
+						finishMultiActionMode(mMode);
+					}
+					else {
+						Utils.toast(R.string.content_fail_shred);
+					}
+				}
+			};
+
+			DialogOptions options = new DialogOptions()
+					.setTitle(R.string.dialog_shred_title)
+					.setDescription(R.string.dialog_shred_description)
+					.setNegative(R.string.cancel)
+					.setPositive(R.string.yes)
+					.setReverseColors(true);
+
+			DialogConstructor.show(
+					getActivity(),
+					options,
+					new IDialogResponse() {
+						@Override
+						public void onPositive() {
+							mActionManager.actionShred(with, shredListener);
+						}
+
+						@Override
+						public void onNegative() {
+							// do nothing
+						}
+
+						@Override
+						public void onCancel() {
+							// do nothing
+						}
+					}
+			);
+
 		}
 
 		/**
@@ -954,6 +934,7 @@ public class ContentFragment extends Fragment implements AdapterView.OnItemClick
 
 			if (actionMode == mMode) {
 				mMode = null;
+				mActionManager.setActionMode(null);
 			}
 		}
 	}

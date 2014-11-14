@@ -1,11 +1,9 @@
 package content;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.android.R;
-import com.stealth.files.DirectoryManager;
 import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.files.IndexedFolder;
@@ -15,8 +13,6 @@ import com.stealth.utils.IOnResult;
 import encryption.IContentManager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

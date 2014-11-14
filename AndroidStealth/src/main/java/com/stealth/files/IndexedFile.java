@@ -178,14 +178,14 @@ public class IndexedFile extends IndexedItem {
 	 * @return true if file is currently locked
 	 */
 	public boolean isLocked() {
-		return !isProcessing() && !getUnlockedFile().exists() && getLockedFile().exists();
+		return !isProcessing() && !getUnlockedFile().exists();
 	}
 
 	/**
 	 * @return true if file is currently unlocked
 	 */
 	public boolean isUnlocked() {
-		return !isProcessing() && getUnlockedFile().exists() && !getLockedFile().exists();
+		return !isProcessing() && getUnlockedFile().exists();
 	}
 
 	/**
