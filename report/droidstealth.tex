@@ -58,14 +58,14 @@ casual search, privacy, nomadic software, obfuscation
 
 \section{Introduction}
 
-\IEEEPARstart{W}{ith} rising use of smart phones in daily life and
-exceptional events means there is a lot more data available on phones.
+\IEEEPARstart{W}{ith} the rising use of smart phones in daily life and
+exceptional events means sensitive data is commonly available on phones.
 These pictures, videos, and in some cases other files are very interesting
-to a wide variety of groups. This might be because oppresive governments
+to a wide variety of groups. This might be because oppressive governments
 want to suppress this data at checkpoints around protests or random
 searches on the street, or even individuals with authority pressuring
 to hand over the phone to grab/remove data themselves. There are many
-instances of law enforcement officers oversteppin their legal bounds
+instances of law enforcement officers overstepping their legal bounds
 to remove images of actions they don't want recorded or because of
 mistaken ideas about the law. 
 
@@ -73,7 +73,7 @@ We call such non-technical searches of devices 'casual search.' The
 person performing it may have varying degrees of expertise regarding
 the workings of mobile computing devices but is limited to the tools
 already available on the phone to check out data. Instead of performing
-advanced attacks using specialised tools designed to get all the data
+advanced attacks using specialized tools designed to get all the data
 out of a phone. 
 
 This project aims to address only the casual searches with an Android
@@ -96,7 +96,7 @@ While mobile operating systems have learned a lot from traditional computing
 system security there are still many gaps to be exploited. In particular the
 human factor. Encryption, passwords, and other heavy security measures are 
 not the standard at the moment of writing. They are generally available but
-rarely used. In part becuase of their limitations. Even widely used protections
+rarely used. In part because of their limitations. Even widely used protections
 like pattern unlock have their own issues with predictable patterns and smudge
 attacks.
 
@@ -106,7 +106,7 @@ associated with oppressive regimes law enforcement in many 'free' countries
 have been overstepping their bounds when it comes to mobile devices. In
 some cases this is even systematic. Removing videos and photos of public 
 spaces involving the officers or spot checks of device contents have been
-occuring. Often without the need for technical intervention or permission
+occurring. Often without the need for technical intervention or permission
 from the device owner, in part because of the above. As such this would be
 casual search of the devices.
 
@@ -125,9 +125,9 @@ only accessible to those who know the secret. Either of the data location
 and of encryption key.
 
 Of course this should minimally impede the ability to access and share the
-data. Assuming that internet access is limited or monitored. Direct transfer
+data. Assuming that Internet access is limited or monitored. Direct transfer
 methods like bluetooth, wi-fi direct, and of course sharing to other apps,
-can be utilised to achieve this.
+can be utilized to achieve this.
 
 
 \section{Design and software architecture}
@@ -149,7 +149,7 @@ What the hell do we do to make morphing possible.
 \section{Future Work}
 
 There are several aspects of the application than can be improved. Which
-can be categorised under one of the following: usability, and morphing.
+can be categorized under one of the following: usability, and morphing.
 The categories will be discusses individually as they are separated both
 technically and conceptually. 
 
@@ -159,8 +159,8 @@ avenues of improvement. First is how to access the application.
 
 While the freely chosen app name and icon do suffice there are other ways 
 it could be done. Namely the widgets available to android users. This could 
-be a simple widget mimicing the standard available widgets, or even be 
-invisible. So as to have no recognisable screen space. While it could still
+be a simple widget mimicking the standard available widgets, or even be 
+invisible. So as to have no recognizable screen space. While it could still
 react to certain use patterns. A first implementation of this functionality is
 available but needs to be properly evaluated.
 
@@ -171,12 +171,32 @@ While several solutions have been discussed, like listening to home button
 presses or having files only be unlocked for limited time, these still need
 to be explored in depth.
 
-When it comes to morphing there is one major limitation, app renaming.
-Right now there is a functional limitation in the length of the new name.
+When it comes to morphing there are two major limitations, app renaming
+and software integrity validation. The first pertains to limitations in the renaming
+of the application when morphing. The second holds that there is no way
+to guarantee that the application hasn't been modified after morphing.
+
+When it comes to naming there is a functional limitation in the length
+of the new name as of now.
 It has to be the same length or shorter than the original name length,
 which can be padded with whitespace. But as of yet the way android
 manifests are encoded are opaque enough that not all size indicators
 have been correctly identified.
+
+The integrity validation is currently something that does not exist with
+morphing. The application needs to be signed with the same key
+before morphing as after morphing. This makes it possible to distribute
+updates in a nomadic manner. But also means the signing key is packaged
+with the application itself for it to work. As such anyone can create a
+modified version of the application and spread that as an 'update.'
+Solving this problem is non-trivial and requires more research.
+
+However initial exploration of this issues has pointed us in the direction
+of a second signer application that verifies the code based on other
+indicators, e.g. hash. This would then produce the application and
+preferably uninstall itself. Then all updates would have to happen
+through instances of this application. But this is just a concept at the
+moment.
 
 
 \appendices{}
