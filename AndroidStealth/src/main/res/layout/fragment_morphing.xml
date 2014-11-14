@@ -17,7 +17,7 @@
 				android:orientation="horizontal"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/default_medium_padding">
+				android:layout_marginBottom="@dimen/default_large_padding">
 			<ImageView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -32,6 +32,108 @@
 					android:layout_gravity="center_vertical"
 					style="@style/Title"/>
 		</LinearLayout>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/RegularText"
+				android:text="@string/morph_current"
+				android:id="@+id/morph_current"
+				android:layout_gravity="left|top"
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+
+		<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/default_large_padding">
+			<ImageView
+					android:layout_width="@dimen/icon_size"
+					android:layout_height="@dimen/icon_size"
+					android:id="@+id/morph_current_icon"
+					android:src="@drawable/ic_app_home"
+					android:layout_marginRight="@dimen/default_regular_padding"/>
+			<TextView
+					android:tag="@string/font_light_condensed"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/morph_current_name"
+					android:layout_gravity="center_vertical"
+					android:text="@string/morphable_app_name"
+					style="@style/RegularText"/>
+		</LinearLayout>
+
+		<LinearLayout android:orientation="horizontal"
+		              android:layout_width="match_parent"
+		              android:layout_height="wrap_content"
+		              android:background="@drawable/launch_button"
+		              android:layout_marginBottom="@dimen/divider_width"
+		              android:clickable="true"
+		              android:id="@+id/morph_share">
+
+			<View
+					android:layout_width="4dp"
+					android:layout_height="match_parent"
+					android:background="@color/positive"  />
+			<ImageView
+					android:tag="@string/font_light_condensed"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_marginLeft="@dimen/default_regular_padding"
+					android:layout_marginRight="@dimen/default_regular_padding"
+					android:src="@drawable/ic_morph_share" />
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:text="@string/morph_share"
+					android:textColor="@color/base"
+					android:layout_gravity="center_vertical"
+					android:paddingTop="12dp"
+					android:paddingBottom="12dp"/>
+		</LinearLayout>
+
+		<LinearLayout android:orientation="horizontal"
+		              android:layout_width="match_parent"
+		              android:layout_height="wrap_content"
+		              android:background="@drawable/launch_button"
+		              android:layout_marginBottom="@dimen/default_large_padding"
+		              android:clickable="true"
+		              android:id="@+id/morph_reset">
+
+			<View
+					android:layout_width="@dimen/morph_color_bar_width"
+					android:layout_height="match_parent"
+					android:background="@color/processing"  />
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_marginLeft="@dimen/default_regular_padding"
+					android:layout_marginRight="@dimen/default_regular_padding"
+					android:src="@drawable/ic_morph_reset" />
+			<TextView
+					android:tag="@string/font_light_condensed"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:text="@string/morph_reset"
+					android:textColor="@color/base"
+					android:layout_gravity="center_vertical"
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
+		</LinearLayout>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/morph_settings_title"
+				android:id="@+id/morph_settings_title"
+				android:layout_gravity="center_vertical"
+				android:layout_marginBottom="@dimen/default_large_padding"
+				style="@style/Title"/>
+
 		<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -39,25 +141,18 @@
 				android:text="@string/morph_description"
 				android:id="@+id/morph_description"
 				android:layout_gravity="left|top"
-				android:layout_marginBottom="@dimen/default_huge_padding"/>
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/morph_settings_title"
-				android:id="@+id/morph_settings_title"
-				android:layout_gravity="center_vertical"
-				android:layout_marginBottom="@dimen/default_huge_padding"
-				style="@style/Title"/>
+				android:layout_marginBottom="@dimen/default_large_padding"/>
+
 		<LinearLayout
 				android:orientation="horizontal"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/default_huge_padding">
 			<ImageView
-					android:layout_width="48dp"
-					android:layout_height="48dp"
+					android:layout_width="@dimen/icon_size"
+					android:layout_height="@dimen/icon_size"
 					android:id="@+id/morph_edit_icon"
-					android:src="@drawable/ic_drawer_home"
+					android:src="@drawable/ic_app_home"
 					android:layout_marginRight="@dimen/default_medium_padding"/>
 			<EditText
 					android:layout_width="match_parent"
@@ -73,12 +168,12 @@
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-					  android:layout_marginBottom="1dp"
+					  android:layout_marginBottom="@dimen/divider_width"
 					  android:clickable="true"
 					  android:id="@+id/morph_pick_app">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/positive" />
 			<ImageView
@@ -96,20 +191,20 @@
 					android:text="@string/morph_pick_app"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal"
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-		              android:layout_marginBottom="1dp"
+		              android:layout_marginBottom="@dimen/divider_width"
 		              android:clickable="true"
 		              android:id="@+id/morph_pick_icon">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/processing"  />
 			<ImageView
@@ -127,20 +222,20 @@
 					android:text="@string/morph_pick_icon"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal"
 		              android:layout_width="match_parent"
 		              android:layout_height="wrap_content"
 		              android:background="@drawable/launch_button"
-		              android:layout_marginBottom="1dp"
+		              android:layout_marginBottom="@dimen/divider_width"
 		              android:clickable="true"
-		              android:id="@+id/morph_share">
+		              android:id="@+id/morph_execute">
 
 			<View
-					android:layout_width="4dp"
+					android:layout_width="@dimen/morph_color_bar_width"
 					android:layout_height="match_parent"
 					android:background="@color/special"  />
 			<ImageView
@@ -149,18 +244,20 @@
 					android:layout_gravity="center_vertical"
 					android:layout_marginLeft="@dimen/default_regular_padding"
 					android:layout_marginRight="@dimen/default_regular_padding"
-					android:src="@drawable/ic_morph_share" />
+					android:src="@drawable/ic_drawer_morph" />
 			<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:tag="@string/font_light_condensed"
 					android:textSize="@dimen/text_medium"
-					android:text="@string/morph_share"
+					android:text="@string/morph_action"
 					android:textColor="@color/base"
 					android:layout_gravity="center_vertical"
-					android:paddingTop="12dp"
-					android:paddingBottom="12dp"/>
+					android:paddingTop="@dimen/default_regular_padding"
+					android:paddingBottom="@dimen/default_regular_padding"/>
 
 		</LinearLayout>
+
+
 	</LinearLayout>
 </ScrollView>

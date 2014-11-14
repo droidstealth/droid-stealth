@@ -1,1 +1,1 @@
-include ':AndroidStealth', ':libraries:FileChooser', ':libraries:DirectoryChooser'
+include ':AndroidStealth', ':libraries:FileChooser', ':libraries:droidmorphing-lib', ':libraries:DirectoryChooser'

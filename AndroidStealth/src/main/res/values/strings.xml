@@ -56,4 +56,18 @@
 	<string name="action_no_restore">Failed to restore items!</string>
 	<string name="info">Information</string>
 
+	<string name="morph_app">Morph App</string>
+	<string name="morph_action">Morph this app</string>
+	<string name="current_app">Current look and feel:</string>
+	<string name="morph_reset">Reset to original</string>
+	<string name="morph_failed">Failed to transform app!</string>
+	<string name="morphing_dialog_title">Morphing app</string>
+	<string name="morphing_started">Started app morphing</string>
+	<string name="morphing_extracting">Extracting original app</string>
+	<string name="morphing_labeling">Setting new app title</string>
+	<string name="morphing_icons">Setting new icons</string>
+	<string name="morphing_repackaging">Repackaging app</string>
+	<string name="morphing_signing">Signing new app</string>
+	<string name="icon_retrieve_failed">Retrieving icon failed</string>
+
 </resources>
