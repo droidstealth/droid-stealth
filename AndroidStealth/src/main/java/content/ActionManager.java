@@ -92,6 +92,7 @@ public class ActionManager {
 		}
 		catch (android.content.ActivityNotFoundException e) {
 			Toast.makeText(activity, "No handler for file " + file.getUnlockedFilename(), 4000).show();
+			activity.setRequestedActivity(false);
 		}
 
 		finishActionMode();
