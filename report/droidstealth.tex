@@ -153,6 +153,8 @@ can be categorized under one of the following: usability, and morphing.
 The categories will be discusses individually as they are separated both
 technically and conceptually. 
 
+\subsection{Usability}
+
 In terms of usability there has been no formal study on what aspects of
 the application work work well. However informal testing has shown several
 avenues of improvement. First is how to access the application. 
@@ -171,6 +173,8 @@ While several solutions have been discussed, like listening to home button
 presses or having files only be unlocked for limited time, these still need
 to be explored in depth.
 
+\subsection{Morphing}
+
 When it comes to morphing there are two major limitations, app renaming
 and software integrity validation. The first pertains to limitations in the renaming
 of the application when morphing. The second holds that there is no way
@@ -183,6 +187,13 @@ which can be padded with whitespace. But as of yet the way android
 manifests are encoded are opaque enough that not all size indicators
 have been correctly identified.
 
+The other component of of naming is the package name staying consistent
+across morphs. This is not relevant for casual search in most situations
+however there is one exception, ff the application is on an appstore. As
+apps are identified there by package name this would make it easy to
+reveal the presence of the app. Just by searching for it on the appstore.
+Currently the only solution is to not be available on appstores.
+
 The integrity validation is currently something that does not exist with
 morphing. The application needs to be signed with the same key
 before morphing as after morphing. This makes it possible to distribute
@@ -194,9 +205,10 @@ Solving this problem is non-trivial and requires more research.
 However initial exploration of this issues has pointed us in the direction
 of a second signer application that verifies the code based on other
 indicators, e.g. hash. This would then produce the application and
-preferably uninstall itself. Then all updates would have to happen
-through instances of this application. But this is just a concept at the
-moment.
+preferably uninstall itself. As this would allow the signer app to be
+on a appstore without revealing the presence of the application. Then 
+all updates would have to happen through instances of this application.
+This all needs to be properly designed and verified however.
 
 
 \appendices{}
