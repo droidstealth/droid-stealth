@@ -1,4 +1,4 @@
-package spikes.notifications;
+package com.stealth.notifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import com.stealth.android.R;
 import com.stealth.utils.Utils;
 
-import encryption.EncryptionService;
+import com.stealth.encryption.EncryptionService;
 
 /**
  * This class provides easy control of the notifications for this app.

@@ -10,7 +10,7 @@ import android.widget.RemoteViews;
 import com.stealth.launch.LaunchManager;
 import com.stealth.launch.WidgetManager;
 import com.stealth.utils.Utils;
-import pin.PinActivity;
+import com.stealth.pin.PinActivity;
 
 /**
  * Implementation of App Widget functionality.

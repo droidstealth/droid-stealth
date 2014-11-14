@@ -43,8 +43,6 @@ import com.stealth.dialog.IDialogAdapter;
 import com.stealth.font.FontManager;
 import com.stealth.utils.Utils;
 
-import sharing.SharingUtils;
-
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Use the {@link MorphingFragment#newInstance} factory
  * method to create an instance of this fragment.

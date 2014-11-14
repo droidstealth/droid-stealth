@@ -10,7 +10,7 @@
 				android:layout_alignParentTop="true"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				tools:context="pin.PinFragment"
+				tools:context="com.stealth.pin.PinFragment"
 				android:background="@color/background"
 				android:orientation="vertical">
 

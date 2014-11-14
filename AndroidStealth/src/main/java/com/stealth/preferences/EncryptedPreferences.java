@@ -1,16 +1,12 @@
 package com.stealth.preferences;
 
-import com.facebook.crypto.exception.CryptoInitializationException;
 import com.stealth.files.DirectoryManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
 
-import encryption.ConcealCrypto;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 

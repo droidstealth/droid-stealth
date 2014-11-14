@@ -9,14 +9,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,10 +28,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -41,7 +37,7 @@ import com.stealth.android.BuildConfig;
 import com.stealth.android.R;
 import com.stealth.files.DirectoryManager;
 import com.stealth.font.FontManager;
-import encryption.ConcealCrypto;
+import com.stealth.encryption.ConcealCrypto;
 
 /**
  * Read: easy :) This class provides some quick utils to shorten our code and make it more readable. Created by Olivier

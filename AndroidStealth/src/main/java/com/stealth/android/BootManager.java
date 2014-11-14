@@ -10,7 +10,7 @@ import com.stealth.sequencing.IJob;
 import com.stealth.sequencing.JobSequencer;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import pin.PinManager;
+import com.stealth.pin.PinManager;
 
 /**
  * This class ensures everything is created as it should and all resources are ready and available to use Created by

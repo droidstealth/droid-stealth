@@ -1,4 +1,4 @@
-package content;
+package com.stealth.content;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,12 +9,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -49,11 +46,10 @@ import com.stealth.font.FontManager;
 import com.stealth.settings.GeneralSettingsManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import encryption.EncryptionManager;
-import encryption.EncryptionService;
-import encryption.IContentManager;
+import com.stealth.encryption.EncryptionManager;
+import com.stealth.encryption.EncryptionService;
+import com.stealth.encryption.IContentManager;
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
-import sharing.SharingUtils;
 
 /**
  * Please only instantiate me if you have created the file index successfully Created by Alex on 3/6/14.

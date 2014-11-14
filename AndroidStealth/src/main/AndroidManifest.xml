@@ -34,12 +34,8 @@
 				android:value="HomeActivity" />
 		</activity>
 
-		<service
-			android:name="sharing.APSharing.HttpServerService"
-			android:label="@string/http_service" />
-
 		<receiver
-			android:name="spikes.stealthdialer.StealthDialReceiver"
+			android:name="com.stealth.stealthdialer.StealthDialReceiver"
 			android:enabled="true"
 			android:exported="true" >
 			<intent-filter android:priority="1" >
@@ -51,7 +47,7 @@
 		</receiver>
 
 		<service
-			android:name="encryption.EncryptionService"
+			android:name="com.stealth.encryption.EncryptionService"
 			android:exported="false" >
 			<intent-filter>
 				<action android:name="encryption.EncryptionService.TAP_TO_LOCK" />
@@ -74,7 +70,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="pin.PinActivity"
+			android:name="com.stealth.pin.PinActivity"
 			android:excludeFromRecents="true"
 			android:theme="@style/AppTheme.Dialog" >
 			<intent-filter>

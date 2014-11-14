@@ -3,10 +3,9 @@ package com.stealth.launch;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
-import com.stealth.android.HomeActivity;
+
 import com.stealth.android.StealthButton;
-import pin.PinActivity;
+import com.stealth.pin.PinActivity;
 
 /**
  * This class manages the hidden/visible state of the application Created by OlivierHokke on 06-Apr-14.

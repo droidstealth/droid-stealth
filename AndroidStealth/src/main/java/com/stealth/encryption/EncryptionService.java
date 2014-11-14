@@ -1,10 +1,9 @@
-package encryption;
+package com.stealth.encryption;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -24,7 +23,7 @@ import com.stealth.files.FileIndex;
 import com.stealth.files.IndexedFile;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import spikes.notifications.FileStatusNotificationsManager;
+import com.stealth.notifications.FileStatusNotificationsManager;
 
 /**
  * Created by Alex on 2/22/14.

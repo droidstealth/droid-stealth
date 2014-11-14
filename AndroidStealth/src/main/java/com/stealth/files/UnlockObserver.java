@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.FileObserver;
-import encryption.IContentManager;
+import com.stealth.encryption.IContentManager;
 
 /**
  * A class that can be used to monitor a file/folder and notify listeners when the folder changes Created by Alex on
