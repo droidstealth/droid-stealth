@@ -1,4 +1,4 @@
-package pin;
+package com.stealth.pin;
 
 import java.util.Random;
 

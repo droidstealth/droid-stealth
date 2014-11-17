@@ -1,10 +1,9 @@
-package content;
+package com.stealth.content;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
-import com.stealth.utils.Utils;
 
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 

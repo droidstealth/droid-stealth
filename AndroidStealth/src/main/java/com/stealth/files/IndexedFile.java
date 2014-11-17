@@ -4,8 +4,8 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.stealth.utils.Utils;
-import content.ThumbnailManager;
-import encryption.EncryptionService;
+import com.stealth.content.ThumbnailManager;
+import com.stealth.encryption.EncryptionService;
 import org.json.JSONArray;
 import org.json.JSONException;
 

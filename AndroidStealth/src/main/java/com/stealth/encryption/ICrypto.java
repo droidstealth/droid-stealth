@@ -1,10 +1,9 @@
-package encryption;
+package com.stealth.encryption;
 
 import com.facebook.crypto.exception.CryptoInitializationException;
 import com.facebook.crypto.exception.KeyChainException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**

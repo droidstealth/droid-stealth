@@ -1,4 +1,4 @@
-package pin;
+package com.stealth.pin;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<content.CheckableLinearLayout
+<com.stealth.content.CheckableLinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="@dimen/content_item_width"
 	android:layout_height="wrap_content"
@@ -98,4 +98,4 @@
 		android:textAppearance="?android:textAppearanceSmall"
 		android:textColor="@color/content_name"
 		android:background="@color/content_text"/>-->
-</content.CheckableLinearLayout>
+</com.stealth.content.CheckableLinearLayout>

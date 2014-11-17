@@ -11,8 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
 import com.stealth.drawer.NavigationDrawerFragment;
 import com.stealth.font.FontManager;
 import com.stealth.morphing.MorphingFragment;
@@ -21,9 +20,9 @@ import com.stealth.settings.LaunchSettingsFragment;
 import com.stealth.launch.VisibilityManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import content.ContentFragment;
-import pin.PinFragment;
-import pin.PinManager;
+import com.stealth.content.ContentFragment;
+import com.stealth.pin.PinFragment;
+import com.stealth.pin.PinManager;
 
 public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 

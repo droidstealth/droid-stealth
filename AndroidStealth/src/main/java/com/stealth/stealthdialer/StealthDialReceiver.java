@@ -1,4 +1,4 @@
-package spikes.stealthdialer;
+package com.stealth.stealthdialer;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,8 +6,8 @@ import android.content.Intent;
 import com.stealth.launch.DialerManager;
 import com.stealth.launch.LaunchManager;
 import com.stealth.utils.Utils;
-import encryption.EncryptionService;
-import pin.PinActivity;
+import com.stealth.encryption.EncryptionService;
+import com.stealth.pin.PinActivity;
 
 /**
  * Creates BroadcastReceiver that listens for Intent.ACTION_NEW_OUTGOING_CALL When it receives such an intent it checks

@@ -1,4 +1,4 @@
-package encryption;
+package com.stealth.encryption;
 
 import android.util.Log;
 

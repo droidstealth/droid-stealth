@@ -1,4 +1,4 @@
-package content;
+package com.stealth.content;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import encryption.EncryptionManager;
-import encryption.IContentManager;
+import com.stealth.encryption.EncryptionManager;
+import com.stealth.encryption.IContentManager;
 
 import java.io.File;
 import java.io.FileInputStream;

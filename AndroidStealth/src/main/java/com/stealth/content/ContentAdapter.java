@@ -1,4 +1,4 @@
-package content;
+package com.stealth.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ import com.stealth.font.FontManager;
 import com.stealth.settings.GeneralSettingsManager;
 import com.stealth.utils.IOnResult;
 import com.stealth.utils.Utils;
-import encryption.IContentManager;
+import com.stealth.encryption.IContentManager;
 
 /**
  * Simple class to display previews of the files. For now it just instantiates ImageView with an icon Created by Alex on

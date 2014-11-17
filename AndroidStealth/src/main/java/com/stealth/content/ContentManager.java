@@ -1,4 +1,4 @@
-package content;
+package com.stealth.content;
 
 import android.content.Context;
 
@@ -10,7 +10,7 @@ import com.stealth.files.IndexedFolder;
 import com.stealth.files.IndexedItem;
 import com.stealth.utils.Utils;
 import com.stealth.utils.IOnResult;
-import encryption.IContentManager;
+import com.stealth.encryption.IContentManager;
 
 import java.io.File;
 import java.util.ArrayList;
