@@ -1,0 +1,251 @@
+\documentclass[twocolumn,english,compsoc,journal]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage[unicode=true,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=1,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{pdftitle={Your Title},
+ pdfauthor={Your Name},
+ pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false}
+\usepackage{breakurl}
+
+\makeatletter
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+ % protect \markboth against an old bug reintroduced in babel >= 3.8g
+ \let\oldforeign@language\foreign@language
+ \DeclareRobustCommand{\foreign@language}[1]{%
+   \lowercase{\oldforeign@language{#1}}}
+
+% for subfigures/subtables
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\usepackage[nocompress]{cite} %optional
+
+\makeatother
+
+\begin{document}
+
+
+
+\title{DroidStealth: A Nomadic Data Obfuscation Tool that Facilitates Sharing}
+
+
+\author{Olivier Hokke, Alex Kolpa, Joris van den Oever, and~Alex Walterbos}
+
+
+\markboth{Delft University of Technology Student Project}{Your Name \MakeLowercase{\textit{et al.}}: Your Title}
+
+\IEEEtitleabstractindextext{
+\begin{abstract}
+TODO ABSTRACT TEXT\end{abstract}
+
+\begin{IEEEkeywords}
+casual search, privacy, nomadic software, obfuscation
+\end{IEEEkeywords}
+
+}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext{}
+
+
+\IEEEpeerreviewmaketitle{}
+
+
+\section{Introduction}
+
+\IEEEPARstart{W}{ith} the rising use of smart phones in daily life and
+exceptional events means sensitive data is commonly available on phones.
+These pictures, videos, and in some cases other files are very interesting
+to a wide variety of groups. And sometimes the standard protections on
+the phone are not enough to keep those groups out. Just slide the screen
+and full access to everything. Even if there things like a password or
+unlock patterns these can be forced out of a person. Followed by a simple
+search through the phones files by hand to find what they desire.
+
+We call such non-technical searches of devices 'casual search.' The
+person performing it will have varying degrees of expertise regarding
+the workings of smartphones but is limited to the tools already available
+on the phone to check out data. Instead of performing advanced attacks
+using specialized tools designed to get all the data out of a phone.
+
+This project aims to address only the issues with casual search through
+the use of an Android app. The tool aided expert attacks are not within the
+scope of this project. As this is a very different kind of problem.
+
+\textbf{Bla bla bla structure of paper and what we're going to discuss
+where.}
+
+
+\section{Problem Description}
+
+As mobile computing becomes ubiquitous and takes the place as the primary
+computing platform for many the security of these devices is paramount.
+While mobile operating systems have learned a lot from traditional computing
+system security there are still many gaps to be exploited. In particular the
+human factor. Encryption, passwords, and other heavy security measures are 
+not the standard at the moment of writing. They are generally available but
+rarely used. In part because of their limitations. Even widely used protections
+like pattern unlock have their own issues with predictable patterns and smudge
+attacks.
+
+But this is not the main issue. While the above can make access easy, not all
+environments are friendly towards all kinds of data. While this is generally
+associated with oppressive regimes law enforcement in many 'free' countries
+have been overstepping their bounds when it comes to mobile devices. In
+some cases this is even systematic. Removing videos and photos of public 
+spaces involving the officers or spot checks of device contents have been
+occurring. Often without the need for technical intervention or permission
+from the device owner, in part because of the above. As such this would be
+casual search of the devices.
+
+Taking that into account, together with the fact that in some cases people
+are required to unlock their computing devices, there needs to be a way to
+safeguard data from such situations. Which means the data integrity needs
+to be preserved so it can still be accessed after the incident. But in some
+cases just having people be aware of the data, and who is holding it, can
+cause issues for the owners. So having control over who sees the data is
+another crucial aspect.
+
+A way to achieve that for casual search is by hiding the data on the device.
+Preferably as it is being made. If it is not in places where it can be seen
+by looking over the device it preserves data integrity, and by making it
+only accessible to those who know the secret. Either of the data location
+and of encryption key.
+
+Of course this should minimally impede the ability to access and share the
+data. Assuming that Internet access is limited or monitored. Direct transfer
+methods like bluetooth, wi-fi direct, and of course sharing to other apps,
+can be utilized to achieve this.
+
+
+\section{Design and software architecture}
+
+Here we say stuff about the libraries and intents because why reinvent
+the wheel.
+
+Data sharing and application sharing.
+
+
+\section{Implementation}
+
+How did we create the data vault. Encryption, thumbnails, notifications
+for unlocking.
+
+What the hell do we do to make morphing possible.
+
+
+\section{Future Work}
+
+There are several aspects of the application than can be improved. Which
+can be categorized under one of the following: usability, and morphing.
+The categories will be discusses individually as they are separated both
+technically and conceptually. 
+
+\subsection{Usability}
+
+In terms of usability there has been no formal study on what aspects of
+the application work work well. However informal testing has shown several
+avenues of improvement. First is how to access the application. 
+
+While the freely chosen app name and icon do suffice there are other ways 
+it could be done. Namely the widgets available to android users. This could 
+be a simple widget mimicking the standard available widgets, or even be 
+invisible. So as to have no recognizable screen space. While it could still
+react to certain use patterns. A first implementation of this functionality is
+available but needs to be properly evaluated.
+
+Once the application has been started there are still some ways the user
+needs to be observant in how she uses the application. As it can result in
+inadvertent data breaches. Mainly when the data is opened in other apps.
+While several solutions have been discussed, like listening to home button
+presses or having files only be unlocked for limited time, these still need
+to be explored in depth.
+
+\subsection{Morphing}
+
+When it comes to morphing there are two major limitations, app renaming
+and software integrity validation. The first pertains to limitations in the renaming
+of the application when morphing. The second holds that there is no way
+to guarantee that the application hasn't been modified after morphing.
+
+When it comes to naming there is a functional limitation in the length
+of the new name as of now.
+It has to be the same length or shorter than the original name length,
+which can be padded with whitespace. But as of yet the way android
+manifests are encoded are opaque enough that not all size indicators
+have been correctly identified.
+
+The other component of of naming is the package name staying consistent
+across morphs. This is not relevant for casual search in most situations
+however there is one exception, ff the application is on an appstore. As
+apps are identified there by package name this would make it easy to
+reveal the presence of the app. Just by searching for it on the appstore.
+Currently the only solution is to not be available on appstores.
+
+The integrity validation is currently something that does not exist with
+morphing. The application needs to be signed with the same key
+before morphing as after morphing. This makes it possible to distribute
+updates in a nomadic manner. But also means the signing key is packaged
+with the application itself for it to work. As such anyone can create a
+modified version of the application and spread that as an 'update.'
+Solving this problem is non-trivial and requires more research.
+
+However initial exploration of this issues has pointed us in the direction
+of a second signer application that verifies the code based on other
+indicators, e.g. hash. This would then produce the application and
+preferably uninstall itself. As this would allow the signer app to be
+on a appstore without revealing the presence of the application. Then 
+all updates would have to happen through instances of this application.
+This all needs to be properly designed and verified however.
+
+
+\appendices{}
+
+
+\section{Appendix citing}
+
+Citation: \cite{example:beebe_archive}
+
+\subsection{subsection}
+
+\subsection{another subsection}
+
+\section{Appendix example for tables and images.}
+
+\begin{figure}[htbp]
+\begin{centering}
+\textsf{A single column figure goes here}
+\par\end{centering}
+
+\protect\caption{Captions go \emph{under} the figure}
+\end{figure}
+\begin{table}[htbp]
+\protect\caption{Table captions go \emph{above} the table}
+
+
+\centering{}%
+\begin{tabular}{|c|c|}
+\hline 
+delete & this\tabularnewline
+\hline 
+\hline 
+example & table\tabularnewline
+\hline 
+\end{tabular}
+\end{table}
+
+
+
+\section*{Acknowlegment}
+
+bla bla bla Pauwelse?
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
