@@ -1,14 +1,3 @@
-A way to achieve that for casual search is by hiding the data on the device.
-Preferably as it is being made. If it is not in places where it can be seen
-by looking over the device it preserves data integrity, and by making it
-only accessible to those who know the secret. Either of the data location
-and of encryption key.
-
-Of course this should minimally impede the ability to access and share the
-data. Assuming that Internet access is limited or monitored. Direct transfer
-methods like bluetooth, wi-fi direct, and of course sharing to other apps,
-can be utilized to achieve this.
-
 \section{Problem Description}
 \label{sec:problem-description}
 Using mobile phones as a primary platform for computing, recording data and storing data is becoming more and more ubiquitous.
@@ -24,29 +13,39 @@ In Section \ref{sec:approach-and-design}, the approach to the solution is descri
 Sensitive data, which data the user wants to keep safe in general, can take many forms.
 The data will likely consist mostly of photos and videos, with the occasional document; regardless, the application should support the file types that the device could normally handle.
 
-The data should be made inaccessible by hiding and encrypting it.
+An obvious solution to keep data safe from inspection by the wrong audience is encryption.
+A secure encryption would not only provide a way of making the data handled by the application less incriminating, as it would not be understandable for the human eye:
+It is also a strong measure because it denies access to those who are not supposed to see it.
 
-WIP
+However, even when the data is not accessible, the presence of inaccessible data can raise suspicion.
+Hiding the data is therefore an important and necessary addition to the solution, further increasing the chance of passing a casual search.
+
 \subsection{Casual Search}
-As discussed in the introduction, we attempt to address the problem of `casual search'
-\footnote{In the scope of this article, we define `casual search' as following: A quick attempt to find information on a mobile device without applying advanced technical knowledge of the device, nor specific knowledge of the protecting methods proposed and implemented as described in this article.}.
+As discussed in the introduction, we attempt to address the problem of `casual search'. 
+In the scope of this article, we define `casual search' as following: A quick attempt to find information on a mobile device without applying advanced technical knowledge of the device, nor specific knowledge of the protecting methods proposed and implemented as described in this article.
 We aim to protect against this investigation method, as it is likely to be the first investigation encountered; pass this and you will likely not be subjected to more intensive searches at all.
 Furthermore, casual search is probably the most used search method. 
 A `quick glance' through a phone, be it at a checkpoint, a protest, or because your significant other has gotten hold of the device is more likely to occur than a thorough investigation of the device by someone who is experienced and trained where to look.
 
-\subsection{WiFi Hotspot}
-WIP
 \subsection{No root}
 The solution that is described in this article had a technical limitation that put a certain set of tools out of reach.
-`Rooting' an Android device (somewhat equivalent to `Jailbreaking' an Apple device) unlocks administrative privileges, also called `root access'.
-This `root access' allows manipulating system files, which in turn provides more powerful tools that could benefit the solution to the problem addressed.
+`Rooting' an Android device unlocks administrative privileges, allowing the user or applications to access restricted files, and communicate with device features more directly.
+By doing this, it undermines Android's security model\cite{vidas2011all}.
+
+Often named `root access', it can be compared with root access as in Unix systems, and Administrator privileges in Windows systems.
+Because `root access' allows manipulating system files, it provides more powerful tools that could benefit the solution to the problem addressed.
 
 However, most users do not have a rooted phone, and are not capable of rooting it either. 
 Rooting a phone has significant disadvantages; one could damage the device's software to the point where it needs to be completely reset.
 Users will also be hesitant to root their phone because it voids the warranty.
 
 To keep the solution available for all Android phones, the use of root access is not an option, and can therefore not be applied.
-\subsection{No unmonitored app distributor}
-Google Play is not available in for example Iran.
 
-WIP
+\subsection{Nomadic distribution}
+In situations where a central distributor of applications is monitored by those from whom the data has to be protected, distribution of the application can prove difficult.
+In these cases, the application we propose in our solution is likely to be blocked.
+Even if it is not, knowledge of the application will quickly reach those who want to access the data the users want to keep to themselves.
+
+A way of circumventing this could be a `nomadic' distribution of the application.
+Instead of providing the application through a central point, that can be monitored, the users could share it directly with those interested.
+This provides extra means of keeping the application in the right hands, and thus preventing the knowledge of the application entirely.  
