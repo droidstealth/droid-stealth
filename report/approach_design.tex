@@ -38,51 +38,31 @@ shared, and even modified.
 
 The issue here with unlocked files, is that these may be
 forgotten by the user, and then, by a third party, found and
-opened using a file browser. The best way to solve this issue,
-is to provide a clear message to the user, that some files are
-unlocked and that, therefore, they may be in danger of leaking.
+opened using a file browser. This issue was solved by showing
+a clear warning to the user, explaining that some files are
+unlocked and that, therefore, they could be leaked.
 The user is presented with a persistent notification in the
 notification drawer of Android, with the message that some of
 the user's files are unlocked. When the notification is pressed,
-all unlocked files are immediately locked. The latter option,
+all unlocked files are immediately locked. This
 provides a user friendly way to swiftly lock the files back so
 they can't be found, without the need to reopen the app, which
 can take much more time, depending on the chosen method of
-hidden and protecting the DroidStealth app. See figure ... for
+hidden and protecting the DroidStealth app. See figure~\ref{fig:dummy-reference} for
 an example of how this is currently implemented.
 
 Furthermore, depending on the size, unlocking files could take a
-minute or more, as the Crypto library would have to perform a
-full decryption process. Someone's smartphone could potentially
-be taken from the user, during this time period. If the user has
-enough time, it should be possible to quickly cancel the
-decryption. For this reason, another notification for the Android 
-notification drawer was implemented, where the user is informed
+minute or more, as the encryption service would have to perform a
+full decryption process. During this process, another notification 
+is shown, where the user is informed
 of the fact that some files are currently in the process of
 being unlocked. Once the user taps on it, the decryption is
-canceled.
+canceled by emptying the queue; the currently de- or encrypted file is finished.
 
-\textbf{Limitations}  %% TODO: MOVE TO FUTURE WORK
-A potential security threat that can be exploited, is that
-unlocked files are stored on the internal SD card of the device,
-and that another app could constantly watch the folders in which
-those files would be decrypted. Then this other app could save
-them somewhere else or send them over the Internet.
-
-Also, if files are unlocked, and the user's device is taken from
-its rightful owner without warning, then the user might not have
-gotten enough time to press the notifications to swiftly lock
-the secret files back. Invaders won't be able to see the data
-directly, unless they launch a file browser and start searching,
-but they would be informed of the existence of secret files.
-This could be a potential danger, because an attacker could be
-interested in those files and do the user harm to get these
-files. Users should be fully aware that they should only unlock
-files if they are 100\% sure that they are in a safe location.
 
 \subsubsection{Locking and Hiding of DroidStealth}
 
-For an App, that prevents others from finding your sensitive
+For an app that prevents others from finding your sensitive
 data by means of a casual search, it is required that this app
 can't be found easily as well. Obviously, if the app were to be
 found by those you want to hide your files from, they will be
@@ -92,26 +72,11 @@ obtain the sensitive files. We have incorporated a few options to hide
 DroidStealth, and to launch the app using some secret methods.
 
 \textbf{Casual Launch}
-First, we discuss the trivial way of launching DroidStealth, which is through 
-the app drawer of an Android device. On startup, the app will present the
-user with a keyboard to enter the pin of the user. If the pin is correct, the 
-DroidStealth will launch into the secret gallery. However, if the pin is incorrect, 
-the user won't be able to enter the application.
+The trivial, default way of launching DroidStealth is through the app drawer of an Android device. 
+When launching the application the first time, the user is promted to enter a pin that will be used to access the application.
+On following launches, the app will present the user with a keyboard to enter the pin of the user. If the pin is correct, the 
+DroidStealth will launch into the secret gallery. However, if the pin is incorrect, the user won't be able to enter the application.
 
-%% MOVE THE FOLLOWING TO FUTURE WORK
-
-The pin keyboard could be randomized/scrambled, so that
-the pin can't be read from the fingerprints that are left on the touchscreen
-of the device. 
-
-%% MOVE THE FOLLOWING TO FUTURE WORK
-
-Talk about having multiple pins (future work), of which
-one could delete all data and show fakes, others could show
-sensitive data. For each pin, different set of data. Then
-sensitive files can be organized or categorized by pin.
-Potential dangers and negative impacts on user experience should
-be researched.
 
 \textbf{Hiding from App Drawer}
 The user has the option to hide DroidStealth completely from the drawer. This 
@@ -120,8 +85,7 @@ which will be discussed in the next parts. A limitation is that the app can stil
 in the application list in the Android settings screen. 
 
 \textbf{Morphing}
-
-ALEX KOLPA
+[Work-in-progress] ALEX KOLPA
 
 \textbf{Launch with Dialer}
 The user may select the option to launch the application by calling a special number
@@ -137,11 +101,9 @@ suspicious call log entries, and deduct the correct pin. A possible solution wou
 check the call log for entries that are similar to the actual one, and to remove those as well.
 
 \textbf{Launch with Widget}
-Another option is to launch the app by means of an invisible widget on the user's home 
-screen. When the user adds a widget to the home screen, it will still be visible, until
-the user presses on it, to indicate that it is placed and ready for use. From that point on,
-when the user presses 5 times on the invisible widget, the app is launched, showing the pin
-keyboard.
+Another option is to launch the app by means of an invisible widget on the user's home screen. 
+When the user adds a widget to the home screen, it will still be visible, until the user presses on it. 
+From that point on, when the user presses the invisible widget 5 times, the app is launched, showing the pin keyboard.
 
 When adding a new access widget, all previously placed widgets become visible. This allows 
 the user to retrieve forgotten widgets. Of course, this is a potential security threat, as this 

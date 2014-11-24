@@ -157,6 +157,38 @@ on a appstore without revealing the presence of the application. Then
 all updates would have to happen through instances of this application.
 This all needs to be properly designed and verified however.
 
+\subsection{Security}
+A potential security threat that can be exploited, is that
+unlocked files are stored on the internal SD card of the device,
+and that another app could constantly watch the folders in which
+those files would be decrypted. Then this other app could save
+them somewhere else or send them over the Internet.
+
+Also, if files are unlocked, and the user's device is taken from
+its rightful owner without warning, then the user might not have
+gotten enough time to press the notifications to swiftly lock
+the secret files back. Invaders won't be able to see the data
+directly, unless they launch a file browser and start searching,
+but they would be informed of the existence of secret files.
+This could be a potential danger, because an attacker could be
+interested in those files and do the user harm to get these
+files. Users should be fully aware that they should only unlock
+files if they are 100\% sure that they are in a safe location.
+
+\textbf{Scrambled numerical keyboard}
+The pin keyboard could be randomized/scrambled, so that
+the pin can't be read from the fingerprints that are left on the touchscreen
+of the device. 
+
+\textbf{Multiple datasets}
+[Work-in-progress] Talk about having multiple pins, of which
+one could delete all data and show fakes, others could show
+sensitive data. For each pin, different set of data. Then
+sensitive files can be organized or categorized by pin.
+Potential dangers and negative impacts on user experience should
+be researched.
+
+
 \section*{Acknowlegments}
 
 The authors would like to thank Dhr JA Pouwelse from the Delft University of Technology for providing the possibility to investigate this matter, for providing his helpful insights and feedback, and placing his expertise at our disposal.
