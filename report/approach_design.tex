@@ -1,0 +1,168 @@
+\section{Approach and Design}
+This section walks though all design choices made with DroidStealth,
+and how we approached the problem in order to tackle it. Most 
+solutions have drawbacks, which will be discussed further in the
+section about future work and limitations. %% ADD REFERENCE
+
+%% Here we say stuff about the libraries and intents because why reinvent the wheel. 
+%% WHAT ELSE DO WE TALK ABOUT HERE EXACTLY BESIDES USER EXPERIENCE?
+%% NOT SURE IF STRUCTURE HERE WORKS
+
+\subsection{Encryption}
+
+\subsection{Morphing}
+
+\subsection{User Experience}
+
+Within this subsection we will briefly elaborate on our design
+choices in user experience design related to locking and hiding
+of both data and the app. Finally, we briefly discuss the 
+philosophy behind the styling. 
+
+\subsubsection{Locking and Hiding of Data}
+
+The most important part of this project, is the ability to hide
+ones files. This means, as mentioned earlier, that hidden media
+files should not be visible anymore in the Android media
+gallery, and that with a file browser, one still shouldn't be
+able to open any of the hidden files, as they would be
+encrypted. However, this also means that while the sensitive
+files are hidden and locked away, the user wouldn't be able to
+directly open the files. Therefore, the user should have the
+ability to unlock files, so that the data can be looked at,
+shared, and even modified.
+
+The issue here with unlocked files, is that these may be
+forgotten by the user, and then, by a third party, found and
+opened using a file browser. The best way to solve this issue,
+is to provide a clear message to the user, that some files are
+unlocked and that, therefore, they may be in danger of leaking.
+The user is presented with a persistent notification in the
+notification drawer of Android, with the message that some of
+the user's files are unlocked. When the notification is pressed,
+all unlocked files are immediately locked. The latter option,
+provides a user friendly way to swiftly lock the files back so
+they can't be found, without the need to reopen the app, which
+can take much more time, depending on the chosen method of
+hidden and protecting the DroidStealth app. See figure ... for
+an example of how this is currently implemented.
+
+Furthermore, depending on the size, unlocking files could take a
+minute or more, as the Crypto library would have to perform a
+full decryption process. Someone's smartphone could potentially
+be taken from the user, during this time period. If the user has
+enough time, it should be possible to quickly cancel the
+decryption. For this reason, another notification for the Android 
+notification drawer was implemented, where the user is informed
+of the fact that some files are currently in the process of
+being unlocked. Once the user taps on it, the decryption is
+canceled.
+
+\textbf{Limitations}  %% TODO: MOVE TO FUTURE WORK
+A potential security threat that can be exploited, is that
+unlocked files are stored on the internal SD card of the device,
+and that another app could constantly watch the folders in which
+those files would be decrypted. Then this other app could save
+them somewhere else or send them over the Internet.
+
+Also, if files are unlocked, and the user's device is taken from
+its rightful owner without warning, then the user might not have
+gotten enough time to press the notifications to swiftly lock
+the secret files back. Invaders won't be able to see the data
+directly, unless they launch a file browser and start searching,
+but they would be informed of the existence of secret files.
+This could be a potential danger, because an attacker could be
+interested in those files and do the user harm to get these
+files. Users should be fully aware that they should only unlock
+files if they are 100\% sure that they are in a safe location.
+
+\subsubsection{Locking and Hiding of DroidStealth}
+
+For an App, that prevents others from finding your sensitive
+data by means of a casual search, it is required that this app
+can't be found easily as well. Obviously, if the app were to be
+found by those you want to hide your files from, they will be
+convinced that you might have sensitive files hidden. Hence, the
+searcher might go further than a casual search, in order to
+obtain the sensitive files. We have incorporated a few options to hide 
+DroidStealth, and to launch the app using some secret methods.
+
+\textbf{Casual Launch}
+First, we discuss the trivial way of launching DroidStealth, which is through 
+the app drawer of an Android device. On startup, the app will present the
+user with a keyboard to enter the pin of the user. If the pin is correct, the 
+DroidStealth will launch into the secret gallery. However, if the pin is incorrect, 
+the user won't be able to enter the application.
+
+%% MOVE THE FOLLOWING TO FUTURE WORK
+
+The pin keyboard could be randomized/scrambled, so that
+the pin can't be read from the fingerprints that are left on the touchscreen
+of the device. 
+
+%% MOVE THE FOLLOWING TO FUTURE WORK
+
+Talk about having multiple pins (future work), of which
+one could delete all data and show fakes, others could show
+sensitive data. For each pin, different set of data. Then
+sensitive files can be organized or categorized by pin.
+Potential dangers and negative impacts on user experience should
+be researched.
+
+\textbf{Hiding from App Drawer}
+The user has the option to hide DroidStealth completely from the drawer. This 
+means that the user should think of different means of launching the application, 
+which will be discussed in the next parts. A limitation is that the app can still be found
+in the application list in the Android settings screen. 
+
+\textbf{Morphing}
+
+ALEX KOLPA
+
+\textbf{Launch with Dialer}
+The user may select the option to launch the application by calling a special number
+in the regular dialer of the phone. Instead of actually calling the filled in number, the
+application will be launched, presenting the user with the pin keyboard. Furthermore,
+the application removes upon launch the last entry of the call log of the phone, so that
+an attacked can't figure out the launch code, by simply checking the call log.
+
+A potential security issue here, is that when a user fills in the wrong launch code, the 
+entry won't be removed from the call log, and thus an attacked could be hinted towards
+the right pin. Also, if a user had made more mistakes, the attacker could merge the 
+suspicious call log entries, and deduct the correct pin. A possible solution would be to
+check the call log for entries that are similar to the actual one, and to remove those as well.
+
+\textbf{Launch with Widget}
+Another option is to launch the app by means of an invisible widget on the user's home 
+screen. When the user adds a widget to the home screen, it will still be visible, until
+the user presses on it, to indicate that it is placed and ready for use. From that point on,
+when the user presses 5 times on the invisible widget, the app is launched, showing the pin
+keyboard.
+
+When adding a new access widget, all previously placed widgets become visible. This allows 
+the user to retrieve forgotten widgets. Of course, this is a potential security threat, as this 
+provides attackers an easy way of finding the hidden widget. We must remind ourselves, 
+however, that we are focusing on casual search. Also, if this would be combined with
+a morphed DroidStealth, attackers would never know which widget of which app should be
+placed, unless widget previews are provided.
+
+\subsubsection{Styling}
+
+DroidStealth is themed with a dark color in order to give users the feeling that they are indeed
+working in secret, and that their data will be safely hidden. However, the app should not
+have an amateuristic feeling about it. This would indicate that the app is potentially unstable, 
+since it would give the user the sense that the developers had no sense of perfection. 
+Therefore, we used a rounded, but solid straight font for our titles, and a formal font for 
+all other texts. Combining this with the use of bright, but slightly softened primary and 
+secondary colors, the user is given the feeling that the app handles its tasks well, but in 
+the mean time, the user is soothed with a comfortable look. %% TODO: ADD SMALL IMAGE
+
+The use of green and red is mirrored from the conventional meaning of those colors. Green 
+will always be used to indicate that something is good or safe, red will do the opposite. 
+In addition we have the color orange, which is used to indicate progress. Whenever a file is 
+locking, or unlocking, the status bar of the file will be orange, and a animated twirl is shown 
+to indicate that the file is being processed. %% TODO: ADD SMALL IMAGE
+
+Finally, the gallery uses no padding or margins between the thumbnails of files, as we want 
+to optimally make use of all the screen space. Thumbnails are thus as big as they can be, 
+and thus will be most efficient in showing the user its contents. 
