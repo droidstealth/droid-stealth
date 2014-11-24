@@ -37,9 +37,16 @@ After these two steps of altering the application appearance, the contents can b
 The first step is rebuilding the archive. 
 Since it is structurally the same as a Java Archive, existing tools could be used. 
 For this, the JarBuilder by Dominik Werthmueller was used, since it posed the least amount of dependencies, which is favorable when working with Android, which can be rather picky about what parts of Java are actually supported in its system. \cite{website:jarbuilder}
+This resulted in a complete archive, which still needed to be zipaligned and signed.
+Because of similar restrictions posed by the decompiling of the Android resources, it was decided that including the zip alignment step was not achievable, nor did zip alignment show a large performance improvement.
 
-Because of similar restrictions posed by the decompiling of the Android resources, it was decided that including the zip alignment step was not achievable, nor did zip alignment show a strong performance loss.
+Finally, the package needs to be signed. 
+Fortunately, an existing standalone solution is available outside the default Android signing methods, the 'zip-signer' library. \cite{website:zip-signer}
+However, a key still needs to be chosen. 
+For the scope of this project, it was decided the test key would be sufficient, since actually signing it with appropriate keys which would needed to be tracked to prevent falsification of the application provide several challenges which will be discussed in section \ref{sec:limitations-morphing}.
 
-To actually sign the archive, multiple options were available. 
+Once the archive has been signed the morphing has been completed. 
+The user can now be presented with an application package which contains the original application, albeit with a new appearance, according to the user's preferences.
+This application can then be shared with other users.
 
 
