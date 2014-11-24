@@ -121,9 +121,9 @@ While several solutions have been discussed, like listening to home button
 presses or having files only be unlocked for limited time, these still need
 to be explored in depth.
 
-\subsection{morphing} 
+\subsection{Morphing} 
 
-When it comes to morphing there are two major limitations, app renaming and software integrity validation. 
+When it comes to morphing there are two major limitations; app renaming and software integrity validation. 
 The first pertains to limitations in the renaming of the application when morphing. 
 The second holds that there is no way to guarantee that the application hasn't been modified after morphing.
 
@@ -131,23 +131,18 @@ When it comes to naming there is a functional limitation in the length of the ne
 It has to be the same length or shorter than the original name length, which can be padded with whitespace. 
 But as of yet the way Android manifests are encoded are opaque enough that not all size indicators have been correctly identified.
 
-The other component of of naming is the package name staying consistent across morphs. 
-This is not relevant for casual search in most situations however there is one exception, namely the application is on an appstore. 
-As apps are identified there by package name this would make it easy to reveal the presence of the app just by searching for it on the appstore.
-Currently the only solution is to not be available on appstores.
+The other component of naming is the `package name' staying consistent across morphs. 
+The package name of an application is a naming convention which Android uses as an identifier for applications in its app store.
+For casual searches, the package name is not relevant in most situations.
+However there is one exception, namely if DroidStealth would be on an app store. 
+As apps are identified there by package name this would make it easy to reveal its presence just by searching for it on the appstore.
+Currently the only solution is to not be available through any app store.
 
 The integrity validation is currently something that does not exist with morphing. 
-The application needs to be signed with the same key before morphing as after morphing. 
-This makes it possible to distribute updates in a nomadic manner. 
-But also means the signing key is packaged with the application itself for it to work. 
-As such anyone can create a modified version of the application and spread that as an 'update.'
+The application needs to be signed with the same key before morphing as after morphing if users want to be able to reinstall it afterwards without first having to remove it. 
+This makes it possible to distribute updates in a nomadic manner, but also means the signing key has to be packaged with DroidStealth for it to work. 
+As such anyone can create a modified version of the application and spread that as an `update.'
 Solving this problem is non-trivial and requires more research.
-
-However initial exploration of this issues has pointed us in the direction of a second signer application that verifies the code based on other indicators, e.g. hash. 
-This would then produce the application and preferably uninstall itself. 
-As this would allow the signer app to be on a appstore without revealing the presence of the application. 
-Then all updates would have to happen through instances of this application.
-This all needs to be properly designed and verified however.
 
 \subsection{Security}
 A potential security threat that can be exploited, is that
