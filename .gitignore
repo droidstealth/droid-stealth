@@ -42,3 +42,4 @@ report/*.log
 report/*.out
 report/*.pdf
 report/*.synctex.gz
+report/latex-output/
