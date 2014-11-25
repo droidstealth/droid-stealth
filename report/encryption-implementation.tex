@@ -17,7 +17,6 @@ An input stream provided by the \texttt{Crypto} class provides the decryption lo
 The output of that stream is passed to a plain Java output stream, which writes the data to a new, unencrypted file.
 
 The files are then stored in a folder outside the application folder.
-This separation is made because the folder would be deleted with the application when overwritten with a morphed version, for example.
-To allow the updating of the application without data loss, this separation is required.
+To allow the updating of the application without data loss, this separation is required; overwriting the application folder may be required, especially when installing a morphed version of DroidStealth.
 This means that the folder storing the files is public; other applications, as well as the user, can find it on their device via a computer or with a file explorer app.
 The risk posed by this is migitated by the encryption of the files, as well as the requirement to know of DroidStealth, transcending the scope of `casual search'.
