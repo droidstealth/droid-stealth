@@ -1,0 +1,22 @@
+\subsubsection{The Encryption Service}
+DroidStealth uses a `Service'\footnote{An Android Service is a part of an application that runs in the background, often used for more intensive or lengthy executions.} for the encryption of files.
+This service runs in the background, and listens for \texttt{Intents} started by the application.
+A queue is used to order the requests, and the service running in the backgrounds works through the queue continuously.
+
+The encryption that DroidStealth provides is implemented using Facebook's Conceal API\cite{facebookConceal}.
+Conceal provides a set of APIs for data encryption and authentication; we only use the first.
+The Conceal library does not implement cryptography algorithms, but instead uses algorithms used in OpenSSL\cite{openssl}.
+
+The process of encrypting an unencrypted file is quite simple because of the use of the Conceal API:
+The \texttt{Crypto} class, provided by the Conceal API, handles all encryption logic in the process.
+A `plain' Java input stream is created from the unencrypted file, and the \texttt{Crypto} class provides an output stream that encrypts data as it is being passed through.
+When both streams have been created, a dedicated algorithm copies the data, buffered in chunks of 4096 bytes, from the unencrypted file's input stream to the encrypting output stream.
+The final result is, as expected, the encrypted version of the previously unencrypted file.
+The decryption process uses the exact opposite method:
+An input stream provided by the \texttt{Crypto} class provides the decryption logic, by which the encrypted file is read.
+The output of that stream is passed to a plain Java output stream, which writes the data to a new, unencrypted file.
+
+The files are then stored in a folder outside the application folder.
+To allow the updating of the application without data loss, this separation is required; overwriting the application folder may be required, especially when installing a morphed version of DroidStealth.
+This means that the folder storing the files is public; other applications, as well as the user, can find it on their device via a computer or with a file explorer app.
+The risk posed by this is migitated by the encryption of the files, as well as the requirement to know of DroidStealth, transcending the scope of `casual search'.
