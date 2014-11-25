@@ -15,7 +15,6 @@
 		<item name="android:textSize">@dimen/text_largest</item>
 		<item name="android:textColor">@color/accent</item>
 		<item name="android:textStyle">bold</item>
-		<item name="android:layout_marginTop">@dimen/default_large_padding</item>
 	</style>
 
 	<style name="SubTitle">
