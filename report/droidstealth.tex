@@ -83,13 +83,7 @@ where.}
 
 \input{problemdescription}
 
-\section{Design and software architecture}
-
-Here we say stuff about the libraries and intents because why reinvent
-the wheel.
-
-Data sharing and application sharing.
-
+\include{approach_design}
 
 \section{Implementation}
 
@@ -162,6 +156,24 @@ preferably uninstall itself. As this would allow the signer app to be
 on a appstore without revealing the presence of the application. Then 
 all updates would have to happen through instances of this application.
 This all needs to be properly designed and verified however.
+
+\subsection{Security}
+A potential security threat that can be exploited, is that
+unlocked files are stored on the internal SD card of the device,
+and that another app could constantly watch the folders in which
+those files would be decrypted. Then this other app could save
+them somewhere else or send them over the Internet.
+
+Also, if files are unlocked, and the user's device is taken from
+its rightful owner without warning, then the user might not have
+gotten enough time to press the notifications to swiftly lock
+the secret files back. Invaders won't be able to see the data
+directly, unless they launch a file browser and start searching,
+but they would be informed of the existence of secret files.
+This could be a potential danger, because an attacker could be
+interested in those files and do the user harm to get these
+files. Users should be fully aware that they should only unlock
+files if they are 100\% sure that they are in a safe location.
 
 \section*{Acknowlegments}
 
