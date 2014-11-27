@@ -93,70 +93,73 @@ canceled by emptying the queue; the current de- or en-cryption is completed.
 
 \subsubsection{Locking and Hiding of DroidStealth}
 
-For an app that prevents others from finding your sensitive
-data by means of a casual search, it is required that this app
-can't be found easily as well. Obviously, if the app were to be
-found by those you want to hide your files from, they will be
-convinced that you might have sensitive files hidden. Hence, the
-searcher might go further than a casual search, in order to
-obtain the sensitive files. We have incorporated a few options to hide 
-DroidStealth, and to launch the app using some secret methods.
+As described in the problem description the data and the app can't be easy to find.
+Yet even as it is made to be hard to find it should still be easy to use.
+While at first glance this may seem like contrary goals it does not have to be.
+To this purpose we have incorporated several options to stealthily launch DroidStealth when it is hidden.
 
-\textbf{Casual Launch}
-The trivial, default way of launching DroidStealth is through the app drawer of an Android device. 
-When launching the application the first time, the user is promted to enter a pin that will be used to access the application.
-On following launches, the app will present the user with a keyboard to enter the pin of the user. If the pin is correct, the 
-DroidStealth will launch into the secret gallery. However, if the pin is incorrect, the user won't be able to enter the application.
+\textbf{Normal Launch}
+The trivial, and default way of launching apps, is through the app drawer of an Android device. 
+When launching the application the first time, the user is prompted to enter a pin that will be used to access the application.
+On following launches, the app will present the user with a keyboard to enter the pin of the user. 
+If the pin is correct, the DroidStealth will launch into the secret gallery.
+However, if the pin is incorrect, the user won't be able to enter the application.
+This pin will also be requested for all other launch methods. %Is this true?
+This is the least obfuscating option, but not necessarily an insecure method.
+Earlier we mentioned morphing DroidStealth to look like a different application.
+When only morphing is used the resulting name and icon should not stand out from the other apps to prevent easy detection.
 
-
-\textbf{Hiding from App Drawer}
-The user has the option to hide DroidStealth completely from the drawer. This 
-means that the user should think of different means of launching the application, 
-which will be discussed in the next parts. A limitation is that the app can still be found
-in the application list in the Android settings screen. 
+The user has the option to hide DroidStealth completely from the drawer. 
+This means that the user is can  not turn on this feature unless other means of launching DroidStealth have been set up.
+A listing of the other means will be discussed below.  %I think this might not be needed here? And the below is probably for the limitations section?
+Important to note is that DroidStealth can still be found in the application list in the Android settings screen.
+Meaning that morphing is still important even when the application is not in the app drawer.
+As Morphing will change the icon and name for the application list.
 
 \textbf{Launch with Dialer}
-The user may select the option to launch the application by calling a special number
-in the regular dialer of the phone. Instead of actually calling the filled in number, the
-application will be launched, presenting the user with the pin keyboard. Furthermore,
-the application removes upon launch the last entry of the call log of the phone, so that
-an attacked can't figure out the launch code, by simply checking the call log.
+The user may select the option to launch the application by dialing a special phone number. 
+Instead of actually calling the entered number, the application will be launched, presenting the user with the pin keyboard. 
+DroidStealth ensures this number does not show up the call log of the phone when it is launched successfully.
+This is so that an attacker can not find the phone number for launching by checking the call log.
 
-A potential security issue here, is that when a user fills in the wrong launch code, the 
-entry won't be removed from the call log, and thus an attacked could be hinted towards
-the right pin. Also, if a user had made more mistakes, the attacker could merge the 
-suspicious call log entries, and deduct the correct pin. A possible solution would be to
-check the call log for entries that are similar to the actual one, and to remove those as well.
+%I think this section is meant for the limitations section later on too?
+A potential security issue here is that when a user enters an incorrect phone number when trying to start DroidStealth.
+The wrong number is not automatically removed from the call log. 
+A smart attacker can potentially use this to shrink the search space for a brute force attack.
+Though this is generally not feasible for a casual search it could still be an indicator for the presence of DroidStealth if invalid phone numbers are used.
+This can potentially be solved would be to check the call log for entries that are similar to the actual one, and to remove those as well.
 
 \textbf{Launch with Widget}
-Another option is to launch the app by means of an invisible widget on the user's home screen. 
-When the user adds a widget to the home screen, it will still be visible, until the user presses on it. 
-From that point on, when the user presses the invisible widget 5 times, the app is launched, showing the pin keyboard.
+Another option is to launch DroidStealth by means of an 'invisible' widget on the user's home screen. 
+When the user adds a widget to the home screen it will be visible.
+Until the user presses on it at least, then it will go fully transparent.
+Making it impossible to see under normal circumstances.
+From that point on when the user presses the invisible widget 5 times DroidStealth is launched.
 
-When adding a new access widget, all previously placed widgets become visible. This allows 
-the user to retrieve forgotten widgets. Of course, this is a potential security threat, as this 
-provides attackers an easy way of finding the hidden widget. We must remind ourselves, 
-however, that we are focusing on casual search. Also, if this would be combined with
-a morphed DroidStealth, attackers would never know which widget of which app should be
-placed, unless widget previews are provided.
+When adding a new access widget, all previously placed widgets become visible. 
+This allows the user to retrieve widgets that have been misplaced.
+To provide additional security this should be combined with a morphed DroidStealth.
+Morphing obfuscates which widget of what app should be replaced unless widget previews are provided.
 
 \subsubsection{Styling}
-
+%Not sure if this fits right after bits about launch methods. And should those be under user experience if styling is there too?
+%Also this says what we did and what it should do. But how do we know that? And was this tested? Maybe actually go into how things were tested?
+%Add a bit about user experience testing being part of future work? Does this go across cultures too?
 DroidStealth is themed with a dark color in order to give users the feeling that they are indeed
-working in secret, and that their data will be safely hidden. However, the app should not
-have an amateuristic feeling about it. This would indicate that the app is potentially unstable, 
-since it would give the user the sense that the developers had no sense of perfection. 
+working in secret and that their data will be safe. However, DroidStealth should not
+have a hobbyist feel to it. This would indicate that the code is potentially unstable, 
+as it would give the user the sense that the developers were not serious or unqualified. 
 Therefore, we used a rounded, but solid straight font for our titles, and a formal font for 
 all other texts. Combining this with the use of bright, but slightly softened primary and 
 secondary colors, the user is given the feeling that the app handles its tasks well, but in 
 the mean time, the user is soothed with a comfortable look. %% TODO: ADD SMALL IMAGE
 
-The use of green and red is mirrored from the conventional meaning of those colors. Green 
+The use of green and red is mirrored from the conventional meaning of those colors. Green %How is that mirrored from the conventional meaning?
 will always be used to indicate that something is good or safe, red will do the opposite. 
 In addition we have the color orange, which is used to indicate progress. Whenever a file is 
 locking, or unlocking, the status bar of the file will be orange, and a animated twirl is shown 
 to indicate that the file is being processed. %% TODO: ADD SMALL IMAGE
 
-Finally, the gallery uses no padding or margins between the thumbnails of files, as we want 
+Finally, the gallery uses no padding or margins between the thumbnails of files, as we want %Maybe mention android standards here?
 to optimally make use of all the screen space. Thumbnails are thus as big as they can be, 
 and thus will be most efficient in showing the user its contents. 
