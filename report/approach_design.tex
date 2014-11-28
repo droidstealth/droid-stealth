@@ -16,36 +16,36 @@ section about future work and limitations. %% ADD REFERENCE
 \label{sec:approach-and-design:morphing}
 
 Simply hiding a user's data will not be enough to pass the casual search that was described earlier. 
-Anyone inspecting a phone that is aware of our application and its functionality would become highly suspicious of any user with the application installed, resulting in more thorough inspection. 
+Anyone inspecting a phone that knows of DroidStealth and its functionality would become highly suspicious of any user with the application installed, resulting in more thorough inspection. 
 This is something this application was not designed for, which could possibly result in the hidden data becoming compromised. 
 
-From this it follows that not only the data needs to be hidden, but the application itself as well. 
+From this it follows that not only the data needs to be hidden, but DroidStealth as well. 
 Unfortunately, the Android framework does not provide many tools for this. 
 This is mainly because the operating system, like most mobile operating systems, is focused on easy application access instead of easy file access. 
-This meant some unconvential approaches had to be assessed.
+Preventing detection meant some unconventional approaches had to be assessed.
 
-There are several obstacles in casual search for the application on Android. 
-The most obvious obstacle is the so called `app drawer', which is an overview of all the applications installed on the Android device.
-In Android is possible to change the way the app drawer behaves, since it in itself is an application as well.
+There are several obstacles when it comes to staying unnoticed through a casual search on Android. 
+The most obvious obstacle is the `app drawer', which is an overview of all the applications installed on the Android device.
+In Android is possible to change the way the app drawer behaves, since it is itself an application as well.
 However, changing the app drawer is a radical approach, which many users, especially those not technically literate, would not consider doing.
-Since the product was meant to be as unobtrusive as possible to install and use, it meant that having an application that behaved as a custom app drawer was not an option.
+Since the product was meant to be as easy as possible to install and use, it meant that having an application that behaved as a custom app drawer was not an option.
 
 This meant that the application would have to be able to hide itself.
-It would have to be so unnoticable between the user's other applications, casual search would not expose it immediately. 
-This proved another problem, since applications have a name and an icon that stays the same as long as they are not updated by the developer themselves. 
-Updating continuously would not be an option, since the application is meant for offline usage, as explained in section \ref{sec:problem-description}. 
+It would have to be so unnoticeable between the user's other applications, casual search would not expose it immediately. 
+This led to another problem, since applications have a name and an icon that stays the same as long as they are not updated by the developer themselves.
+Updating continuously would not be an option, since DroidStealth is meant for offline usage, as explained in section \ref{sec:problem-description}. 
 
-Since the developers can not update the appearance of the application, this means it is something the users would need to be able to do themselves.
+Since the developers can not consistently update the appearance of the application, this means it is something the users would need to be able to do themselves.
 To achieve this, a novel approach was taken.
-For this project a method was devised to allow users to alter the name and icon of the application without developer intervention, a method which was appropriately dubbed `morphing' due to the now fluid behaviour application appearances can have.
+For this project we devised a method to allow users to alter the name and icon of DroidStealth without developer intervention, a method which was dubbed `morphing' due to the now fluid appearances DroidStealth.
 Unfortunately, due to limitations in Android, users would need to re-install the application after having `morphed' it, but this problem is addressed through the way users share the application.
 
 As expressed in the section \ref{sec:problem-description}, the application should be able to be shared nomadically, meaning there is no central distribution point, but users share the application between each other. 
-Combined with the morphing discussed in the previous paragraph, this provides for a good solution for the necessity of reinstalling the application for it to be morphed: 
+Combined with the morphing discussed in the previous paragraph, this provides for a good solution for the necessity of reinstalling the application for it to be morphed.
 Users can create a morphed version which they can share with other users, so that the application never looks the same, making it near impossible to detect during a casual search.
 
 Sharing the application can be achieved through a multitude of ways on Android, but because of the ease of use and the increasing implementation, Near Field Communication (NFC)\cite{website:nfc-spec} was chosen the main approach for data sharing. 
-It is also possible to share through the default sharing system supported by Android -- which includes BlueTooth and uploading files to various sharing services -- for those devices that do not yet support NFC.
+It is also possible to share through the default sharing system supported by Android ,which includes BlueTooth and uploading files to various sharing services, for those devices that do not yet support NFC.
 
 \subsection{User Experience}
 \label{sec:approach-and-design:user-experience}
@@ -57,30 +57,30 @@ philosophy behind the styling.
 
 \subsubsection{Locking and Hiding of Data}
 
-The most important part of this project, is the ability to hide
-ones files. This means, as mentioned earlier, that hidden media
-files should not be visible anymore in the Android media
-gallery, and that with a file browser, one still shouldn't be
-able to open any of the hidden files, as they would be
-encrypted. However, this also means that while the sensitive
-files are hidden and locked away, the user wouldn't be able to
+The most important part of this project is the ability to hide
+files. This means, as mentioned earlier, that hidden
+files should no longer be visible in the media
+galleries. When using a file browser hidden files should not be
+able to open any of the hidden files either.
+The files are hidden from the above and locked by encrypting the files.
+While the sensitive files are hidden and locked away, the user would not be able to
 directly open the files. Therefore, the user should have the
-ability to unlock files, so that the data can be looked at,
+ability to unlock files, so that the data can be viewed,
 shared, and even modified.
 
-The issue here with unlocked files, is that these may be
-forgotten by the user, and then, by a third party, found and
-opened using a file browser. This issue was solved by showing
+Unlocking files potentially causes security risks, they may be
+forgotten by the user. Third party could then find the file when the user thought they were safe.
+This issue was solved by showing
 a clear warning to the user, explaining that some files are
-unlocked and that, therefore, they could be leaked.
-The user is presented with a persistent notification in the
+unlocked and that the unlocked files present a risk.
+The user is shown a persistent notification in the
 notification drawer of Android, with the message that some of
 the user's files are unlocked. When the notification is pressed,
 all unlocked files are immediately locked. This
-provides a user friendly way to swiftly lock the files back so
-they can't be found, without the need to reopen the app, which
-can take much more time, depending on the chosen method of
-hidden and protecting the DroidStealth app. 
+provides a user friendly way to swiftly lock the files again. These files
+can then no longer be found without having to launch DroidStealth again. Launching
+is potentially timeconsuming, depending on the chosen method of
+hiding and protecting the DroidStealth app, so the notifications are especially useful in time critical situations.
 
 Furthermore, depending on the size, unlocking files could take a
 minute or more, as the encryption service would have to perform a
@@ -88,75 +88,80 @@ full decryption process. During this process, another notification
 is shown, where the user is informed
 of the fact that some files are currently in the process of
 being unlocked. Once the user taps on it, the decryption is
-canceled by emptying the queue; the currently de- or encrypted file is finished.
+canceled by emptying the queue; the current de- or en-cryption is completed.
 
 
 \subsubsection{Locking and Hiding of DroidStealth}
 
-For an app that prevents others from finding your sensitive
-data by means of a casual search, it is required that this app
-can't be found easily as well. Obviously, if the app were to be
-found by those you want to hide your files from, they will be
-convinced that you might have sensitive files hidden. Hence, the
-searcher might go further than a casual search, in order to
-obtain the sensitive files. We have incorporated a few options to hide 
-DroidStealth, and to launch the app using some secret methods.
+As described in the problem description the data and the app should not be easy to find.
+Yet even as it is made to be hard to find it should still be easy to use.
+While at first glance this may seem like contrary goals it does not have to be.
+To this purpose we have incorporated several options to stealthily launch DroidStealth when it is hidden.
 
-\textbf{Casual Launch}
-The trivial, default way of launching DroidStealth is through the app drawer of an Android device. 
-When launching the application the first time, the user is promted to enter a pin that will be used to access the application.
-On following launches, the app will present the user with a keyboard to enter the pin of the user. If the pin is correct, the 
-DroidStealth will launch into the secret gallery. However, if the pin is incorrect, the user won't be able to enter the application.
+\textbf{Normal Launch}
+The trivial, and default way of launching apps, is through the app drawer of an Android device. 
+This is the default method of launching DroidStealth.
+The user is then prompted to enter a pin that will be used to access the application.
+On following launches, the app will present the user with a keyboard to enter the pin of the user. 
+If the pin is correct, the DroidStealth will launch into the secret gallery.
+However, if the pin is incorrect, the user won't be able to enter the application.
+This pin will also be requested for all other launch methods.
+This is the least obfuscating option, but not necessarily an insecure method.
 
+The application icon will show in an easily accesible list of application where Droidstealth may stand out if the icon and name are known.
+Earlier we mentioned morphing DroidStealth to look like a different application which solves this.
+When morphing is used the resulting display name and icon on the smartphone should not stand out from the other apps, preventing easy detection.
 
-\textbf{Hiding from App Drawer}
-The user has the option to hide DroidStealth completely from the drawer. This 
-means that the user should think of different means of launching the application, 
-which will be discussed in the next parts. A limitation is that the app can still be found
-in the application list in the Android settings screen. 
+In some cases this obfuscation is not enough security for the user.
+If this is the case the user has the option to hide DroidStealth completely from the drawer.
+Earlier we mentioned that the app drawer is the default launch method.
+To prevent users locking themselves out of the application users can not hide DroidStealth unless one or more other means of launching, described below, have been set up.
+Important to note is that DroidStealth can still be found in the `installed application' list in the Android settings screen.
+This list means that morphing is still important even when the application is not in the app drawer as Morphing will change the icon and name for the `installed application' list.
 
 \textbf{Launch with Dialer}
-The user may select the option to launch the application by calling a special number
-in the regular dialer of the phone. Instead of actually calling the filled in number, the
-application will be launched, presenting the user with the pin keyboard. Furthermore,
-the application removes upon launch the last entry of the call log of the phone, so that
-an attacked can't figure out the launch code, by simply checking the call log.
+The user may select the option to launch the application by dialing a special phone number, a dialer code. 
+Instead of actually calling the entered number, the application will be launched, presenting the user with the pin keyboard. 
+DroidStealth ensures this number does not show up the call log of the phone when it is launched successfully.
+This is so that an attacker can not find the phone number for launching DroidStealth by checking the call log.
 
-A potential security issue here, is that when a user fills in the wrong launch code, the 
-entry won't be removed from the call log, and thus an attacked could be hinted towards
-the right pin. Also, if a user had made more mistakes, the attacker could merge the 
-suspicious call log entries, and deduct the correct pin. A possible solution would be to
-check the call log for entries that are similar to the actual one, and to remove those as well.
+A potential security issue here is that when a user enters an incorrect dialer code when trying to start DroidStealth.
+The wrong number is not automatically removed from the call log. 
+An attacker can potentially use this to make it easier to determine the correct dialer code.
+Though this is generally not feasible for a casual search it could still be an indicator for the presence of DroidStealth if invalid phone numbers are used.
+This can potentially be solved would be to check the call log for entries that are similar to the actual one, and to remove those as well.
 
 \textbf{Launch with Widget}
-Another option is to launch the app by means of an invisible widget on the user's home screen. 
-When the user adds a widget to the home screen, it will still be visible, until the user presses on it. 
-From that point on, when the user presses the invisible widget 5 times, the app is launched, showing the pin keyboard.
+Launching DroidStealth by means of an `invisible' widget on the user's home screen is the final launch option.. 
+When the user adds a widget to the home screen it will be visible.
+Until the user presses on it at least, then it will go fully transparent.
+This results in a widget that is impossible to see on standard android homescreen implementations.
+From that point on when the user presses the invisible widget 5 times DroidStealth is launched.
 
-When adding a new access widget, all previously placed widgets become visible. This allows 
-the user to retrieve forgotten widgets. Of course, this is a potential security threat, as this 
-provides attackers an easy way of finding the hidden widget. We must remind ourselves, 
-however, that we are focusing on casual search. Also, if this would be combined with
-a morphed DroidStealth, attackers would never know which widget of which app should be
-placed, unless widget previews are provided.
+When adding a new access widget, all previously placed widgets become visible. 
+This allows the user to retrieve widgets that have been misplaced.
+To provide additional security this should be combined with a morphed DroidStealth.
+Morphing obfuscates which widget of what app should be replaced unless widget previews are provided.
 
 \subsubsection{Styling}
-
+%Not sure if this fits right after bits about launch methods. And should those be under user experience if styling is there too?
+%Also this says what we did and what it should do. But how do we know that? And was this tested? Maybe actually go into how things were tested?
+%Add a bit about user experience testing being part of future work? Does this go across cultures too?
 DroidStealth is themed with a dark color in order to give users the feeling that they are indeed
-working in secret, and that their data will be safely hidden. However, the app should not
-have an amateuristic feeling about it. This would indicate that the app is potentially unstable, 
-since it would give the user the sense that the developers had no sense of perfection. 
+working in secret and that their data will be safe. However, DroidStealth should
+make a professional impression. This would indicate that the code is potentially unstable, 
+as it would give the user the sense that the developers are not professional or unqualified. 
 Therefore, we used a rounded, but solid straight font for our titles, and a formal font for 
 all other texts. Combining this with the use of bright, but slightly softened primary and 
 secondary colors, the user is given the feeling that the app handles its tasks well, but in 
 the mean time, the user is soothed with a comfortable look. %% TODO: ADD SMALL IMAGE
 
-The use of green and red is mirrored from the conventional meaning of those colors. Green 
+The use of green and red reflects the conventional meaning of those colors. Green
 will always be used to indicate that something is good or safe, red will do the opposite. 
 In addition we have the color orange, which is used to indicate progress. Whenever a file is 
 locking, or unlocking, the status bar of the file will be orange, and a animated twirl is shown 
 to indicate that the file is being processed. %% TODO: ADD SMALL IMAGE
 
-Finally, the gallery uses no padding or margins between the thumbnails of files, as we want 
+Finally, the gallery uses no padding or margins between the thumbnails of files, as we want
 to optimally make use of all the screen space. Thumbnails are thus as big as they can be, 
 and thus will be most efficient in showing the user its contents. 

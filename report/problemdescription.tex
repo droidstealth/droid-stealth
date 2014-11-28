@@ -1,31 +1,40 @@
 \section{Problem Description}
 \label{sec:problem-description}
 Using mobile phones as a primary platform for computing, recording data and storing data is becoming more and more ubiquitous.
-While the users store sensitive data on these devices, the security measures to protect this data, if even applied, often prove to be insufficient.
+While the users store sensitive data on these devices the security measures to protect this data often prove to be insufficient.
+This can be because of implementation failures but often these measures are hard to apply properly by the average user\cite{usablesecurity,cannotsecurity}.
 Even the more popular security measures available, such as PIN codes, `unlock patterns' and passwords have proven not to be effective at all times.
 There are even techniques to retrieve these codes and patterns, for example using smudge attacks\cite{aviv2010smudge}.
 
 This section describes the problem we attempt to solve.
-It does so by explaining the sensitive data that should be kept safe, the situation (environment) in which it should provide protection, and limitations that arise.
-In Section \ref{sec:approach-and-design}, the approach to the solution is described. 
+It does so by explaining the sensitive data that should be kept safe, the situation (environment) in which it should provide protection, and limitations that arise. 
+First it will go into what kind of data it should involve and how to handle it. 
+Then an explanation of what this data should be protected against. 
+Followed by a section on 'root access' on a phone, what that means, and why that can not be required.
+Finally we discuss the need for nomadic distribution.
 
-\subsection{Hide and encrypt}
-Sensitive data, which data the user wants to keep safe in general, can take many forms.
-The data will likely consist mostly of photos and videos, with the occasional document; regardless, the application should support the file types that the device could normally handle.
+\subsection{Hiding and Securing Data}
+Sensitive data, files that the user wants to keep private, can take many forms.
+The data will likely consist primarily of photos and videos with the occasional document but should not exclude other types of file.
+As such the application should support the file types that the device could normally handle.
 
-An obvious solution to keep data safe from inspection by the wrong audience is encryption.
-A secure encryption would not only provide a way of making the data handled by the application less incriminating, as it would not be understandable for the human eye:
-It is also a strong measure because it denies access to those who are not supposed to see it.
+An obvious solution to keep data safe from undesired inspection is encrypting it.
+Encryption, properly implemented, would provide a way of securing the data by making it impossible to access without the encryption key. 
+This has the added benefit of hiding the encrypted data by making it unrecognizable as the file it once was.
+Preventing many applications on a smart phone from showing them to a user, though not all.
 
-However, even when the data is not accessible, the presence of inaccessible data can raise suspicion.
-Hiding the data is therefore an important and necessary addition to the solution, further increasing the chance of passing a casual search.
+Yet hiding the data is not enough.
+The presence of the app can raise suspicion, especially when its purpose is known. 
+This could result in follow-up measures.
+Thus the app should be hard to find or recognize, further increasing the chance of passing a casual search.
 
 \subsection{Casual Search}
-As discussed in the introduction, we attempt to address the problem of `casual search'. 
+As discussed in the introduction, we attempt to address the problem of `casual search'.
 In the scope of this article, we define `casual search' as following: A quick attempt to find information on a mobile device without applying advanced technical knowledge of the device, nor specific knowledge of the protecting methods proposed and implemented as described in this article.
-We aim to protect against this investigation method, as it is likely to be the first investigation encountered; pass this and you will likely not be subjected to more intensive searches at all.
-Furthermore, casual search is probably the most used search method. 
-A `quick glance' through a phone, be it at a checkpoint, a protest, or because your significant other has gotten hold of the device is more likely to occur than a thorough investigation of the device by someone who is experienced and trained where to look.
+
+We aim to protect against this investigation method, as it is likely to be the first investigation encountered; pass it and a more thorough search will be unlikely.
+Furthermore, casual search is probably the most common as more intensive searches usually require very limited resources.
+After all a `quick glance' through a phone, be it at a checkpoint, a protest, or because your significant other has gotten hold of the device is more likely to occur than a thorough investigation of the device by someone who is experienced and trained where to look.
 
 \subsection{No root}
 The solution that is described in this article had a technical limitation that put a certain set of tools out of reach.
@@ -35,17 +44,17 @@ By doing this, it undermines Android's security model\cite{vidas2011all}.
 Often named `root access', it can be compared with root access as in Unix systems, and Administrator privileges in Windows systems.
 Because `root access' allows manipulating system files, it provides more powerful tools that could benefit the solution to the problem addressed.
 
-However, most users do not have a rooted phone, and are not capable of rooting it either. 
-Rooting a phone has significant disadvantages; one could damage the device's software to the point where it needs to be completely reset.
+However, most users do not have a rooted phone, nor do do they have the technical knowledge to root their phone themselves. 
+Rooting a phone has significant disadvantages if done incorrectly; the device's software could get corrupted to the point where it needs to be completely reset or becomes unusable.
 Users will also be hesitant to root their phone because it voids the warranty.
-
 To keep the solution available for all Android phones, the use of root access is not an option, and can therefore not be applied.
 
 \subsection{Nomadic distribution}
-In situations where a central distributor of applications is monitored by those from whom the data has to be protected, distribution of the application can prove difficult.
+In situations where a central distributor of applications is monitored or censored, distribution of the application can prove difficult.
 In these cases, the application we propose in our solution is likely to be blocked.
-Even if it is not, knowledge of the application will quickly reach those who want to access the data the users want to keep to themselves.
+Even if it is not, knowledge of the application will quickly reach those who desire access to the data the users want to keep private.
 
 A way of circumventing this could be a `nomadic' distribution of the application.
 Instead of providing the application through a central point, that can be monitored, the users could share it directly with those interested.
+More importantly, they can share it only with those they trust.
 This provides extra means of keeping the application in the right hands, and thus preventing the knowledge of the application entirely.  
