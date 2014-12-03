@@ -9,6 +9,7 @@
  pdfauthor={Your Name},
  pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false}
 \usepackage{breakurl}
+\usepackage{color}
 
 \makeatletter
 
@@ -24,23 +25,26 @@
 \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 %\usepackage[nocompress]{cite} %optional
 
+\newcommand{\todo}[1]{\colorbox{yellow}{#1}}
+
 \makeatother
 
 \begin{document}
 
 
 
-\title{DroidStealth: A Nomadic Data Obfuscation Tool that Facilitates Sharing}
+\title{A Nomadic Self-Compiling Android Data Obfuscation Tool}
 
 
-\author{Olivier Hokke, Alex Kolpa, Joris van den Oever, and~Alex Walterbos}
+\author{Olivier Hokke, Alex Kolpa, Joris van den Oever, Alex Walterbos, and Johan Pouwelse (Course supervisor)}
 
 
 \markboth{Delft University of Technology Student Project}{Your Name \MakeLowercase{\textit{et al.}}: Your Title}
 
 \IEEEtitleabstractindextext{
 \begin{abstract}
-TODO ABSTRACT TEXT\end{abstract}
+	\todo{TODO ABSTRACT TEXT}
+\end{abstract}
 
 \begin{IEEEkeywords}
 casual search, privacy, nomadic software, obfuscation
@@ -84,11 +88,7 @@ Finally, the limitations and future work will be discussed in section \ref{sec:f
 
 \input{problemdescription}
 
-<<<<<<< HEAD
-\input{approach_design}
-=======
 \input{approach-design}
->>>>>>> 7a830f7... Split user experience into own file, to implementation
 
 \section{Implementation}
 \label{sec:implementation}
@@ -99,11 +99,10 @@ It consists of the morphing implementation in section \ref{sec:implementation:mo
 \input{morphing}
 
 \input{encryption-implementation}
-<<<<<<< HEAD
-=======
 
 \input{user-experience}
->>>>>>> 7a830f7... Split user experience into own file, to implementation
+
+\input{vulnerability-analysis}
 
 \section{Future Work}
 \label{sec:future-work}
@@ -156,24 +155,6 @@ The application needs to be signed with the same key before morphing as after mo
 This makes it possible to distribute updates in a nomadic manner, but also means the signing key has to be packaged with DroidStealth for it to work. 
 As such anyone can create a modified version of the application and spread that as an `update.'
 Solving this problem is non-trivial and requires more research.
-
-\subsection{Security}
-A potential security threat that can be exploited, is that
-unlocked files are stored on the internal SD card of the device,
-and that another app could constantly watch the folders in which
-those files would be decrypted. Then this other app could save
-them somewhere else or send them over the Internet.
-
-Also, if files are unlocked, and the user's device is taken from
-its rightful owner without warning, then the user might not have
-gotten enough time to press the notifications to swiftly lock
-the secret files back. Invaders won't be able to see the data
-directly, unless they launch a file browser and start searching,
-but they would be informed of the existence of secret files.
-This could be a potential danger, because an attacker could be
-interested in those files and do the user harm to get these
-files. Users should be fully aware that they should only unlock
-files if they are 100\% sure that they are in a safe location.
 
 \section*{Acknowlegments}
 
