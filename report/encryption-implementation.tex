@@ -1,4 +1,5 @@
-\subsubsection{The Encryption Service}
+\subsection{The Encryption Service}
+\label{sec:implementation:encryption}
 DroidStealth uses a `Service'\footnote{An Android Service is a part of an application that runs in the background, often used for more intensive or lengthy executions.} for the encryption of files.
 This service runs in the background, and listens for \texttt{Intents} started by the application.
 A queue is used to order the requests, and the service running in the backgrounds works through the queue continuously.

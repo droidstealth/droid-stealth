@@ -74,29 +74,30 @@ on the phone to check out data. Instead of performing advanced attacks
 using specialized tools designed to get all the data out of a phone.
 
 This project aims to address only the issues with casual search through
-the use of an Android app. The tool aided expert attacks are not within the
-scope of this project. As this is a very different kind of problem.
+the use of an Android app. The tool-aided expert attacks are not within the
+scope of this project.
 
-\textbf{Bla bla bla structure of paper and what we're going to discuss
-where.}
-
+This paper starts with explaining the problem description in section \ref{sec:problem-description}, wherein the problem that led to the setup of this project is expanded upon.
+Next, the approach taken to this problem is discusssed in section \ref{sec:approach-and-design}.
+Once the approach has been determined, a description of the actual implementation can be provided, which is done is section \ref{sec:implementation}.
+Finally, the limitations and future work will be discussed in section \ref{sec:future-work}.
 
 \input{problemdescription}
 
-\include{approach_design}
+\input{approach_design}
 
 \section{Implementation}
+\label{sec:implementation}
 
-How did we create the data vault. Encryption, thumbnails, notifications
-for unlocking.
-
-What we do to make morphing possible.
+This section will discuss the actual implementation of the approach as taken in section \ref{sec:approach-and-design}. 
+It consists of the morphing implementation in section \ref{sec:implementation:morphing}, and the encryption implementation in section \ref{sec:implementation:encryption}.
 
 \input{morphing}
 
-\include{encryption-implementation}
+\input{encryption-implementation}
 
 \section{Future Work}
+\label{sec:future-work}
 
 There are several aspects of the application than can be improved. Which
 can be categorized under one of the following: usability, and morphing.
@@ -124,6 +125,7 @@ presses or having files only be unlocked for limited time, these still need
 to be explored in depth.
 
 \subsection{Morphing} 
+\label{sec:limitations:morphing}
 
 When it comes to morphing there are two major limitations; app renaming and software integrity validation. 
 The first pertains to limitations in the renaming of the application when morphing. 
