@@ -16,6 +16,7 @@ import com.stealth.android.R;
 import com.stealth.android.StealthButton;
 import com.stealth.dialog.DialogConstructor;
 import com.stealth.dialog.DialogOptions;
+import com.stealth.dialog.HelpDialogFragment;
 import com.stealth.dialog.IDialogResponse;
 import com.stealth.font.FontManager;
 import com.stealth.launch.DialerManager;
@@ -198,27 +199,33 @@ public class LaunchSettingsFragment extends Fragment implements CompoundButton.O
 	}
 
 	private void createHelpDialog(int titleResourceID, int bodyResourceID) {
-		DialogOptions dialogOptions = new DialogOptions()
-				.setTitle(titleResourceID)
-				.setNegativeButtonEnabled(false)
-				.setPositiveButtonEnabled(false)
-				.setDescription(bodyResourceID);
-
-		DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
-			@Override
-			public void onPositive() {
-				// Do nothing
-			}
-
-			@Override
-			public void onNegative() {
-				// Do nothing
-			}
-
-			@Override
-			public void onCancel() {
-				// Do nothing
-			}
-		});
+//		DialogOptions dialogOptions = new DialogOptions()
+//				.setTitle(titleResourceID)
+//				.setNegativeButtonEnabled(false)
+//				.setPositiveButtonEnabled(false)
+//				.setDescription(bodyResourceID);
+//
+//		DialogConstructor.show(getActivity(), dialogOptions, new IDialogResponse() {
+//			@Override
+//			public void onPositive() {
+//				// Do nothing
+//			}
+//
+//			@Override
+//			public void onNegative() {
+//				// Do nothing
+//			}
+//
+//			@Override
+//			public void onCancel() {
+//				// Do nothing
+//			}
+//		});
+		HelpDialogFragment helpDialogFragment = new HelpDialogFragment();
+		Bundle arguments = new Bundle();
+		arguments.putInt(HelpDialogFragment.TITLE, titleResourceID);
+		arguments.putInt(HelpDialogFragment.MESSAGE, bodyResourceID);
+		helpDialogFragment.setArguments(arguments);
+		helpDialogFragment.show(getFragmentManager(), "DroidStealth.HelpDialogFragment");
 	}
 }
