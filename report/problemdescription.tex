@@ -1,5 +1,6 @@
 \section{Problem Description}
 \label{sec:problem-description}
+\todo{Pouwelse: "Human rights activists and others are vulnerable when storing data on smartphones. We propose hiding data, instead of mere encryption".}
 Using mobile phones as a primary platform for computing, recording data and storing data is becoming more and more ubiquitous.
 While the users store sensitive data on these devices, the security measures to protect this data, if even applied, often prove to be insufficient.
 Even the more popular security measures available, such as PIN codes, `unlock patterns' and passwords have proven not to be effective at all times.
@@ -10,6 +11,8 @@ It does so by explaining the sensitive data that should be kept safe, the situat
 In Section \ref{sec:approach-and-design}, the approach to the solution is described. 
 
 \subsection{Hide and encrypt}
+\todo{Section title > Beyond simple encryption.}
+\todo{Kernzin: Encryption usage makes you a suspect.}
 Sensitive data, which data the user wants to keep safe in general, can take many forms.
 The data will likely consist mostly of photos and videos, with the occasional document; regardless, the application should support the file types that the device could normally handle.
 
@@ -21,13 +24,14 @@ However, even when the data is not accessible, the presence of inaccessible data
 Hiding the data is therefore an important and necessary addition to the solution, further increasing the chance of passing a casual search.
 
 \subsection{Casual Search}
+\todo{Add anecdote on protest check}
 As discussed in the introduction, we attempt to address the problem of `casual search'. 
 In the scope of this article, we define `casual search' as following: A quick attempt to find information on a mobile device without applying advanced technical knowledge of the device, nor specific knowledge of the protecting methods proposed and implemented as described in this article.
 We aim to protect against this investigation method, as it is likely to be the first investigation encountered; pass this and you will likely not be subjected to more intensive searches at all.
 Furthermore, casual search is probably the most used search method. 
 A `quick glance' through a phone, be it at a checkpoint, a protest, or because your significant other has gotten hold of the device is more likely to occur than a thorough investigation of the device by someone who is experienced and trained where to look.
 
-\subsection{No root}
+\subsection{Root Permissions}
 The solution that is described in this article had a technical limitation that put a certain set of tools out of reach.
 `Rooting' an Android device unlocks administrative privileges, allowing the user or applications to access restricted files, and communicate with device features more directly.
 By doing this, it undermines Android's security model\cite{vidas2011all}.
