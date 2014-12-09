@@ -1,10 +1,9 @@
 \section{Implementation}
 \label{sec:implementation}
-\todo{Open source.}
 
-This section will discuss the implementation of the application in detail. 
-We first discuss the implementation of the `morphing' capabilities, after which the encryption service is explained.
-\todo{Reread paragraph.}
+This section diverges on the technical details of the implementation of DroidStealth.
+It explains our solutions to challenges we encountered in the morphing and encryption.
+Challenges and implementation decisions regarding the user experience are discussed, and finally an analysis of the vulnerabilities of DroidStealth is addressed.
 
 \input{morphing}
 
@@ -14,8 +13,10 @@ We first discuss the implementation of the `morphing' capabilities, after which 
 
 \input{vulnerability-analysis}
 
+\input{sharing-droidstealth}
+
 \subsection{Open Source}
 This application was written as an open source project.
 The code can be found on GitHub\cite{githubSource}, and may be used under terms of the licences provided there.
 \todo{Add licences here too.}
-The source code of this application is provided, as well as a separate library that can be used to morph any Android application by including it.
+The source code of this application is provided, as well as a separately usable library that can be used to include the morphing feature into another Android application.

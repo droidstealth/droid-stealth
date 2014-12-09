@@ -19,6 +19,7 @@ These civilian smartphone owners spread their recordings of protests and alleged
 This application addresses the problem of `casual search'.
 In the scope of this article, we define `casual search' as following: 
 "A quick attempt to find information on a mobile device without applying advanced technical knowledge of the device, nor specific knowledge of the protecting methods proposed and implemented as described in this article".
+Someone applying a casual search is named a casual inspector, or casual searcher.
 We aim to protect against this investigation method, as it is likely to be the first investigation encountered; pass this and you will likely not be subjected to more intensive searches at all.
 This reasoning also implicates that casual search is likely the most used search method:
 A `quick glance' through a mobile device is more likely to occur than a thorough investigation of the device by someone who is experienced and trained where to look.
@@ -34,7 +35,10 @@ Second, the encryption would render the files unreadable and unrecognizable to a
 However, using encryption makes you suspicious.
 The inaccessible data can be a reason to extend a casual search with more intensive search methods, in which case the data might be compromised after all.
 The same applies to the application that holds the data; any restriction to opening the application can be seen as suspicions.
-To address both issues, the application should not only hide the data, but also itself.
+To address both issues, the application should not only hide the data, but itself as well.
+
+In this article, we will use the term `locked data' to refer to encrypted, inaccessible data.
+With `locked application' we mean the application with its access restriction, as we will explain in Section~\ref{sec:approach}.
 
 \subsection{Root Permissions}
 The solution that is described in this article had a technical limitation that put a certain set of tools out of reach.

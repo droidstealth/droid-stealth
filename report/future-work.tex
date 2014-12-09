@@ -49,3 +49,12 @@ The application needs to be signed with the same key before morphing as after mo
 This makes it possible to distribute updates in a nomadic manner, but also means the signing key has to be packaged with DroidStealth for it to work. 
 As such anyone can create a modified version of the application and spread that as an `update'.
 Solving this problem is non-trivial and requires more research.
+
+\subsection{Reinstalling the application}
+When the application is reinstalled from, for example, a morphed android application package, the encryption key used to lock data is replaced.
+This means that the data locked before the reinstallation is impossible to decrypt; a significant limitation in the usability.
+
+A method of deriving a key that is consistent through reinstalling the application is required, while it remains underivable for external parties.
+
+Reinstalling the application from the newly created application package unfortunately replaces the encryption key that is used to encrypt and decrypt the files.
+This means that the data stored before the reinstall cannot be unlocked anymore; a harsh limitation in the usga
