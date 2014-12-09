@@ -7,24 +7,21 @@ The categories will be discusses individually as they are separated both
 technically and conceptually. 
 
 \subsection{Usability}
+In terms of usability there has been no formal study on what aspects of the application work work well. 
+However, informal testing has shown several avenues of improvement. 
 
-In terms of usability there has been no formal study on what aspects of
-the application work work well. However informal testing has shown several
-avenues of improvement. First is how to access the application. 
+The testing has shown that the alternative launch methods could use closer attention when it comes to the usability.
+The counterintuitive approaches to launching DroidStealth can be confusing.
+There is also a risk that the methods, or the codes are forgotten when the user only sporadically opens the app;
+This would render the data managed by the application lost forever.
+Future work could address this issue with a solution that creates a more usable alternative launch method, while maintaining the security of the application.
 
-While the freely chosen app name and icon do suffice there are other ways 
-it could be done. Namely the widgets available to android users. This could 
-be a simple widget mimicking the standard available widgets, or even be 
-invisible. So as to have no recognizable screen space. While it could still
-react to certain use patterns. A first implementation of this functionality is
-available but needs to be properly evaluated.
+Once the application has been launched, the user is required to pay close attention to the state of the application, and the state of the files managed by it.
+A small human error can result in inadvertent data breaches, especially when the data in the application is opened in other apps.
 
-Once the application has been started there are still some ways the user
-needs to be observant in how she uses the application. As it can result in
-inadvertent data breaches. Mainly when the data is opened in other apps.
-While several solutions have been discussed, like listening to home button
-presses or having files only be unlocked for limited time, these still need
-to be explored in depth.
+Monitoring the application's lifecycle more closely could resolve some of these issues:
+For example, `listening' to home button presses could be used to trigger the locking of files automatically whenever the app gets out of focus.
+Another solution that has been discussed is limiting the time during which a file may be unlocked, which could restore the encryption after a (user-)designated duration.
 
 \subsection{Morphing} 
 \label{sec:limitations:morphing}
