@@ -12,24 +12,23 @@ After that, the applied techniques that allow nomadic distribution are discussed
 The first layer of protection offered by DroidStealth is access restriction.
 This restriction consists of two parts, one for the data itself and one for the application.
 
-\subsubsection{Data Access Restriction}
 All data within DroidStealth is encrypted by default.
 When the user adds a file to be managed by the application, it is automatically removed from its original location, encrypted, and added to a dedicated data folder.
 This way, the data cannot be accessed by another application, and restricts users to opening these files through DroidStealth.
-Even when the user wants to open an arbitrary file managed by DroidStealth, it has to take the conscious step of decrypting the file first, raising awareness of the risk of exposure.
+Even when the user wants to open an arbitrary file managed by DroidStealth, they have to take the conscious step of decrypting the file first, raising awareness of the risk of exposure.
 
-\subsubsection{Application Access Restriction}
 Every launch of the application requires the user to enter a pin code, which the user defines the first time DroidStealth is opened.
-Only by entering this pin code upon launch can the user access the files managed by DroidStealth; if the pin code is forgotten, the data in the application will remain encrypted forever.
+Only by entering this pin code upon launch can the user access the files managed by DroidStealth. Should it be forgotten, the data in the application will remain encrypted forever.
 
 \subsection{Second Layer of Protection: Hiding DroidStealth}
 The first layer of protection provides strong measures against casual inspectors trying to access the data or the application.
 However, as explained in Section~\ref{sec:problem-description}, finding encrypted and inaccessible data or applications can raise suspicion towards the user.
-Since simply encrypting the data is therefore not enough, our approach provides an added step of obfuscation that increases security of the data: DroidStealth hides itself.
+Since simply encrypting the data is not enough, our approach provides an added step of obfuscation that increases security of the data: DroidStealth hides itself.
 This combination provides the two-layered protection, which is the key solution implemented in DroidStealth.
 
 With the purpose of hiding all incriminating aspects of the encrypted data, we apply two ways of hiding DroidStealth on the device: 
-Providing alternative launching methods, and `hiding the application in plain sight' by changing DroidStealth's appearance.
+Providing alternative launching methods, and `hiding the application in plain sight' by changing DroidStealth's appearance. 
+The first is employed if the user wants to hide DroidStealth from easy access on Android devices, while changing its appearance allows for easy access as well as protection from casual search.
 
 \subsubsection{Alternative Launch Methods}
 The default way of launching an application on an Android device is through the `app drawer'.
@@ -43,12 +42,7 @@ For this, we have implemented two alternative launching methods, which can be en
 DroidStealth provides a launch option that opens the application by dialing a user-defined numeric sequence. 
 The user enters this numeric sequence in the any regular phone number dialing application, as it would with a phone number.
 Instead of actually calling the number, the application launches, requesting the pin code. 
-Furthermore, the application removes the numeric launch sequence from the call log, hiding it from a casual inspector.
-
-\todo{Move to Vulnerability Analysis.}
-A potential security issue here, is that when a user fills in the wrong launch code, the entry won't be removed from the call log, and thus an attacked could be hinted towards the right pin. 
-Also, if a user had made more mistakes, the attacker could merge the suspicious call log entries, and deduct the correct pin. 
-A possible solution would be to check the call log for entries that are similar to the actual one, and to remove those as well.
+Furthermore, DroidStealth fully intercepts the call, making sure the number never gets added to the call log.
 
 \textbf{Transparent Widget}
 Another option is to launch the app by means of an invisible widget on the device's home screen. 
@@ -62,15 +56,10 @@ After the first time the widget is tapped, it becomes transparent.
 When adding a new access widget, all previously placed widgets become visible. 
 This allows the user to retrieve forgotten widgets. 
 
-\todo{Move to Vulnerability Analysis}
-Of course, this is a potential security threat, as this provides attackers an easy way of finding the hidden widget. 
-We must remind ourselves, however, that we are focusing on casual search. 
-Also, if this would be combined with a morphed DroidStealth, attackers would never know which widget of which app should be placed, unless widget previews are provided.
-
 \subsubsection{Morphing: Mimicking Other Applications}
 DroidStealth is capable of transforming itself, changing its appearance as shown on the device.
 The user can change the application's icon and name, and DroidStealth can then create an Android Application Package from which the application can be (re-)installed with the new appearance.
 DroidStealth is also capable of listing all installed applications on the device, from which the user can easily pick the one it wants to mimic.
 
 With the newly acquired appearance, DroidStealth does not need to be hidden from the app drawer and no secret launch methods are required.
-This way, the intuitive `default' launching method is retained, while DroidStealth is still hidden to a casual inspector.
+This way, the intuitive `default' launching method is retained, while DroidStealth is still hidden from a casual inspector.

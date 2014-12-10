@@ -14,6 +14,12 @@ The testing has shown that the alternative launch methods could use closer atten
 The counterintuitive approaches to launching DroidStealth can be confusing.
 There is also a risk that the methods, or the codes are forgotten when the user only sporadically opens the app;
 This would render the data managed by the application lost forever.
+
+With the providing of alternative access methods, easier access is provided to both the users and possible attackers.
+The invisible widget that is provided is easily found in the widget list, though it is made more complex to detect when used in combination with a morphed DroidStealth.
+The dialer launcher poses a risk when a user fills in the wrong launch code, as the entry won't be removed from the call log, and thus an attacked could be hinted towards the right pin. 
+Also, if a user had made more mistakes, the attacker could merge the suspicious call log entries, and deduct the correct pin. 
+A possible solution would be to check the call log for entries that are similar to the actual one, and to remove those as well.
 Future work could address this issue with a solution that creates a more usable alternative launch method, while maintaining the security of the application.
 
 Once the application has been launched, the user is required to pay close attention to the state of the application, and the state of the files managed by it.

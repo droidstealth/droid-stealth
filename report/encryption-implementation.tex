@@ -10,9 +10,10 @@ The Conceal library does not implement cryptography algorithms, but instead uses
 
 Files are encrypted individually.
 When encryption would be applied at folder level, the application would have to decrypt all data upon being opened.
-Not only does this expose all data during the user's interaction with (most likely) only one of the files:
-If the user would then forget to lock the data, all data managed by DroidStealth would remain exposed.
+Not only does this expose all data during the user's interaction with (most likely) only one of the files;
+but if the user would then forget to lock the data, all data managed by DroidStealth would remain exposed.
 By applying per-file encryption, the risk of exposure is kept to a minimum.
+Only loading files when needed also means an increase in startup time, as it is not necessary to decrypt the entire folder.
 
 The process of encrypting an unencrypted file is quite simple because of the use of the Conceal API:
 The \texttt{Crypto} class, provided by the Conceal API, handles all encryption logic in the process.
