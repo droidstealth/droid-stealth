@@ -9,6 +9,7 @@
  pdfauthor={Your Name},
  pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false}
 \usepackage{breakurl}
+\usepackage{color}
 
 \makeatletter
 
@@ -22,7 +23,10 @@
 
 % for subfigures/subtables
 \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+
 %\usepackage[nocompress]{cite} %optional
+
+\newcommand{\todo}[1]{\colorbox{yellow}{#1}}
 
 \makeatother
 
@@ -30,20 +34,29 @@
 
 
 
-\title{DroidStealth: A Nomadic Data Obfuscation Tool that Facilitates Sharing}
+\title{A Nomadic Self-Compiling Android Data Obfuscation Tool}
 
 
-\author{Olivier Hokke, Alex Kolpa, Joris van den Oever, and~Alex Walterbos}
+\author{Olivier Hokke, Alex Kolpa, Joris van den Oever, Alex Walterbos, and Johan Pouwelse (Course supervisor)}
 
 
 \markboth{Delft University of Technology Student Project}{Your Name \MakeLowercase{\textit{et al.}}: Your Title}
 
 \IEEEtitleabstractindextext{
 \begin{abstract}
-TODO ABSTRACT TEXT\end{abstract}
+	Smartphones are becoming more significant for storing and transferring data, yet techniques making sure this data is not compromised in a search of the device are not readily available. 
+	DroidStealth, an open source Android application, provides a smartphone user not only with means to encrypt the data on the device, but also hides itself through different obfuscation techniques. 
+	This includes hiding the application's default launch methods and providing methods such as dial-to-launch and transparent launch buttons. 
+	A novel technique provided by DroidStealth is the ability to morph the application to hide it in plain sight, using self-compilation, and without requiring root permissions.
+	This Two-Layer protection aims to protect the user and its data from casual search in various situations.
+\end{abstract}
 
 \begin{IEEEkeywords}
-casual search, privacy, nomadic software, obfuscation
+casual search, 
+privacy, 
+nomadic software, 
+data obfuscation,
+data encryption
 \end{IEEEkeywords}
 
 }
@@ -78,97 +91,17 @@ the use of an Android app. The tool-aided expert attacks are not within the
 scope of this project.
 
 This paper starts with explaining the problem description in section \ref{sec:problem-description}, wherein the problem that led to the setup of this project is expanded upon.
-Next, the approach taken to this problem is discusssed in section \ref{sec:approach-and-design}.
+Next, the approach taken to this problem is discusssed in section \ref{sec:approach}.
 Once the approach has been determined, a description of the actual implementation can be provided, which is done is section \ref{sec:implementation}.
 Finally, the limitations and future work will be discussed in section \ref{sec:future-work}.
 
 \input{problemdescription}
 
-\input{approach_design}
+\input{approach}
 
-\section{Implementation}
-\label{sec:implementation}
+\input{implementation}
 
-This section will discuss the actual implementation of the approach as taken in section \ref{sec:approach-and-design}. 
-It consists of the morphing implementation in section \ref{sec:implementation:morphing}, and the encryption implementation in section \ref{sec:implementation:encryption}.
-
-\input{morphing}
-
-\input{encryption-implementation}
-
-\section{Future Work}
-\label{sec:future-work}
-
-There are several aspects of the application than can be improved. Which
-can be categorized under one of the following: usability, and morphing.
-The categories will be discusses individually as they are separated both
-technically and conceptually. 
-
-\subsection{Usability}
-
-In terms of usability there has been no formal study on what aspects of
-the application work work well. However informal testing has shown several
-avenues of improvement. First is how to access the application. 
-
-While the freely chosen app name and icon do suffice there are other ways 
-it could be done. Namely the widgets available to android users. This could 
-be a simple widget mimicking the standard available widgets, or even be 
-invisible. So as to have no recognizable screen space. While it could still
-react to certain use patterns. A first implementation of this functionality is
-available but needs to be properly evaluated.
-
-Once the application has been started there are still some ways the user
-needs to be observant in how she uses the application. As it can result in
-inadvertent data breaches. Mainly when the data is opened in other apps.
-While several solutions have been discussed, like listening to home button
-presses or having files only be unlocked for limited time, these still need
-to be explored in depth.
-
-\subsection{Morphing} 
-\label{sec:limitations:morphing}
-
-When it comes to morphing there are two major limitations; app renaming and software integrity validation. 
-The first pertains to limitations in the renaming of the application when morphing. 
-The second holds that there is no way to guarantee that the application hasn't been modified after morphing.
-
-When it comes to naming there is a functional limitation in the length of the new name as of now.
-It has to be the same length or shorter than the original name length, which can be padded with whitespace. 
-But as of yet the way Android manifests are encoded are opaque enough that not all size indicators have been correctly identified.
-
-The other component of naming is the `package name' staying consistent across morphs. 
-The package name of an application is a naming convention which Android uses as an identifier for applications in its app store.
-For casual searches, the package name is not relevant in most situations.
-However there is one exception, namely if DroidStealth would be on an app store. 
-As apps are identified there by package name this would make it easy to reveal its presence just by searching for it on the appstore.
-Currently the only solution is to not be available through any app store.
-
-The integrity validation is currently something that does not exist with morphing. 
-The application needs to be signed with the same key before morphing as after morphing if users want to be able to reinstall it afterwards without first having to remove it. 
-This makes it possible to distribute updates in a nomadic manner, but also means the signing key has to be packaged with DroidStealth for it to work. 
-As such anyone can create a modified version of the application and spread that as an `update.'
-Solving this problem is non-trivial and requires more research.
-
-\subsection{Security}
-A potential security threat that can be exploited, is that
-unlocked files are stored on the internal SD card of the device,
-and that another app could constantly watch the folders in which
-those files would be decrypted. Then this other app could save
-them somewhere else or send them over the Internet.
-
-Also, if files are unlocked, and the user's device is taken from
-its rightful owner without warning, then the user might not have
-gotten enough time to press the notifications to swiftly lock
-the secret files back. Invaders won't be able to see the data
-directly, unless they launch a file browser and start searching,
-but they would be informed of the existence of secret files.
-This could be a potential danger, because an attacker could be
-interested in those files and do the user harm to get these
-files. Users should be fully aware that they should only unlock
-files if they are 100\% sure that they are in a safe location.
-
-\section*{Acknowlegments}
-
-The authors would like to thank Dhr JA Pouwelse from the Delft University of Technology for providing the possibility to investigate this matter, for providing his helpful insights and feedback, and placing his expertise at our disposal.
+\input{future-work}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
