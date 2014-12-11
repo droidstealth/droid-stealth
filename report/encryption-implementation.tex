@@ -1,4 +1,5 @@
-\subsubsection{The Encryption Service}
+\subsection{The Encryption Service}
+\label{sec:implementation:encryption}
 DroidStealth uses a `Service'\footnote{An Android Service is a part of an application that runs in the background, often used for more intensive or lengthy executions.} for the encryption of files.
 This service runs in the background, and listens for \texttt{Intents} started by the application.
 A queue is used to order the requests, and the service running in the backgrounds works through the queue continuously.
@@ -6,6 +7,13 @@ A queue is used to order the requests, and the service running in the background
 The encryption that DroidStealth provides is implemented using Facebook's Conceal API\cite{facebookConceal}.
 Conceal provides a set of APIs for data encryption and authentication; we only use the first.
 The Conceal library does not implement cryptography algorithms, but instead uses algorithms used in OpenSSL\cite{openssl}.
+
+Files are encrypted individually.
+When encryption would be applied at folder level, the application would have to decrypt all data upon being opened.
+Not only does this expose all data during the user's interaction with (most likely) only one of the files;
+but if the user would then forget to lock the data, all data managed by DroidStealth would remain exposed.
+By applying per-file encryption, the risk of exposure is kept to a minimum.
+Only loading files when needed also means an increase in startup time, as it is not necessary to decrypt the entire folder.
 
 The process of encrypting an unencrypted file is quite simple because of the use of the Conceal API:
 The \texttt{Crypto} class, provided by the Conceal API, handles all encryption logic in the process.

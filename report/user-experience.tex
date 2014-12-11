@@ -1,0 +1,54 @@
+\subsection{User Experience}
+\label{sec:user-experience}
+Within this subsection we will elaborate on our design choices in user experience design related to locking and hiding of both data and the app.
+We also briefly discuss the philosophy behind the styling.
+
+
+\subsubsection{Locking and Hiding of Data}
+Once the application has been opened, the user can interact with the files managed by DroidStealth.
+Destroying an encrypted file is allowed, but opening and exporting/sharing files is not; the user will have to decrypt them first.
+This extra step is part of the interaction to make the user aware that the files are then decrypted.
+
+To add to this awareness, a warning is shown to the user, explaining that some files are unlocked and pose an exposure risk.
+This warning is shown as a persistent notification in the notification drawer of the Android device.
+When the notification is pressed, all unlocked files are immediately locked.
+This provides a user friendly way to swiftly encrypt the files so they cannot be found, without the need to reopen the app.
+\todo{screenshots of notifications.}
+
+Depending on the file size, encrypting or decrypting a file could take up to several minutes.
+During this process, a notification which informs the user of the encryption or decryption process.
+Once the user taps on it, the encryption or decryption is canceled by emptying the queue and finishing the current task.
+
+\subsubsection{Launching DroidStealth}
+The trivial, default way of launching DroidStealth is through the app drawer of an Android device. 
+When launching the application the first time, the user is promted to enter a pin that will be used to access the application.
+On following launches, the app will present the user with a numeric keyboard to enter its pin code. \todo{screenshot of keyboard.}
+If the pin is entered correctly, the DroidStealth will launch into the secret gallery \todo{screenshot of gallery}.
+This pin code is required to open the application trough any launch method.
+If the user forgets the pin code, the data in the application will remain encrypted forever.
+
+\textbf{Alternative Launch Methods}
+As explained in Section~\ref{sec:approach}, DroidStealth provides alternative launch methods.
+The application provides a `Launch Menu' where launch methods can be enabled and disabled \todo{screenshot of launch menu}.
+To protect the user from not being able to open the application, at least one launch method must be enabled at all times.
+
+When the user adds a DroidStealth launch widget to the device's home screen, the new widget and all existing widgets are made temporarily visible.
+This helps the user to place the new widget, as well as retrieve existing (lost) widget locations.
+Touching any of the widgets will make all of them transparent again, and therefore invisible to the human eye.
+From that point on, when the user presses the invisible widget 5 times, the app is launched, showing the pin keyboard.
+
+\subsection{Styling}
+
+DroidStealth is themed with a dark color in order to give users the feeling that they are indeed working in secret, and that their data will be safely hidden.
+To give DroidStealth a professional ambience, we used a rounded but solid straight font for our titles, and a formal font for all other texts.
+Combining this with the use of bright, but slightly softened primary and secondary colors, the user is provided with a balanced and consistent user interface.
+\todo{ADD SMALL IMAGE}
+
+The use of green and red is mirrored from the conventional meaning of those colors.
+Green will always be used to indicate that something is good or safe, red will do the opposite.
+Furthermore, we use the color orange when indicating a process is being executed.
+Whenever a file is locking, or unlocking, the status bar of the file will be orange, and a animated twirl is shown to indicate that the file is being processed.
+\todo{ADD SMALL IMAGE}
+
+Finally, the gallery uses no padding or margins between the thumbnails of files, as we want to optimally make use of all the screen space.
+Thumbnails are thus as big as they can be, and thus will be most efficient in showing the user its contents.

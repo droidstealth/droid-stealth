@@ -2,7 +2,7 @@
 <resources>
 
 	<string name="morphable_app_name">@string/true_app_name</string>
-	<string name="true_app_name">Safe \'n Sound</string>
+	<string name="true_app_name">DroidStealth</string>
 	<string name="content_loading">Loading</string>
 	<string name="http_service">HTTP Service</string>
 	<string name="wifi_AP_progress_title">Wifi Hotspot</string>

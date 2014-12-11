@@ -1,0 +1,63 @@
+\section{Future Work}
+\label{sec:future-work}
+
+There are several aspects of the application than can be improved. Which
+can be categorized under one of the following: usability, and morphing.
+The categories will be discusses individually as they are separated both
+technically and conceptually. 
+
+\subsection{Usability}
+In terms of usability there has been no formal study on what aspects of the application work work well. 
+However, informal testing has shown several avenues of improvement. 
+
+The testing has shown that the alternative launch methods could use closer attention when it comes to the usability.
+The counterintuitive approaches to launching DroidStealth can be confusing.
+There is also a risk that the methods, or the codes are forgotten when the user only sporadically opens the app;
+This would render the data managed by the application lost forever.
+
+With the providing of alternative access methods, easier access is provided to both the users and possible attackers.
+The invisible widget that is provided is easily found in the widget list, though it is made more complex to detect when used in combination with a morphed DroidStealth.
+The dialer launcher poses a risk when a user fills in the wrong launch code, as the entry won't be removed from the call log, and thus an attacked could be hinted towards the right pin. 
+Also, if a user had made more mistakes, the attacker could merge the suspicious call log entries, and deduct the correct pin. 
+A possible solution would be to check the call log for entries that are similar to the actual one, and to remove those as well.
+Future work could address this issue with a solution that creates a more usable alternative launch method, while maintaining the security of the application.
+
+Once the application has been launched, the user is required to pay close attention to the state of the application, and the state of the files managed by it.
+A small human error can result in inadvertent data breaches, especially when the data in the application is opened in other apps.
+
+Monitoring the application's lifecycle more closely could resolve some of these issues:
+For example, `listening' to home button presses could be used to trigger the locking of files automatically whenever the app gets out of focus.
+Another solution that has been discussed is limiting the time during which a file may be unlocked, which could restore the encryption after a (user-)designated duration.
+
+\subsection{Morphing} 
+\label{sec:limitations:morphing}
+
+When it comes to morphing there are two major limitations; app renaming and software integrity validation. 
+The first pertains to limitations in the renaming of the application when morphing. 
+The second holds that there is no way to guarantee that the application hasn't been modified after morphing.
+
+When it comes to naming there is a functional limitation in the length of the new name as of now.
+It has to be the same length or shorter than the original name length, which can be padded with whitespace. 
+But as of yet the way Android manifests are encoded are opaque enough that not all size indicators have been correctly identified.
+
+The other component of naming is the `package name' staying consistent across morphs. 
+The package name of an application is a naming convention which Android uses as an identifier for applications in its app store.
+For casual searches, the package name is not relevant in most situations.
+However there is one exception, namely if DroidStealth would be on an app store. 
+As apps are identified there by package name this would make it easy to reveal its presence just by searching for it on the appstore.
+Currently the only solution is to not be available through any app store.
+
+The integrity validation is currently something that does not exist with morphing. 
+The application needs to be signed with the same key before morphing as after morphing if users want to be able to reinstall it afterwards without first having to remove it. 
+This makes it possible to distribute updates in a nomadic manner, but also means the signing key has to be packaged with DroidStealth for it to work. 
+As such anyone can create a modified version of the application and spread that as an `update'.
+Solving this problem is non-trivial and requires more research.
+
+\subsection{Reinstalling the application}
+When the application is reinstalled from, for example, a morphed android application package, the encryption key used to lock data is replaced.
+This means that the data locked before the reinstallation is impossible to decrypt; a significant limitation in the usability.
+
+A method of deriving a key that is consistent through reinstalling the application is required, while it remains underivable for external parties.
+
+Reinstalling the application from the newly created application package unfortunately replaces the encryption key that is used to encrypt and decrypt the files.
+This means that the data stored before the reinstall cannot be unlocked anymore; a harsh limitation in the usga
