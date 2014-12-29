@@ -1,0 +1,170 @@
+\documentclass[twocolumn,english,compsoc,journal]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage[unicode=true,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=1,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{pdftitle={Your Title},
+ pdfauthor={Your Name},
+ pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false}
+\usepackage{breakurl}
+
+\makeatletter
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+ % protect \markboth against an old bug reintroduced in babel >= 3.8g
+ \let\oldforeign@language\foreign@language
+ \DeclareRobustCommand{\foreign@language}[1]{%
+   \lowercase{\oldforeign@language{#1}}}
+
+% for subfigures/subtables
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\usepackage[nocompress]{cite} %optional
+
+\makeatother
+
+\begin{document}
+
+
+
+\title{DroidStealth: A nomadic data obfuscation tool that facilitates sharing}
+
+
+\author{Olivier Hokke, Alex Kolpa, Joris van den Oever and~Alex Walterbos}
+
+
+\markboth{Delft University of Technology Student Project}{Your Name \MakeLowercase{\textit{et al.}}: Your Title}
+
+\IEEEtitleabstractindextext{
+\begin{abstract}
+TODO ABSTRACT TEXT\end{abstract}
+
+\begin{IEEEkeywords}
+casual search, privacy, nomadic software, obfuscation
+\end{IEEEkeywords}
+
+}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext{}
+
+
+\IEEEpeerreviewmaketitle{}
+
+
+\section{Introduction}
+
+\IEEEPARstart{W}{ith} rising use of smart phones in daily life and
+exceptional events means there is a lot more data available on phones.
+These pictures, videos, and in some cases other files are very interesting
+to a wide variety of groups. This might be because oppresive governments
+want to suppress this data at checkpoints around protests or random
+searches on the street, or even individuals with authority pressuring
+to hand over the phone to grab/remove data themselves. There are many
+instances of law enforcement officers oversteppin their legal bounds
+to remove images of actions they don't want recorded or because of
+mistaken ideas about the law. 
+
+We call such non-technical searches of devices 'casual search.' The
+person performing it may have varying degrees of expertise regarding
+the workings of mobile computing devices but is limited to the tools
+already available on the phone to check out data. Instead of performing
+advanced attacks using specialised tools designed to get all the data
+out of a phone. 
+
+This project aims to address only the casual searches with an Android
+app rather than the latter. Which is nearly impossible to defend against
+if enough time and effort is expended. This is done by providing more
+control over private data in these situations. It allows users to
+lock and hide their content, without inhibiting the sharing whenever
+they have the desire to do so. Yet remain difficult to detect even
+to those who know of its existence.
+
+\textbf{Bla bla bla structure of paper and what we're going to discuss
+where.}
+
+
+\section{Problem Description}
+
+Describe exactly what we are trying to solve in detail.
+
+
+\subsection{subsection}
+
+
+\subsection{another subsection}
+
+
+\section{Design and software architecture}
+
+Here we say stuff about the libraries and intents because why reinvent
+the wheel.
+
+Data sharing and application sharing.
+
+
+\section{Implementation}
+
+How did we create the data vault. Encryption, thumbnails, notifications
+for unlocking.
+
+What the hell do we do to make morphing possible.
+
+
+\section{Future Work}
+
+bla bla, unlimited naming for morphed apps. (UTF-8, length limits?
+Byte length indicator start of manifest and length of name field.)
+
+Sharing, invisible widget
+
+Locking files on timer or detecting if app that was opened on intent
+is closed/home buttoned. Since that leaves stuff open.
+
+
+\appendices{}
+
+
+\section{Appendix citing}
+
+Citation: \cite{example:beebe_archive}
+
+
+\section{Appendix example for tables and images.}
+
+\begin{figure}[htbp]
+\begin{centering}
+\textsf{A single column figure goes here}
+\par\end{centering}
+
+\protect\caption{Captions go \emph{under} the figure}
+\end{figure}
+\begin{table}[htbp]
+\protect\caption{Table captions go \emph{above} the table}
+
+
+\centering{}%
+\begin{tabular}{|c|c|}
+\hline 
+delete & this\tabularnewline
+\hline 
+\hline 
+example & table\tabularnewline
+\hline 
+\end{tabular}
+\end{table}
+
+
+
+\section*{Acknowlegment}
+
+bla bla bla Pauwelse?
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
