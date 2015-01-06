@@ -17,7 +17,7 @@
 	<dimen name="column_item_height">120dp</dimen>
 	<dimen name="content_item_width">120dp</dimen>
 	<dimen name="content_image_width">120dp</dimen>
-	<dimen name="content_image_height">90dp</dimen>
+	<dimen name="content_image_height">120dp</dimen>
 	<dimen name="content_status_line_height">8dp</dimen>
 	<dimen name="content_text_side_padding">4dp</dimen>
 	<dimen name="content_status_icon_padding">1dp</dimen>
