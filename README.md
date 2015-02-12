@@ -1,4 +1,4 @@
-Android Stealth
+DroidStealth
 ===============
 
 This application provides a platform for secure hidden storage of user data on an Android phone.
@@ -10,6 +10,11 @@ Yet it very much remains tricky thing to balance between the security and sharin
 Furthermore, the application can be shared directly between two Android phones via a WiFi hotspot, BlueTooth, and Android Beam (when available).
 The goal is to implement the tools to make offline sharing and distribution an easy thing.
 Both of the app and the data stored inside the app.
+
+## Running it
+You can download the `.apk` file from the [releases page](https://github.com/droidstealth/droid-stealth/releases), and install this on your phone. This *should* be stable, create an issue if it is not. 
+
+For the latest, most up-to-date version, clone the repository and build the application with [Android Studio](http://developer.android.com/tools/studio/index.html)
 
 Project Vision
 --------------
