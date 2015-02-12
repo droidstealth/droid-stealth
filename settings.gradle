@@ -1,1 +1,2 @@
-include ':AndroidStealth', ':libraries:FileChooser', ':libraries:droid-morph:droidmorphing-lib', ':libraries:DirectoryChooser'
+include ':AndroidStealth', ':libraries:FileChooser', ':libraries:DirectoryChooser', ':droidmorphing-lib'
+project(':droidmorphing-lib').projectDir = new File('libraries/droid-morph/droidmorphing-lib')
