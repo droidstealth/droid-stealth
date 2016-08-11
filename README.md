@@ -1,3 +1,5 @@
+**This project is no longer being maintained; at least not by the original dev team. It might be picked up by related teams, but no such plans are known to former maintainers of this repository at this time.**
+
 DroidStealth
 ===============
 
